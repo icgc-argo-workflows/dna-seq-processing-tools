@@ -1,6 +1,4 @@
-#### Run BWA mem + merged + sort + mark duplicates
+Two tools:
 
-Two scripts:
-
-- align.py to make the bwa alignment
-- merge.py to merge, sort and mark duplicates in one command
+- bwa-mem-aligner.py: take lane-level unaligned BAM as input align it using BWA MEM
+- bam-merge-markdup-sort.py: merge multiple lane-level aligned BAMs, mark duplicated reads and sort reads by genomic coordinates
