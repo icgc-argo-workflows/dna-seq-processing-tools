@@ -14,8 +14,8 @@ RUN chmod +x /tools/sambamba
 ENV PATH=/tools:$PATH
 
 #Install libmaus2
-LIBMAUS_VERSION=2.0.611-release-20190408112550
-LIBMAUS_SOURCE=https://gitlab.com/german.tischler/libmaus2/-/archive/$LIBMAUS_VERSION/libmaus2-$LIBMAUS_VERSION.tar.gz
+ENV LIBMAUS_VERSION=2.0.611-release-20190408112550
+ENV LIBMAUS_SOURCE=https://gitlab.com/german.tischler/libmaus2/-/archive/$LIBMAUS_VERSION/libmaus2-$LIBMAUS_VERSION.tar.gz
 RUN cd /tmp \
     && wget LIBMAUS_SOURCE -O libmaus2-$LIBMAUS_VERSION.tar.gz \
     && tar -zxvf libmaus2-$LIBMAUS_VERSION.tar.gz \
@@ -28,8 +28,8 @@ RUN cd /tmp \
     && make install
 
 #Install biobambam2
-BIOBAMBAM_VERSION=2.0.95-release-20190320141403
-BIOBAMBAM_SOURCE=https://gitlab.com/german.tischler/biobambam2/-/archive/$BIOBAMBAM_VERSION/biobambam2-$BIOBAMBAM_VERSION.tar.gz
+ENV BIOBAMBAM_VERSION=2.0.95-release-20190320141403
+ENV BIOBAMBAM_SOURCE=https://gitlab.com/german.tischler/biobambam2/-/archive/$BIOBAMBAM_VERSION/biobambam2-$BIOBAMBAM_VERSION.tar.gz
 RUN cd /tmp \
     && wget BIOBAMBAM_SOURCE -O biobambam2-$BIOBAMBAM_VERSION.tar.gz \
     && tar -zxvf biobambam2-$BIOBAMBAM_VERSION.tar.gz \
