@@ -21,6 +21,7 @@ def main():
     if args.tool == "samtools":
         merge = 'samtools merge - %s -f' % ' '.join(args.input_bams)
         sort = 'samtools sort - -o /dev/stdout'
+        # samtools markup errors out, needs to have closer look
         markdup = 'samtools markdup - %s' % (args.output_bam)
         cmd = '|'.join([merge, sort, markdup])
 
@@ -30,7 +31,7 @@ def main():
         sort = 'java -jar /tools/picard.jar SortSam INPUT=/dev/stdin OUTPUT=/dev/stdout SORT_ORDER=coordinate'
         # Picard MarkDuplicates does not work with stdin as input, there seems to be a bug
         #markdup = 'java -jar /tools/picard.jar MarkDuplicates ASSUME_SORT_ORDER=coordinate I=/dev/stdin O=%s M=marked_dup_metrics.txt' % args.output_bam
-        markdup = 'bammarkduplicates2 O=%s markthreads=16 M=duplicates_metrics.txt' % \
+        markdup = 'bammarkduplicates2 O=%s markthreads=16 M=duplicates-metrics.txt' % \
                     args.output_bam
         cmd = '|'.join([merge, sort, markdup])
 
@@ -41,7 +42,11 @@ def main():
         cmd = '|'.join([merge, sort, markdup])
 
     elif args.tool == "biobambam":
-        raise NotImplementedError
+        # bamsormadup does sort and markdup in one step, but the result seems not right, need to verify
+        merge = 'java -jar /tools/picard.jar MergeSamFiles I=%s O=/dev/stdout' % \
+                    ' I='.join(args.input_bams)
+        sortmarkdup = 'bamsormadup threads=5 level=5 M=duplicates-metrics.txt > %s' % args.output_bam
+        cmd = '|'.join([merge, sortmarkdup])
 
     print('command: %s' % cmd)
     stdout, stderr, p, success = '', '', None, True
