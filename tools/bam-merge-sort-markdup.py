@@ -10,7 +10,8 @@ def main():
     """ Main program """
     parser = argparse.ArgumentParser(description='Merge bam')
     parser.add_argument('tool', type=str, help='Tool to used',
-                        choices=['samtools', 'picard-biobambam', 'sambamba', 'biobambam'])
+                        choices=['samtools', 'picard-biobambam', 'sambamba', 'biobambam'],
+                        default='picard-biobambam')
     parser.add_argument('-i','--input-bams', dest='input_bams',
                         type=str, help='Input bam file', nargs='+', required=True)
     parser.add_argument('-o','--output-bam', dest='output_bam',

@@ -6,13 +6,15 @@ import argparse
 from multiprocessing import cpu_count
 import sys
 
+
 def main():
     """ Main program """
     parser = argparse.ArgumentParser(description='BWA alignment')
     parser.add_argument('-i','--input-bam', dest='input_bam', type=str,
                         help='Input bam file', required=True)
     parser.add_argument('-r','--ref-genome', dest='ref_genome', type=str,
-                        help='Fa.gz reference genome file', required=True)
+                        help='Reference genome file (eg, .fa.gz), make sure BWA index files '
+                             '(eg. .alt, .ann, .bwt etc) are all present at the same location', required=True)
     parser.add_argument('-o','--output', dest='output', type=str,
                         help='Output bam file', required=True)
     parser.add_argument("-n", "--cpus", type=int, default=cpu_count())
