@@ -15,25 +15,24 @@ def main():
     parser.add_argument('-i','--input-bams', dest='input_bams',
                         type=str, help='Input bam file', nargs='+', required=True)
     parser.add_argument('-o','--output-bam', dest='output_bam',
-                        type=str, help='Output merged bam file', required=True)
+                        type=str, help='Output merged bam with relative path', required=True)
     args = parser.parse_args()
 
     cmd = ''
+    output_dir = os.path.dirname(args.output_bam)
     if args.tool == "samtools":
         merge = 'samtools merge - %s -f' % ' '.join(args.input_bams)
         sort = 'samtools sort - -o /dev/stdout'
         # samtools markup errors out, needs to have closer look
-        markdup = 'samtools markdup - %s' % (args.output_bam)
+        markdup = 'samtools markdup - %s' % args.output_bam
         cmd = '|'.join([merge, sort, markdup])
 
     elif args.tool == "picard-biobambam":
         merge = 'java -jar /tools/picard.jar MergeSamFiles I=%s O=/dev/stdout' % \
                     ' I='.join(args.input_bams)
         sort = 'java -jar /tools/picard.jar SortSam INPUT=/dev/stdin OUTPUT=/dev/stdout SORT_ORDER=coordinate'
-        # Picard MarkDuplicates does not work with stdin as input, there seems to be a bug
-        #markdup = 'java -jar /tools/picard.jar MarkDuplicates ASSUME_SORT_ORDER=coordinate I=/dev/stdin O=%s M=marked_dup_metrics.txt' % args.output_bam
-        markdup = 'bammarkduplicates2 O=%s markthreads=16 M=duplicates-metrics.txt' % \
-                    args.output_bam
+        markdup = 'bammarkduplicates2 O=%s markthreads=16 M=%s rewritebam=1 rewritebamlevel=1 index=1 md5=1' % \
+                  (args.output_bam, os.path.join(output_dir, args.tool+".duplicates-metrics.txt"))
         cmd = '|'.join([merge, sort, markdup])
 
     elif args.tool == "sambamba":
@@ -46,7 +45,8 @@ def main():
         # bamsormadup does sort and markdup in one step, but the result seems not right, need to verify
         merge = 'java -jar /tools/picard.jar MergeSamFiles I=%s O=/dev/stdout' % \
                     ' I='.join(args.input_bams)
-        sortmarkdup = 'bamsormadup threads=5 level=5 M=duplicates-metrics.txt > %s' % args.output_bam
+        sortmarkdup = 'bamsormadup threads=5 level=5 M=%s > %s' % \
+                      (os.path.join(output_dir, args.tool+".duplicates-metrics.txt"), args.output_bam)
         cmd = '|'.join([merge, sortmarkdup])
 
     print('command: %s' % cmd)
