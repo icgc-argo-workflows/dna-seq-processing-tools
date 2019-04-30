@@ -27,8 +27,8 @@ def main():
         cmd = '|'.join([merge, sort, markdup])
 
     elif args.tool == "picard-biobambam":
-        merge = 'java -jar /tools/picard.jar MergeSamFiles I=%s O=/dev/stdout' % \
-                    ' I='.join(args.input_bams)
+        merge = 'java -jar /tools/picard.jar MergeSamFiles I=/data/%s O=/dev/stdout' % \
+                    ' I=/data/'.join(args.input_bams)
         sort = 'java -jar /tools/picard.jar SortSam INPUT=/dev/stdin OUTPUT=/dev/stdout SORT_ORDER=coordinate'
         markdup = 'bammarkduplicates2 O=%s markthreads=16 M=%s rewritebam=1 rewritebamlevel=1 index=1 md5=1' % \
                   (args.output_bam, args.output_bam+".duplicates-metrics.txt")
