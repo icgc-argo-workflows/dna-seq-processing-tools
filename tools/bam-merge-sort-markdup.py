@@ -13,9 +13,9 @@ def main():
                         choices=['samtools', 'picard-biobambam', 'sambamba', 'biobambam'],
                         default='picard-biobambam')
     parser.add_argument('-i','--input-bams', dest='input_bams',
-                        type=str, help='Input bam file', nargs='+', required=True)
+                        type=str, help='Input bam file', nargs='+')
     parser.add_argument('-o','--output-bam', dest='output_bam',
-                        type=str, help='Output merged bam filename', required=True)
+                        type=str, help='Output merged bam filename')
     args = parser.parse_args()
 
     cmd = ''
