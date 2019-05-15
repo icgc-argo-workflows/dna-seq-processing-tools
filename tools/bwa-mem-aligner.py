@@ -36,12 +36,15 @@ def main():
 
     if not len(rg_array) == 1: sys.exit('\n%s: The input bam should only contain one readgroup ID: %s' % args.input_bam)
 
-    bam2fastq = 'samtools fastq %s ' % args.input_bam
+    bam2fastq = 'samtools fastq -@ %s %s ' % (str(args.cpus), args.input_bam)
 
     #Command with header
-    alignment = ' bwa mem -t %s -p -R "%s" %s - > %s' % (str(args.cpus), rg_array[0], args.ref_genome, args.output)
+    alignment = ' bwa mem -K 100000000 -Y -t %s -p -R "%s" %s - ' % (str(args.cpus), rg_array[0], args.ref_genome)
 
-    cmd = '|'.join([bam2fastq, alignment])
+    # Sort the SAM output by coordinate from bwa and save to BAM file
+    sort = ' samtools sort -O BAM -@ %s -o %s /dev/stdin' % (str(args.cpus), args.output)
+
+    cmd = '|'.join([bam2fastq, alignment, sort])
 
     print('command: %s' % cmd)
     stdout, stderr, p, success = '', '', None, True
