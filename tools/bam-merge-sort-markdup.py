@@ -10,8 +10,8 @@ def main():
     """ Main program """
     parser = argparse.ArgumentParser(description='Merge bam')
     parser.add_argument('tool', type=str, help='Tool to used',
-                        choices=['samtools', 'biobambam', 'sambamba'],
-                        default='picard-biobambam')
+                        choices=['samtools', 'picard-biobambam', 'biobambam', 'sambamba', 'bamsormadup'],
+                        default='biobambam')
     parser.add_argument('-i','--input-bams', dest='input_bams',
                         type=str, help='Input bam file', nargs='+', required=True)
     parser.add_argument('-o','--output-bam', dest='output_bam',
@@ -27,6 +27,14 @@ def main():
         markdup = 'samtools markdup - %s' % args.output_bam
         cmd = '|'.join([merge, sort, markdup])
 
+    elif args.tool == "picard-biobambam":
+        merge = 'java -jar /tools/picard.jar MergeSamFiles I=/data/%s O=/dev/stdout' % \
+                    ' I=/data/'.join(args.input_bams)
+        sort = 'java -jar /tools/picard.jar SortSam INPUT=/dev/stdin OUTPUT=/dev/stdout SORT_ORDER=coordinate'
+        markdup = 'bammarkduplicates2 O=%s markthreads=16 M=%s rewritebam=1 rewritebamlevel=1 index=1 md5=1' % \
+                  (args.output_bam, args.output_bam+".duplicates-metrics.txt")
+        cmd = '|'.join([merge, sort, markdup])
+
     elif args.tool == "biobambam":
         markdup = 'bammarkduplicates2 O=%s markthreads=%s M=%s rewritebam=1 rewritebamlevel=1 index=1 md5=1 I=/data/%s' % \
                   (args.output_bam, str(args.cpus), args.output_bam+".duplicates-metrics.txt", ' I=/data/'.join(args.input_bams))
@@ -38,13 +46,13 @@ def main():
         markdup = 'sambamba markdup -t 16 -l 5 /dev/stdin %s' % args.output_bam
         cmd = '|'.join([merge, sort, markdup])
 
-    # elif args.tool == "biobambam":
-    #     # bamsormadup does sort and markdup in one step, but the result seems not right, need to verify
-    #     merge = 'java -jar /tools/picard.jar MergeSamFiles I=%s O=/dev/stdout' % \
-    #                 ' I='.join(args.input_bams)
-    #     sortmarkdup = 'bamsormadup threads=5 level=5 M=%s > %s' % \
-    #                   (args.output_bam+".duplicates-metrics.txt", args.output_bam)
-    #     cmd = '|'.join([merge, sortmarkdup])
+    elif args.tool == "bamsormadup":
+        # bamsormadup does sort and markdup in one step, but the result seems not right, need to verify
+        merge = 'java -jar /tools/picard.jar MergeSamFiles I=%s O=/dev/stdout' % \
+                    ' I='.join(args.input_bams)
+        sortmarkdup = 'bamsormadup threads=5 level=5 M=%s > %s' % \
+                      (args.output_bam+".duplicates-metrics.txt", args.output_bam)
+        cmd = '|'.join([merge, sortmarkdup])
 
     print('command: %s' % cmd)
     stdout, stderr, p, success = '', '', None, True
