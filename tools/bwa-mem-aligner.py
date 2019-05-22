@@ -36,7 +36,7 @@ def main():
 
     if not len(rg_array) == 1: sys.exit('\n%s: The input bam should only contain one readgroup ID: %s' % args.input_bam)
 
-    sort_qname = 'samtools sort -n -O BAM -@ %s ' % (str(args.cpus), args.input_bam)
+    sort_qname = 'samtools sort -n -O BAM -@ %s %s ' % (str(args.cpus), args.input_bam)
 
     bam2fastq = ' samtools fastq -@ %s - ' % (str(args.cpus))
 
