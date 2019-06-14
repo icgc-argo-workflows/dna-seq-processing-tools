@@ -44,7 +44,7 @@ def main():
         if args.mdup and args.cram:
             markdup = 'bammarkduplicates2 markthreads=%s O=/dev/stdout M=%s rewritebam=1 rewritebamlevel=1 index=1 md5=1 I=/data/%s | tee %s ' % \
                       (str(args.cpus), args.output_base + ".bam.duplicates-metrics.txt", ' I=/data/'.join(args.input_bams), args.output_base + ".bam" )
-            cram = 'samtools view -C -T %s -@ %s /dev/stdin | tee %s ' % ("/data/" + args.reference, args.cpus, args.output_base + ".cram")
+            cram = 'samtools view -C -T %s -@ %s /dev/stdin | tee %s ' % ("/ref/" + args.reference, args.cpus, args.output_base + ".cram")
             crai = 'samtools index -@ %s /dev/stdin %s' % (args.cups, args.output_base + ".cram.crai")
             cmd.append('|'.join([markdup, cram, crai]))
 
@@ -55,7 +55,7 @@ def main():
 
         elif not args.mdup and args.cram:
             merge = 'samtools merge -uf -@ %s /dev/stdout /data/%s | tee %s' % (args.cpus, ' /data/'.join(args.input_bams), args.output_base + ".bam")
-            cram = 'samtools view -C -T %s -@ %s /dev/stdin | tee %s ' % ("/data/" + args.reference, args.cpus, args.output_base + ".cram")
+            cram = 'samtools view -C -T %s -@ %s /dev/stdin | tee %s ' % ("/ref/" + args.reference, args.cpus, args.output_base + ".cram")
             crai = 'samtools index -@ %s /dev/stdin %s' % (args.cups, args.output_base + ".cram.crai")
             cmd.append('|'.join([merge, cram, crai]))
             bai = 'samtools index -@ %s %s %s ' % (args.cups, args.output_base + ".bam", args.output_base + ".bam.bai")
