@@ -21,7 +21,7 @@ inputs:
     type: File
     inputBinding:
       prefix: -s
-  seq_files
+  seq_files:
     type: Directory
     inputBinding:
       prefix: -f
