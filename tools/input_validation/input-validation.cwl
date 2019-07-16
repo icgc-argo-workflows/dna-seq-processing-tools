@@ -21,7 +21,10 @@ inputs:
     type: File
     inputBinding:
       prefix: -s
-    secondaryFiles: [.fq, .sa, .pac, .ann, .bwt, .fai, .alt]
+  seq_files
+    type: Directory
+    inputBinding:
+      prefix: -f
   seqexp_json_name:
     type: string
     inputBinding:
