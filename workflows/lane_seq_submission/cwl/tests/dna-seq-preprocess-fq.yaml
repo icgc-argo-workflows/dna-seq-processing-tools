@@ -1,0 +1,14 @@
+exp_tsv:
+  class: File
+  path: data/experiment.tsv
+rg_tsv:
+  class: File
+  path: data/read_group-fq.tsv
+file_tsv:
+  class: File
+  path: data/file-fq.tsv
+seq_exp_json_name: "seq_exp-fq.json"
+seq_rg_json_name: "seq_rg-fq.json"
+seq_files_dir:
+  class: Directory
+  location: data
