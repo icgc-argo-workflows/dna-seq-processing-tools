@@ -5,6 +5,7 @@ import subprocess
 import argparse
 from multiprocessing import cpu_count
 import sys
+import os
 
 
 def main():
@@ -15,8 +16,8 @@ def main():
     parser.add_argument('-r','--ref-genome', dest='ref_genome', type=str,
                         help='Reference genome file (eg, .fa.gz), make sure BWA index files '
                              '(eg. .alt, .ann, .bwt etc) are all present at the same location', required=True)
-    parser.add_argument('-o','--output', dest='output', type=str,
-                        help='Output bam file', required=True)
+    parser.add_argument('-o','--aligned_lane_prefix', dest='aligned_lane_prefix', type=str,
+                        help='Output aligned lane bam file prefix', required=True)
     parser.add_argument("-n", "--cpus", type=int, default=cpu_count())
     args = parser.parse_args()
 
@@ -44,7 +45,7 @@ def main():
     alignment = ' bwa mem -K 100000000 -Y -t %s -p -R "%s" %s - ' % (str(args.cpus), rg_array[0], args.ref_genome)
 
     # Sort the SAM output by coordinate from bwa and save to BAM file
-    sort_coordinate = ' samtools sort -O BAM -@ %s -o %s /dev/stdin' % (str(args.cpus), args.output)
+    sort_coordinate = ' samtools sort -O BAM -@ %s -o %s /dev/stdin' % (str(args.cpus), args.aligned_lane_prefix+"."+os.path.basename(args.input_bam))
 
     cmd = '|'.join([sort_qname, bam2fastq, alignment, sort_coordinate])
 

@@ -1,8 +1,8 @@
-cpus: 8
+cpus: 1
 input_bam:
   class: File
-  path: /input/file/test.bam
-ref_genome:
+  path: data/test.bam
+ref_genome_gz:
   class: File
-  path: /ref/data/GRCh38_hla_decoy_ebv.fa.gz
-output_filename: aligned_seq.bam
+  path: data/GRCh38_hla_decoy_ebv.fa.gz
+aligned_lane_prefix: "grch38-aligned"

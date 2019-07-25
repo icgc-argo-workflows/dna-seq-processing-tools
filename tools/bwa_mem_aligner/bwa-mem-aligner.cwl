@@ -4,7 +4,7 @@ id: bwa-mem-aligner
 requirements:
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/pancancer/dna-seq-processing:latest'
+  dockerPull: 'quay.io/lindaxiang/dna-seq-processing:latest'
 
 baseCommand: [ 'bwa-mem-aligner.py' ]
 
@@ -13,7 +13,7 @@ inputs:
     type: File
     inputBinding:
       prefix: -i
-  ref_genome:
+  ref_genome_gz:
     type: File
     inputBinding:
       prefix: -r
@@ -22,17 +22,14 @@ inputs:
     type: int?
     inputBinding:
       prefix: -n
-  aligned_seq_output:
+  aligned_lane_prefix:
     type: string
     inputBinding:
       prefix: -o
 
 outputs:
-  aligned_seq:
+  aligned_lane_bam:
     type: File
     outputBinding:
-      glob: $(inputs.aligned_seq_output)
-  output_meta:
-    type: File
-    outputBinding:
-      glob: output.json
+      glob: $(inputs.aligned_lane_prefix).$(inputs.input_bam.basename)
+

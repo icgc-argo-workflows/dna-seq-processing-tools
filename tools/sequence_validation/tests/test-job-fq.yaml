@@ -1,0 +1,7 @@
+seq_rg_json:
+  class: File
+  path: data/seq_rg-fq.json
+seq_files_dir:
+  class: Directory
+  location: data
+seq_format: "FASTQ"

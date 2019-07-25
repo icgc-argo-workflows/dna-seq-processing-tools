@@ -1,0 +1,24 @@
+exp_tsv:
+  class: File
+  path: data/experiment.tsv
+rg_tsv:
+  class: File
+  path: data/read_group.tsv
+file_tsv:
+  class: File
+  path: data/file.tsv
+seq_exp_json_name: "seq_exp-bam.json"
+seq_rg_json_name: "seq_rg-bam.json"
+seq_files_dir:
+  class: Directory
+  location: data
+ref_genome_gz:
+  class: File
+  path: data/GRCh38_hla_decoy_ebv.fa.gz
+ref_genome:
+  class: File
+  path: data/GRCh38_hla_decoy_ebv.fa
+cpus: 1
+aligned_lane_prefix: "grch38-aligned"
+markdup: true
+cram: true
