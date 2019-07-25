@@ -30,7 +30,7 @@ outputs:
 
 steps:
   metadata_validation:
-    run: ../tools/metadata_validation/metadata-validation.cwl
+    run: ../../../tools/metadata_validation/metadata-validation.cwl
     in:
       exp_tsv: exp_tsv
       rg_tsv: rg_tsv
@@ -41,7 +41,7 @@ steps:
       [ seq_exp_json, seq_rg_json, input_format]
 
   sequence_validation:
-    run: ../tools/sequence_validation/seq-validation.cwl
+    run: ../../../tools/sequence_validation/seq-validation.cwl
     in:
       seq_rg_json: metadata_validation/seq_rg_json
       seq_files_dir: seq_files_dir
@@ -50,7 +50,7 @@ steps:
       [  ]
 
   preprocess:
-    run: ../tools/seq_data_to_lane_bam/preprocess.cwl
+    run: ../../../tools/seq_data_to_lane_bam/preprocess.cwl
     in:
       picard_jar: picard_jar
       seq_rg_json: metadata_validation/seq_rg_json

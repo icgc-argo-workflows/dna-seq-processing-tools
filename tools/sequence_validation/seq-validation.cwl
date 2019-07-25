@@ -7,7 +7,7 @@ requirements:
 - class: InitialWorkDirRequirement
   listing: $(inputs.seq_files_dir.listing)
 - class: DockerRequirement
-  dockerPull: 'quay.io/lindaxiang/dna-seq-processing:latest'
+  dockerPull: 'quay.io/pancancer/dna-seq-processing:latest'
 
 baseCommand: [ 'seq-validation.py' ]
 
