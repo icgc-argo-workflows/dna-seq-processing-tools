@@ -14,10 +14,10 @@ seq_files_dir:
   location: data
 ref_genome_gz:
   class: File
-  path: data/GRCh38_hla_decoy_ebv.fa.gz
+  path: data/tiny-grch38-chr11-530001-537000.fa.gz
 ref_genome:
   class: File
-  path: data/GRCh38_hla_decoy_ebv.fa
+  path: data/tiny-grch38-chr11-530001-537000.fa
 cpus: 1
 aligned_lane_prefix: "grch38-aligned"
 markdup: true
