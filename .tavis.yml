@@ -1,0 +1,16 @@
+language: python
+
+python:
+  - "3.7"
+
+services:
+  - docker
+
+before_install:
+  - docker pull quay.io/pancancer/dna-seq-processing:latest
+
+install:
+  - "pip install -r tests/requirements-test.txt"
+
+script: 
+  - pytest -v
