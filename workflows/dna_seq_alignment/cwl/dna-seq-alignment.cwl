@@ -63,7 +63,7 @@ outputs:
 
 steps:
   metadata_validation:
-    run: ../tools/metadata_validation/metadata-validation.cwl
+    run: ../../../tools/metadata_validation/metadata-validation.cwl
     in:
       exp_tsv: exp_tsv
       rg_tsv: rg_tsv
@@ -74,7 +74,7 @@ steps:
       [ seq_exp_json, seq_rg_json, input_format]
 
   sequence_validation:
-    run: ../tools/sequence_validation/seq-validation.cwl
+    run: ../../../tools/sequence_validation/seq-validation.cwl
     in:
       seq_rg_json: metadata_validation/seq_rg_json
       seq_files_dir: seq_files_dir
@@ -83,7 +83,7 @@ steps:
       [  ]
 
   preprocess:
-    run: ../tools/seq_data_to_lane_bam/preprocess.cwl
+    run: ../../../tools/seq_data_to_lane_bam/preprocess.cwl
     in:
       picard_jar: picard_jar
       seq_rg_json: metadata_validation/seq_rg_json
@@ -93,7 +93,7 @@ steps:
       [ lane_bams, aligned_basename ]
 
   alignment:
-    run: ../tools/bwa_mem_aligner/bwa-mem-aligner.cwl
+    run: ../../../tools/bwa_mem_aligner/bwa-mem-aligner.cwl
     scatter: input_bam
     in:
       input_bam: preprocess/lane_bams
@@ -103,7 +103,7 @@ steps:
     out: [ aligned_lane_bam ]
 
   markdup:
-    run: ../tools/alignment_merge_sort_markdup/bam-merge-sort-markdup.cwl
+    run: ../../../tools/alignment_merge_sort_markdup/bam-merge-sort-markdup.cwl
     in:
       aligned_lane_bams: alignment/aligned_lane_bam
       aligned_basename: preprocess/aligned_basename

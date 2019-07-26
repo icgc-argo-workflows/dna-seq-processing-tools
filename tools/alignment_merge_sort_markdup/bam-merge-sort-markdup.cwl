@@ -4,7 +4,7 @@ id: bwa-mem-aligner
 requirements:
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/lindaxiang/dna-seq-processing:latest'
+  dockerPull: 'quay.io/pancancer/dna-seq-processing:latest'
 
 baseCommand: [ 'bam-merge-sort-markdup.py' ]
 

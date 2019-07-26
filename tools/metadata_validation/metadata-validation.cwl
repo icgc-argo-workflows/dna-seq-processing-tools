@@ -1,11 +1,11 @@
 class: CommandLineTool
 cwlVersion: v1.0
-id: bwa-mem-aligner
+id: metadata-validation
 requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/lindaxiang/dna-seq-processing:latest'
+  dockerPull: 'quay.io/pancancer/dna-seq-processing:latest'
 
 baseCommand: [ 'metadata-validation.py' ]
 

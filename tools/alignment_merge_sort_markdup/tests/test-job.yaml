@@ -1,0 +1,14 @@
+aligned_lane_bams:
+  - class: File
+    path: input/grch38-aligned.D0RH0_2.lane.bam
+  - class: File
+    path: input/grch38-aligned.D0RE2_1.lane.bam
+  - class: File
+    path: input/grch38-aligned.C0HVY_2.lane.bam
+ref_genome:
+  class: File
+  path: reference/tiny-grch38-chr11-530001-537000.fa
+cpus: 1
+aligned_basename: "HCC1143.3.20190726.wgs.grch38"
+markdup: true
+cram: true
