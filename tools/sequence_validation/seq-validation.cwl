@@ -1,6 +1,6 @@
 class: CommandLineTool
 cwlVersion: v1.0
-id: bwa-mem-aligner
+id: sequence-validation
 requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement

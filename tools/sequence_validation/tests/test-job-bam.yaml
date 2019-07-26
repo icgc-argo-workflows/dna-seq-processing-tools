@@ -1,7 +1,7 @@
 seq_rg_json:
   class: File
-  path: input/seq_rg-fq.json
+  path: input/seq_rg.json
 seq_files_dir:
   class: Directory
   location: input
-seq_format: "FASTQ"
+seq_format: "BAM"

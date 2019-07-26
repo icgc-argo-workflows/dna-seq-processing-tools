@@ -1,23 +1,23 @@
 exp_tsv:
   class: File
-  path: data/experiment.tsv
+  path: input/experiment.tsv
 rg_tsv:
   class: File
-  path: data/read_group.tsv
+  path: input/read_group.tsv
 file_tsv:
   class: File
-  path: data/file.tsv
-seq_exp_json_name: "seq_exp-bam.json"
-seq_rg_json_name: "seq_rg-bam.json"
+  path: input/file.tsv
+seq_exp_json_name: "seq_exp.json"
+seq_rg_json_name: "seq_rg.json"
 seq_files_dir:
   class: Directory
-  location: data
+  location: input
 ref_genome_gz:
   class: File
-  path: data/tiny-grch38-chr11-530001-537000.fa.gz
+  path: reference/tiny-grch38-chr11-530001-537000.fa.gz
 ref_genome:
   class: File
-  path: data/tiny-grch38-chr11-530001-537000.fa
+  path: reference/tiny-grch38-chr11-530001-537000.fa
 cpus: 1
 aligned_lane_prefix: "grch38-aligned"
 markdup: true
