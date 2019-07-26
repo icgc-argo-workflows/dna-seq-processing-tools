@@ -63,3 +63,4 @@ docs/_build
 *.bak
 *.log
 .vscode
+.python-version
