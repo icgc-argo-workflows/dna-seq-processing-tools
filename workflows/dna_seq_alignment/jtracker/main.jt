@@ -3,7 +3,7 @@
 # also collected at convenient steps
 
 workflow:
-  name:  dna-seq-preprocess
+  name:  dna-seq-alignment
   version: "0.0.1"
 
   env_var:  # JT will not pass these as parameters for tasks, instead, JT may check existence of the env variable
@@ -41,9 +41,15 @@ workflow:
     seq_files_dir:
       type: string
       is_required: true
-    min_coverage:
-      type: number
-      default: 0.01
+    cpus:
+      type: integer
+      default: 1
+    cram:
+      type: boolean
+      default: true
+    markdup:
+      type: boolean
+      default: true
     picard_jar:
       type: string
       is_file: true
@@ -57,6 +63,12 @@ workflow:
     preprocess.dockstore_tool:
       type: string
       default: "[preprocess.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tools/seq_data_to_lane_bam/preprocess.cwl"
+    alignment_wf.dockstore_tool:
+      type: string
+      default: "[alignment_wf.cwl]"
+    markdup.dockstore_tool:
+      type: string
+      default: "[markdup.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tools/alignment_merge_sort_markdup/bam-merge-sort-markdup.cwl"
     reference_gz_amb:
       type: string
       is_file: true
@@ -101,7 +113,7 @@ workflow:
 
   tasks:
     metadata_validation:
-      tool: metadata_validation
+      tool: plugin:metadata_validation
       input:
         exp_tsv: exp_tsv
         rg_tsv: rg_tsv
@@ -109,7 +121,6 @@ workflow:
         seq_exp_json_name: seq_exp_json_name
         seq_rg_json_name: seq_rg_json_name
         dockstore_tool: metadata_validation.dockstore_tool
-
 
     sequence_validation:
       tool: sequence_validation
@@ -127,6 +138,27 @@ workflow:
         seq_format: input_format@metadata_validation
         picard_jar: picard_jar
         dockstore_tool: preprocess.dockstore_tool
+
+    alignment_wf:
+      tool: alignment_wf
+      input:
+        input_bam: lane_bams@preprocess
+        ref_genome_gz: ref_genome_gz
+        cpus: cpus
+        aligned_lane_prefix: aligned_lane_prefix
+        dockstore_tool: alignment_wf.dockstore_tool
+
+    markdup:
+      tool: markdup
+      input:
+        aligned_lane_bams: aligned_lane_bam@alignment
+        aligned_basename: aligned_basename@preprocess
+        ref_genome: ref_genome
+        cpus: cpus
+        markdup: markdup
+        cram: cram
+        dockstore_tool: markdup.dockstore_tool
+
 
 
 # A workflow is made up with one or more tools
@@ -211,3 +243,66 @@ tools:
       aligned_basename:
         type: string
 
+  alignment_wf:
+    command: cwltool_launcher.py
+
+    input:
+      input_bam:
+        type: array
+        items:
+          type: string
+          is_file: true
+          glob_pattern: "*.bam"
+      ref_genome_gz:
+        type: string
+        is_file: true
+      cpus:
+        type: integer
+      aligned_lane_prefix:
+        type: string
+      dockstore_tool:
+        type: string
+        is_file: true
+    output:
+      aligned_lane_bam:
+        type: array
+        items:
+          type: string
+          is_file: true
+          glob_pattern: "*.bam"
+
+  markdup:
+    command: cwltool_launcher.py
+
+    input:
+      aligned_lane_bams:
+        type: array
+        items:
+          type: string
+          is_file: true
+          glob_pattern: "*.bam"
+      aligned_basename:
+        type: string
+      ref_genome:
+        type: string
+        is_file: true
+      cpus:
+        type: integer
+      markdup:
+        type: boolean
+      cram:
+        type: boolean
+      dockstore_tool:
+        type: string
+        is_file: true
+
+    output:
+      aligned_bam:
+        type: string
+        is_file: true
+      aligned_bam_duplicate_metrics:
+        type: string
+        is_file: true
+      aligned_cram:
+        type: string
+        is_file: true
