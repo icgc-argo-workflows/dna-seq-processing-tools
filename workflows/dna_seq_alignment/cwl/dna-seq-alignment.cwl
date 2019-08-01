@@ -8,7 +8,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: StepInputExpressionRequirement
 - class: MultipleInputFeatureRequirement
-- class: ScatterFeatureRequirement
+- class: SubworkflowFeatureRequirement
 
 inputs:
   - id: exp_tsv
@@ -93,8 +93,7 @@ steps:
       [ lane_bams, aligned_basename ]
 
   alignment:
-    run: ../../../tools/bwa_mem_aligner/bwa-mem-aligner.cwl
-    scatter: input_bam
+    run: ../../bwa_mem_subwf/cwl/bwa-mem-subwf.cwl
     in:
       input_bam: preprocess/lane_bams
       ref_genome_gz: ref_genome_gz

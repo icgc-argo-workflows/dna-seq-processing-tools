@@ -11,9 +11,9 @@ import shutil
 task_dict = json.loads(sys.argv[1])
 
 task_input = task_dict['input']
-dockstore_tool = task_input['dockstore_tool']
+cwl_document = task_input['url']
 
-cmd = "cwltool --make-template %s" % dockstore_tool
+cmd = "cwltool --make-template %s" % cwl_document
 p = subprocess.run(cmd, capture_output=True, shell=True)
 
 input_json = yaml.load(p.stdout, Loader=yaml.FullLoader)
@@ -51,7 +51,7 @@ if os.path.exists(cwl_outdir):  # remove  if exist
 os.makedirs(cwl_outdir)
 
 # launch cwltool
-cmd = "cwltool --non-strict --debug --outdir %s %s job.json" % (cwl_outdir, dockstore_tool)
+cmd = "cwltool --non-strict --debug --outdir %s %s job.json" % (cwl_outdir, cwl_document)
 p = subprocess.Popen( cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
 stdout, stderr = p.communicate()

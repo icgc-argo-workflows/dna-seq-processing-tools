@@ -3,7 +3,7 @@
 # also collected at convenient steps
 
 workflow:
-  name:  dna-seq-alignment
+  name:  dna-seq-alignment-jt
   version: "0.0.1"
 
   env_var:  # JT will not pass these as parameters for tasks, instead, JT may check existence of the env variable
@@ -54,19 +54,19 @@ workflow:
       type: string
       is_file: true
       default: "[picard.jar]https://github.com/broadinstitute/picard/releases/download/2.18.16/picard.jar"
-    metadata_validation.dockstore_tool:
+    metadata_validation.url:
       type: string
       default: "[metadata-validation.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tools/metadata_validation/metadata-validation.cwl"
-    sequence_validation.dockstore_tool:
+    sequence_validation.url:
       type: string
       default: "[seq-validation.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tools/sequence_validation/seq-validation.cwl"
-    preprocess.dockstore_tool:
+    preprocess.url:
       type: string
       default: "[preprocess.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tools/seq_data_to_lane_bam/preprocess.cwl"
-    alignment_wf.dockstore_tool:
+    alignment_wf.url:
       type: string
-      default: "[alignment_wf.cwl]"
-    markdup.dockstore_tool:
+      default: "[alignment_wf.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/workflows/bwa_mem_subwf/cwl/bwa-mem-subwf.cwl"
+    markdup.url:
       type: string
       default: "[markdup.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tools/alignment_merge_sort_markdup/bam-merge-sort-markdup.cwl"
     reference_gz_amb:
@@ -120,7 +120,7 @@ workflow:
         file_tsv: file_tsv
         seq_exp_json_name: seq_exp_json_name
         seq_rg_json_name: seq_rg_json_name
-        dockstore_tool: metadata_validation.dockstore_tool
+        url: metadata_validation.url
 
     sequence_validation:
       tool: sequence_validation
@@ -128,7 +128,7 @@ workflow:
         seq_format: input_format@metadata_validation
         seq_rg_json: seq_rg_json@metadata_validation
         seq_files_dir: seq_files_dir
-        dockstore_tool: sequence_validation.dockstore_tool
+        url: sequence_validation.url
 
     preprocess:
       tool: preprocess
@@ -137,7 +137,9 @@ workflow:
         seq_rg_json: seq_rg_json@metadata_validation
         seq_format: input_format@metadata_validation
         picard_jar: picard_jar
-        dockstore_tool: preprocess.dockstore_tool
+        url: preprocess.url
+      depends_on:
+        - completed@sequence_validation
 
     alignment_wf:
       tool: alignment_wf
@@ -146,18 +148,18 @@ workflow:
         ref_genome_gz: ref_genome_gz
         cpus: cpus
         aligned_lane_prefix: aligned_lane_prefix
-        dockstore_tool: alignment_wf.dockstore_tool
+        url: alignment_wf.url
 
     markdup:
       tool: markdup
       input:
-        aligned_lane_bams: aligned_lane_bam@alignment
+        aligned_lane_bams: aligned_lane_bam@alignment_wf
         aligned_basename: aligned_basename@preprocess
         ref_genome: ref_genome
         cpus: cpus
         markdup: markdup
         cram: cram
-        dockstore_tool: markdup.dockstore_tool
+        url: markdup.url
 
 
 
@@ -181,7 +183,7 @@ tools:
         type: string
       seq_rg_json_name:
         type: string
-      dockstore_tool:
+      url:
         type: string
         is_file: true
 
@@ -206,8 +208,7 @@ tools:
         is_file: true
       seq_files_dir:
         type: string
-        is_directory: true
-      dockstore_tool:
+      url:
         type: string
         is_file: true
 
@@ -229,7 +230,7 @@ tools:
       picard_jar:
         type: string
         is_file: true
-      dockstore_tool:
+      url:
         type: string
         is_file: true
 
@@ -260,7 +261,7 @@ tools:
         type: integer
       aligned_lane_prefix:
         type: string
-      dockstore_tool:
+      url:
         type: string
         is_file: true
     output:
@@ -292,7 +293,7 @@ tools:
         type: boolean
       cram:
         type: boolean
-      dockstore_tool:
+      url:
         type: string
         is_file: true
 
