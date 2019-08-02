@@ -11,7 +11,7 @@ import shutil
 task_dict = json.loads(sys.argv[1])
 
 task_input = task_dict['input']
-cwl_document = task_input['url']
+cwl_document = task_input['tool_url']
 
 cmd = "cwltool --make-template %s" % cwl_document
 p = subprocess.run(cmd, capture_output=True, shell=True)
