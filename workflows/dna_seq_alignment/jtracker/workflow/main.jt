@@ -65,7 +65,7 @@ workflow:
       default: "[preprocess.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tools/seq_data_to_lane_bam/preprocess.cwl"
     alignment_wf.tool_url:
       type: string
-      default: "[alignment_wf.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/workflows/bwa_mem_subwf/cwl/bwa-mem-subwf.cwl"
+      default: "[alignment_wf.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/cwltool-launcher/workflows/bwa_mem_subwf/cwl/bwa-mem-subwf.cwl"
     markdup.tool_url:
       type: string
       default: "[markdup.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tools/alignment_merge_sort_markdup/bam-merge-sort-markdup.cwl"
