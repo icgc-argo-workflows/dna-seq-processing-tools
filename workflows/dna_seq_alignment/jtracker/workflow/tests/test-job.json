@@ -1,0 +1,17 @@
+{
+  "exp_tsv": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/data/experiment.tsv",
+  "rg_tsv":  "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/data/read_group.tsv",
+  "file_tsv": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/data/file.tsv",
+  "seq_files_dir": "file://input",
+  "reference_gz": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.gz",
+  "reference_gz_amb": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.gz.amb",
+  "reference_gz_sa": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.gz.sa",
+  "reference_gz_pac": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.gz.pac",
+  "reference_gz_ann": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.gz.ann",
+  "reference_gz_bwt": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.gz.bwt",
+  "reference_gz_alt": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.gz.alt",
+  "reference_gz_fai": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.gz.fai",
+  "reference_fai": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.fai",
+  "reference": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa",
+  "aligned_lane_prefix": "grch38-aligned"
+}
