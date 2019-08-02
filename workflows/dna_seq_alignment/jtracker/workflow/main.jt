@@ -34,21 +34,21 @@ workflow:
       is_required: true
     seq_exp_json_name:
       type: string
-      default: seq_exp.json
+      default: "seq_exp.json"
     seq_rg_json_name:
       type: string
-      default: seq_rg.json
+      default: "seq_rg.json"
     seq_files_dir:
       type: string
       is_required: true
     cpus:
-      type: integer
+      type: number
       default: 1
     cram:
-      type: boolean
+      type: bool
       default: true
     markdup:
-      type: boolean
+      type: bool
       default: true
     picard_jar:
       type: string
@@ -113,7 +113,7 @@ workflow:
 
   tasks:
     metadata_validation:
-      tool: plugin:metadata_validation
+      tool: metadata_validation
       input:
         exp_tsv: exp_tsv
         rg_tsv: rg_tsv
@@ -258,7 +258,7 @@ tools:
         type: string
         is_file: true
       cpus:
-        type: integer
+        type: number
       aligned_lane_prefix:
         type: string
       url:
@@ -288,11 +288,11 @@ tools:
         type: string
         is_file: true
       cpus:
-        type: integer
+        type: number
       markdup:
-        type: boolean
+        type: bool
       cram:
-        type: boolean
+        type: bool
       url:
         type: string
         is_file: true
