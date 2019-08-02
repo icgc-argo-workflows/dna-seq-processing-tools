@@ -35,7 +35,7 @@ outputs:
 
 steps:
   alignment:
-    run: ../../../tools/bwa_mem_aligner/bwa-mem-aligner.cwl
+    run: https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/cwltool-launcher/tools/bwa_mem_aligner/bwa-mem-aligner.cwl
     scatter: input_bam
     in:
       input_bam: input_bam
