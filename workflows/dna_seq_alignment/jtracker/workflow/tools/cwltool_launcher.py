@@ -16,15 +16,16 @@ cwl_document = task_input['url']
 cmd = "cwltool --make-template %s" % cwl_document
 p = subprocess.run(cmd, capture_output=True, shell=True)
 
-input_json = yaml.load(p.stdout, Loader=yaml.FullLoader)
-
-for i in input_json:
-    if i == 'run-id':
-        input_json[i] = 'run-id'
-    elif type(input_json[i]) in [str, int, bool]:
+input_template = yaml.load(p.stdout, Loader=yaml.FullLoader)
+input_json = {}
+for i in input_template:
+    # handle some optional inputs defined in cwl
+    if not task_input.get(i):
+        continue
+    if type(input_template[i]) in [str, int, bool]:
         input_json[i] = task_input[i]
     # cwltool make-template does not do good job with 'null' in template
-    elif isinstance(input_json[i], list) and \
+    elif isinstance(input_template[i], list) and \
         isinstance(task_input[i], list) and \
         len(task_input[i]) > 0:  # a bit hacky here, assume it's a local file
         input_json[i] = []
@@ -35,8 +36,10 @@ for i in input_json:
                         'path': f
                     }
                 )
-    elif isinstance(input_json[i], dict) and input_json[i].get('class') in ['File', 'Directory']:
-        input_json[i]['path'] = task_input[i]
+    elif isinstance(input_template[i], dict):
+        input_json[i] = input_template[i]
+        if input_json[i].get('class') in ['File', 'Directory']:
+            input_json[i]['path'] = task_input[i]
     else:
         sys.exit('Required input not provided: %s' % i)
 
