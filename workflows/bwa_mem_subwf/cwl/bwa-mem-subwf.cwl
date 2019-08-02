@@ -24,7 +24,7 @@ inputs:
       - .sa
       - .alt
   - id: cpus
-    type: int
+    type: int?
   - id: aligned_lane_prefix
     type: string
 

@@ -1,0 +1,9 @@
+{
+  "exp_tsv": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/data/experiment.tsv",
+  "rg_tsv":  "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/data/read_group.tsv",
+  "file_tsv": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/data/file.tsv",
+  "seq_files_dir": "file://input",
+  "ref_genome_gz": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa.gz",
+  "ref_genome": "https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tests/reference/tiny-grch38-chr11-530001-537000.fa",
+  "aligned_lane_prefix": "grch38-aligned"
+}
