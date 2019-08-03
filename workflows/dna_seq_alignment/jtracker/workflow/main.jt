@@ -74,43 +74,43 @@ workflow:
       type: string
       is_file: true
       default: "[markdup.cwl]https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/dna-seq-processing/master/tools/alignment_merge_sort_markdup/bam-merge-sort-markdup.cwl"
-    reference_gz_amb:
+    ref_genome_gz_amb:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.amb]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.amb"
-    reference_gz_sa:
+    ref_genome_gz_sa:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.sa]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.sa"
-    reference_gz_pac:
+    ref_genome_gz_pac:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.pac]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.pac"
-    reference_gz_ann:
+    ref_genome_gz_ann:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.ann]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.ann"
-    reference_gz_bwt:
+    ref_genome_gz_bwt:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.bwt]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.bwt"
-    reference_gz_alt:
+    ref_genome_gz_alt:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.alt]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.alt"
-    reference_gz_fai:
+    ref_genome_gz_fai:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.fai]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.fai"
-    reference_gz:
+    ref_genome_gz:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz"
-    reference_fai:
+    ref_genome_fai:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.fai]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.fai"
-    reference:
+    ref_genome:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa"
@@ -150,7 +150,14 @@ workflow:
       tool: alignment_wf
       input:
         input_bam: lane_bams@preprocess
-        ref_genome_gz: reference_gz
+        ref_genome_gz: ref_genome_gz
+        ref_genome_gz_amb: ref_genome_gz_amb
+        ref_genome_gz_sa: ref_genome_gz_sa
+        ref_genome_gz_pac: ref_genome_gz_pac
+        ref_genome_gz_ann: ref_genome_gz_ann
+        ref_genome_gz_bwt: ref_genome_gz_bwt
+        ref_genome_gz_alt: ref_genome_gz_alt
+        ref_genome_gz_fai: ref_genome_gz_fai
         aligned_lane_prefix: aligned_lane_prefix
         tool_url: alignment_wf.tool_url
 
@@ -159,11 +166,11 @@ workflow:
       input:
         aligned_lane_bams: aligned_lane_bam@alignment_wf
         aligned_basename: aligned_basename@preprocess
-        ref_genome: reference
+        ref_genome: ref_genome
+        ref_genome_fai: ref_genome_fai
         markdup: markdup
         cram: cram
         tool_url: markdup.tool_url
-
 
 
 # A workflow is made up with one or more tools
@@ -260,6 +267,27 @@ tools:
       ref_genome_gz:
         type: string
         is_file: true
+      ref_genome_gz_amb:
+        type: string
+        is_file: true
+      ref_genome_gz_sa:
+        type: string
+        is_file: true
+      ref_genome_gz_pac:
+        type: string
+        is_file: true
+      ref_genome_gz_ann:
+        type: string
+        is_file: true
+      ref_genome_gz_bwt:
+        type: string
+        is_file: true
+      ref_genome_gz_alt:
+        type: string
+        is_file: true
+      ref_genome_gz_fai:
+        type: string
+        is_file: true
       cpus:
         type: integer
       aligned_lane_prefix:
@@ -288,6 +316,9 @@ tools:
       aligned_basename:
         type: string
       ref_genome:
+        type: string
+        is_file: true
+      ref_genome_fai:
         type: string
         is_file: true
       cpus:
