@@ -14,7 +14,7 @@ task_input = task_dict['input']
 cwl_document = task_input['tool_url']
 
 cmd = "cwltool --make-template %s" % cwl_document
-p = subprocess.run(cmd, capture_output=True, shell=True)
+p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
 input_template = yaml.load(p.stdout, Loader=yaml.FullLoader)
 input_json = {}
@@ -55,7 +55,7 @@ os.makedirs(cwl_outdir)
 
 # launch cwltool
 cmd = "cwltool --non-strict --debug --outdir %s %s job.json" % (cwl_outdir, cwl_document)
-p = subprocess.Popen( cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
 stdout, stderr = p.communicate()
 
