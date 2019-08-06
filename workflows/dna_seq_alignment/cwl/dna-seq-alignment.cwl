@@ -11,21 +11,21 @@ requirements:
 - class: SubworkflowFeatureRequirement
 
 inputs:
-  - id: exp_tsv
+  exp_tsv:
     type: File
-  - id: rg_tsv
+  rg_tsv:
     type: File
-  - id: file_tsv
+  file_tsv:
     type: File
-  - id: seq_exp_json_name
+  seq_exp_json_name:
     type: string
-  - id: seq_rg_json_name
+  seq_rg_json_name:
     type: string
-  - id: seq_files_dir
+  seq_files_dir:
     type: Directory
-  - id: picard_jar
+  picard_jar:
     type: File?
-  - id: ref_genome_gz
+  ref_genome_gz:
     type: File
     secondaryFiles:
       - .amb
@@ -35,17 +35,17 @@ inputs:
       - .pac
       - .sa
       - .alt
-  - id: ref_genome
+  ref_genome:
     type: File
     secondaryFiles:
       - .fai
-  - id: cpus
+  cpus:
     type: int?
-  - id: aligned_lane_prefix
+  aligned_lane_prefix:
     type: string
-  - id: markdup
+  markdup:
     type: boolean
-  - id: cram
+  cram:
     type: boolean
 
 outputs:
