@@ -1,15 +1,13 @@
 class: CommandLineTool
 cwlVersion: v1.0
-id: sequence-validation
+id: seq-data-to-lane-bam
 requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
-- class: InitialWorkDirRequirement
-  listing: $(inputs.seq_files_dir.listing)
 - class: DockerRequirement
   dockerPull: 'quay.io/pancancer/dna-seq-processing:0.1.0'
 
-baseCommand: [ 'seq-validation.py' ]
+baseCommand: [ 'seq-data-to-lane-bam.py' ]
 
 inputs:
   seq_format:
@@ -27,19 +25,28 @@ inputs:
     inputBinding:
       position: 3
       prefix: -d
+  picard_jar:
+    type: File?
+    inputBinding:
+      position: 4
+      prefix: -j
 
 
 outputs:
-  seq_status:
+  lane_bams:
+    type: File[]
+    outputBinding:
+      glob: '*.lane.bam'
+  aligned_basename:
     type: string
     outputBinding:
-      glob: seq_validation.json
+      glob: preprocess.json
       loadContents: true
       outputEval: |
         ${
-           var data = JSON.parse(self[0].contents)["valid"];
+           var data = JSON.parse(self[0].contents)["aligned_basename"];
            return data;
          }
 
-stdout: seq_validation.json
+stdout: preprocess.json
 
