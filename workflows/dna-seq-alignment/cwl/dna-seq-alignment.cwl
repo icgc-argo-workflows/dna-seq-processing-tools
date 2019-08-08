@@ -63,7 +63,7 @@ outputs:
 
 steps:
   metadata_validation:
-    run: https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/metadata_validation/metadata-validation.cwl
+    run: https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/metadata-validation/metadata-validation.cwl
     in:
       exp_tsv: exp_tsv
       rg_tsv: rg_tsv
