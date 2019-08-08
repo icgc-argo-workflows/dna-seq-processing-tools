@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/pancancer/dna-seq-processing:latest'
+  dockerPull: 'quay.io/pancancer/dna-seq-processing:0.1.0'
 
 baseCommand: [ 'preprocess.py' ]
 

@@ -50,13 +50,13 @@ workflow:
       default: "[picard.jar]https://github.com/broadinstitute/picard/releases/download/2.18.16/picard.jar"
     metadata_validation.dockstore_tool:
       type: string
-      default: "[metadata-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/metadata_validation/metadata-validation.cwl"
+      default: "[metadata-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/metadata_validation/metadata-validation.cwl"
     sequence_validation.dockstore_tool:
       type: string
-      default: "[seq-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/sequence_validation/seq-validation.cwl"
+      default: "[seq-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/sequence_validation/seq-validation.cwl"
     preprocess.dockstore_tool:
       type: string
-      default: "[preprocess.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/seq_data_to_lane_bam/preprocess.cwl"
+      default: "[preprocess.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/seq_data_to_lane_bam/preprocess.cwl"
     reference_gz_amb:
       type: string
       is_file: true

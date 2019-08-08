@@ -57,23 +57,23 @@ workflow:
     metadata_validation.tool_url:
       type: string
       is_file: true
-      default: "[metadata-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/metadata_validation/metadata-validation.cwl"
+      default: "[metadata-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/metadata_validation/metadata-validation.cwl"
     sequence_validation.tool_url:
       type: string
       is_file: true
-      default: "[seq-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/sequence_validation/seq-validation.cwl"
+      default: "[seq-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/sequence_validation/seq-validation.cwl"
     preprocess.tool_url:
       type: string
       is_file: true
-      default: "[preprocess.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/seq_data_to_lane_bam/preprocess.cwl"
+      default: "[preprocess.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/seq_data_to_lane_bam/preprocess.cwl"
     alignment_wf.tool_url:
       type: string
       is_file: true
-      default: "[alignment_wf.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/workflows/bwa_mem_subwf/cwl/bwa-mem-subwf.cwl"
+      default: "[alignment_wf.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/workflows/bwa_mem_subwf/cwl/bwa-mem-subwf.cwl"
     markdup.tool_url:
       type: string
       is_file: true
-      default: "[markdup.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/alignment_merge_sort_markdup/bam-merge-sort-markdup.cwl"
+      default: "[markdup.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/alignment_merge_sort_markdup/bam-merge-sort-markdup.cwl"
     ref_genome_gz_amb:
       type: string
       is_file: true

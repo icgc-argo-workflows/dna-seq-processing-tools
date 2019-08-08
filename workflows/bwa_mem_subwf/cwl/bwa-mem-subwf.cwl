@@ -35,7 +35,7 @@ outputs:
 
 steps:
   alignment:
-    run: https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/bwa_mem_aligner/bwa-mem-aligner.cwl
+    run: https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/bwa_mem_aligner/bwa-mem-aligner.cwl
     scatter: input_bam
     in:
       input_bam: input_bam
