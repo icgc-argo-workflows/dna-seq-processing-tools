@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/pancancer/dna-seq-processing:0.1.0'
+  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:0.1.1'
 
 baseCommand: [ 'seq-data-to-lane-bam.py' ]
 

@@ -4,7 +4,7 @@ id: bam-merge-sort-markdup
 requirements:
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/pancancer/dna-seq-processing:0.1.0'
+  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:0.1.1'
 
 baseCommand: [ 'bam-merge-sort-markdup.py' ]
 
