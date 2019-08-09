@@ -35,6 +35,12 @@ def pytest_generate_tests(metafunc):
 
 def test_app(app, rootDir):
     cwl_file_name, test_dir, test_job = app
+    app_dir = test_dir.split(os.sep)[1]
+
+    assert cwl_file_name == app_dir + '.cwl', \
+        'CWL file must be named as <containing_dir_name>.cwl, dir_name: %s, cwl_file_name: %s' % \
+            (app_dir, cwl_file_name)
+
     cwl_file = os.path.join('..', cwl_file_name)
     test_job_file = os.path.basename(test_job)
 

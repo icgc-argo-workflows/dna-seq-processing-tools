@@ -63,7 +63,7 @@ outputs:
 
 steps:
   metadata_validation:
-    run: ../../../tools/metadata_validation/metadata-validation.cwl
+    run: https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/metadata-validation/metadata-validation.cwl
     in:
       exp_tsv: exp_tsv
       rg_tsv: rg_tsv
@@ -74,7 +74,7 @@ steps:
       [ seq_exp_json, seq_rg_json, input_format]
 
   sequence_validation:
-    run: ../../../tools/sequence_validation/seq-validation.cwl
+    run: https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/seq-validation/seq-validation.cwl
     in:
       seq_rg_json: metadata_validation/seq_rg_json
       seq_files_dir: seq_files_dir
@@ -83,7 +83,7 @@ steps:
       [  ]
 
   preprocess:
-    run: ../../../tools/seq_data_to_lane_bam/preprocess.cwl
+    run: https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/seq-data-to-lane-bam/seq-data-to-lane-bam.cwl
     in:
       picard_jar: picard_jar
       seq_rg_json: metadata_validation/seq_rg_json
@@ -93,7 +93,7 @@ steps:
       [ lane_bams, aligned_basename ]
 
   alignment:
-    run: ../../bwa_mem_subwf/cwl/bwa-mem-subwf.cwl
+    run: https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/workflows/bwa-mem-subwf/cwl/bwa-mem-subwf.cwl
     in:
       input_bam: preprocess/lane_bams
       ref_genome_gz: ref_genome_gz
@@ -102,7 +102,7 @@ steps:
     out: [ aligned_lane_bam ]
 
   markdup:
-    run: ../../../tools/alignment_merge_sort_markdup/bam-merge-sort-markdup.cwl
+    run: https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/bam-merge-sort-markdup/bam-merge-sort-markdup.cwl
     in:
       aligned_lane_bams: alignment/aligned_lane_bam
       aligned_basename: preprocess/aligned_basename

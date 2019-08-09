@@ -3,8 +3,8 @@
 # also collected at convenient steps
 
 workflow:
-  name:  dna-seq-preprocess
-  version: "0.0.1"
+  name:  dna-seq-alignment
+  version: "0.1.0"
 
   env_var:  # JT will not pass these as parameters for tasks, instead, JT may check existence of the env variable
     SCORE_TOKEN:
@@ -34,66 +34,83 @@ workflow:
       is_required: true
     seq_exp_json_name:
       type: string
-      default: seq_exp.json
+      default: "seq_exp.json"
     seq_rg_json_name:
       type: string
-      default: seq_rg.json
+      default: "seq_rg.json"
     seq_files_dir:
       type: string
       is_required: true
-    min_coverage:
-      type: number
-      default: 0.01
-    picard_jar:
+    cpus:
+      type: integer
+      default: 1
+    cram:
+      type: boolean
+      default: true
+    markdup:
+      type: boolean
+      default: true
+    picard_jar:  # TODO: should remove this as input, add the jar in the docker image instead
       type: string
       is_file: true
       default: "[picard.jar]https://github.com/broadinstitute/picard/releases/download/2.18.16/picard.jar"
-    metadata_validation.dockstore_tool:
+    metadata_validation.tool_url:
       type: string
-      default: "[metadata-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/metadata_validation/metadata-validation.cwl"
-    sequence_validation.dockstore_tool:
+      is_file: true
+      default: "[metadata-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/metadata-validation/metadata-validation.cwl"
+    sequence_validation.tool_url:
       type: string
-      default: "[seq-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/sequence_validation/seq-validation.cwl"
-    preprocess.dockstore_tool:
+      is_file: true
+      default: "[seq-validation.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/seq-validation/seq-validation.cwl"
+    preprocess.tool_url:
       type: string
-      default: "[preprocess.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/master/tools/seq_data_to_lane_bam/preprocess.cwl"
-    reference_gz_amb:
+      is_file: true
+      default: "[seq-data-to-lane-bam.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/seq-data-to-lane-bam/seq-data-to-lane-bam.cwl"
+    alignment_wf.tool_url:
+      type: string
+      is_file: true
+      default: "[bwa-mem-subwf.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/workflows/bwa-mem-subwf/cwl/bwa-mem-subwf.cwl"
+    markdup.tool_url:
+      type: string
+      is_file: true
+      default: "[bam-merge-sort-markdup.cwl]https://raw.githubusercontent.com/icgc-argo/dna-seq-processing/0.1.0/tools/bam-merge-sort-markdup/bam-merge-sort-markdup.cwl"
+    ref_genome_gz_amb:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.amb]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.amb"
-    reference_gz_sa:
+    ref_genome_gz_sa:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.sa]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.sa"
-    reference_gz_pac:
+    ref_genome_gz_pac:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.pac]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.pac"
-    reference_gz_ann:
+    ref_genome_gz_ann:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.ann]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.ann"
-    reference_gz_bwt:
+    ref_genome_gz_bwt:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.bwt]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.bwt"
-    reference_gz_alt:
+    ref_genome_gz_alt:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.alt]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.alt"
-    reference_gz_fai:
+    ref_genome_gz_fai:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz.fai]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz.fai"
-    reference_gz:
+    ref_genome_gz:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.gz]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.gz"
-    reference_fai:
+    ref_genome_fai:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa.fai]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa.fai"
-    reference:
+    ref_genome:
       type: string
       is_file: true
       default: "[GRCh38_hla_decoy_ebv.fa]https://object.cancercollaboratory.org:9080/swift/v1/genomics-public-data/reference-genome/GRCh38_hla_decoy_ebv/GRCh38_hla_decoy_ebv.fa"
@@ -108,8 +125,7 @@ workflow:
         file_tsv: file_tsv
         seq_exp_json_name: seq_exp_json_name
         seq_rg_json_name: seq_rg_json_name
-        dockstore_tool: metadata_validation.dockstore_tool
-
+        tool_url: metadata_validation.tool_url
 
     sequence_validation:
       tool: sequence_validation
@@ -117,7 +133,7 @@ workflow:
         seq_format: input_format@metadata_validation
         seq_rg_json: seq_rg_json@metadata_validation
         seq_files_dir: seq_files_dir
-        dockstore_tool: sequence_validation.dockstore_tool
+        tool_url: sequence_validation.tool_url
 
     preprocess:
       tool: preprocess
@@ -126,7 +142,35 @@ workflow:
         seq_rg_json: seq_rg_json@metadata_validation
         seq_format: input_format@metadata_validation
         picard_jar: picard_jar
-        dockstore_tool: preprocess.dockstore_tool
+        tool_url: preprocess.tool_url
+      depends_on:
+        - completed@sequence_validation
+
+    alignment_wf:
+      tool: alignment_wf
+      input:
+        input_bam: lane_bams@preprocess
+        ref_genome_gz: ref_genome_gz
+        ref_genome_gz_amb: ref_genome_gz_amb
+        ref_genome_gz_sa: ref_genome_gz_sa
+        ref_genome_gz_pac: ref_genome_gz_pac
+        ref_genome_gz_ann: ref_genome_gz_ann
+        ref_genome_gz_bwt: ref_genome_gz_bwt
+        ref_genome_gz_alt: ref_genome_gz_alt
+        ref_genome_gz_fai: ref_genome_gz_fai
+        aligned_lane_prefix: aligned_lane_prefix
+        tool_url: alignment_wf.tool_url
+
+    markdup:
+      tool: markdup
+      input:
+        aligned_lane_bams: aligned_lane_bam@alignment_wf
+        aligned_basename: aligned_basename@preprocess
+        ref_genome: ref_genome
+        ref_genome_fai: ref_genome_fai
+        markdup: markdup
+        cram: cram
+        tool_url: markdup.tool_url
 
 
 # A workflow is made up with one or more tools
@@ -149,7 +193,7 @@ tools:
         type: string
       seq_rg_json_name:
         type: string
-      dockstore_tool:
+      tool_url:
         type: string
         is_file: true
 
@@ -174,8 +218,7 @@ tools:
         is_file: true
       seq_files_dir:
         type: string
-        is_directory: true
-      dockstore_tool:
+      tool_url:
         type: string
         is_file: true
 
@@ -197,7 +240,7 @@ tools:
       picard_jar:
         type: string
         is_file: true
-      dockstore_tool:
+      tool_url:
         type: string
         is_file: true
 
@@ -211,3 +254,90 @@ tools:
       aligned_basename:
         type: string
 
+  alignment_wf:
+    command: cwltool_launcher.py
+
+    input:
+      input_bam:
+        type: array
+        items:
+          type: string
+          is_file: true
+          glob_pattern: "*.bam"
+      ref_genome_gz:
+        type: string
+        is_file: true
+      ref_genome_gz_amb:
+        type: string
+        is_file: true
+      ref_genome_gz_sa:
+        type: string
+        is_file: true
+      ref_genome_gz_pac:
+        type: string
+        is_file: true
+      ref_genome_gz_ann:
+        type: string
+        is_file: true
+      ref_genome_gz_bwt:
+        type: string
+        is_file: true
+      ref_genome_gz_alt:
+        type: string
+        is_file: true
+      ref_genome_gz_fai:
+        type: string
+        is_file: true
+      cpus:
+        type: integer
+      aligned_lane_prefix:
+        type: string
+      tool_url:
+        type: string
+        is_file: true
+    output:
+      aligned_lane_bam:
+        type: array
+        items:
+          type: string
+          is_file: true
+          glob_pattern: "*.bam"
+
+  markdup:
+    command: cwltool_launcher.py
+
+    input:
+      aligned_lane_bams:
+        type: array
+        items:
+          type: string
+          is_file: true
+          glob_pattern: "*.bam"
+      aligned_basename:
+        type: string
+      ref_genome:
+        type: string
+        is_file: true
+      ref_genome_fai:
+        type: string
+        is_file: true
+      cpus:
+        type: integer
+      markdup:
+        type: boolean
+      cram:
+        type: boolean
+      tool_url:
+        type: string
+        is_file: true
+
+    output:
+      aligned_bam:
+        type: string
+        is_file: true
+      aligned_bam_duplicate_metrics:
+        type: string
+        is_file: true
+      aligned_cram:
+        type: string
+        is_file: true

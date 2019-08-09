@@ -1,10 +1,10 @@
 class: CommandLineTool
 cwlVersion: v1.0
-id: bwa-mem-aligner
+id: bam-merge-sort-markdup
 requirements:
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/pancancer/dna-seq-processing:latest'
+  dockerPull: 'quay.io/pancancer/dna-seq-processing:0.1.0'
 
 baseCommand: [ 'bam-merge-sort-markdup.py' ]
 
