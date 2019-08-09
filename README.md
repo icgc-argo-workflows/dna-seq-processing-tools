@@ -20,7 +20,7 @@ we'd like to follow additional guidelines.
 1. To start development, start a branch from the current master.
 2. If the planned work affects only one tool, name the branch with the tool's name as prefix,
    followed by '.something'. During development, no code/file not related to this tool should
-   not be changed.
+   be changed.
 3. During the tool development, when it's ready commits should be pushed to the server to
    trigger automated Travis CI tests. Note that first trigger of the test may fail due to missing docker
    image (which is to be or being built by Quay.io, this problem maybe solved if we use Travis
