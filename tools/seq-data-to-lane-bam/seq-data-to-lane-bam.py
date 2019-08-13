@@ -99,7 +99,7 @@ def main(args):
         sys.exit('\n%s: Input files format are not FASTQ or BAM')
 
     output['aligned_basename'] = '.'.join([metadata.get('sample_submitter_id'), str(metadata.get('read_group_count')), datetime.date.today().strftime("%Y%m%d"), 'wgs', 'grch38'])
-    output['payload_type'] = "lane_seq_submission"
+    output['bundle_type'] = "lane_seq_submission"
 
     # write the parameter to stdout
     print(json.dumps(output))
