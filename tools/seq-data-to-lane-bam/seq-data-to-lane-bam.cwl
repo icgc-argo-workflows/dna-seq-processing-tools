@@ -47,6 +47,17 @@ outputs:
            var data = JSON.parse(self[0].contents)["aligned_basename"];
            return data;
          }
+  payload_type:
+    type: string
+    outputBinding:
+      glob: preprocess.json
+      loadContents: true
+      outputEval: |
+        ${
+           var data = JSON.parse(self[0].contents)["payload_type"];
+           return data;
+         }
+
 
 stdout: preprocess.json
 
