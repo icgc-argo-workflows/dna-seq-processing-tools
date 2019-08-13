@@ -13,28 +13,28 @@ inputs:
   input_seq_format:
     type: string?
     inputBinding:
-      prefix: -sf
+      prefix: -s
   bundle_type:
     type: string
     inputBinding:
-      prefix: -pt
+      prefix: -t
   payload_schema_zip:
     type: File
     inputBinding:
-      prefix: -ps
+      prefix: -p
   metadata_lane_seq:
     type: File?
     inputBinding:
-      prefix: -mls
+      prefix: -m
   file_to_upload:
     type: File
     inputBinding:
-      prefix: -fu
+      prefix: -f
     secondaryFiles: [.bai?, .crai?]
   lane_seq_analysis:
     type: File[]?
     inputBinding:
-      prefix: -lp
+      prefix: -a
 
 
 
