@@ -2,6 +2,7 @@ class: CommandLineTool
 cwlVersion: v1.0
 id: bam-merge-sort-markdup
 requirements:
+- class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
   dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:0.1.1'
