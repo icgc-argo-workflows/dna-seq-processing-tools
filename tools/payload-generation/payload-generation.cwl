@@ -14,7 +14,7 @@ inputs:
     type: string?
     inputBinding:
       prefix: -sf
-  payload_type:
+  bundle_type:
     type: string
     inputBinding:
       prefix: -pt
@@ -42,6 +42,6 @@ outputs:
   payload:
     type: File
     outputBinding:
-      glob: '$(inputs.payload_type).*.json'
+      glob: '$(inputs.bundle_type).*.json'
 
 

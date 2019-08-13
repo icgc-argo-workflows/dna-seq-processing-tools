@@ -40,9 +40,9 @@ def main(args):
     with zipfile.ZipFile(args.payload_schema_zip) as myzip:
         myzip.extractall(cwd)
 
-    payload_template = glob.glob("argo-metadata-schemas-*/schemas/_example_docs/*.%s.*.json" % args.payload_type)
+    payload_template = glob.glob("argo-metadata-schemas-*/schemas/_example_docs/*.%s.*.json" % args.bundle_type)
 
-    if args.payload_type == 'lane_seq_submission':
+    if args.bundle_type == 'lane_seq_submission':
         with open(args.metadata_lane_seq, 'r') as f:
             metadata = json.load(f)
         if args.input_seq_format == 'FASTQ':
@@ -90,7 +90,7 @@ def main(args):
         payload['files']['bam_file'].pop('_final_doc', None)
         payload['files']['bam_file'].pop('_mocked_system_properties', None)
 
-    elif args.payload_type == 'dna_alignment':
+    elif args.bundle_type == 'dna_alignment':
         for template in payload_template:
             if not '40.dna_alignment.01.ok.json' in template: continue
             with open(template, 'r') as f:
@@ -125,11 +125,11 @@ def main(args):
         payload['files']['aligned_seq_index'].pop('_final_doc', None)
         payload['files']['aligned_seq_index'].pop('_mocked_system_properties', None)
 
-    elif args.payload_type == 'sanger_ssm_call':
+    elif args.bundle_type == 'sanger_ssm_call':
         pass
 
     else:
-        sys.exit('\n%s: Unknown payload_type')
+        sys.exit('\n%s: Unknown bundle_type')
 
 
     payload.pop('_final_doc', None)
@@ -138,21 +138,21 @@ def main(args):
     # get analysis of the payload
     pass
 
-    payload_fname = ".".join([args.payload_type, os.path.basename(args.file_to_upload), 'json'])
+    payload_fname = ".".join([args.bundle_type, os.path.basename(args.file_to_upload), 'json'])
     with open(payload_fname, 'w') as f:
         f.write(json.dumps(payload))
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-sf", "--input_seq_format", dest="input_seq_format",
+    parser.add_argument("-s", "--input_seq_format", dest="input_seq_format",
                         help="Sequence format")
-    parser.add_argument("-pt", "--payload_type", dest="payload_type",
+    parser.add_argument("-t", "--bundle_type", dest="bundle_type",
                         help="Payload type")
-    parser.add_argument("-ps", "--payload_schema_zip", dest="payload_schema_zip", help="released metadata schema zip file")
-    parser.add_argument("-mls", "--metadata_lane_seq", dest="metadata_lane_seq",
+    parser.add_argument("-p", "--payload_schema_zip", dest="payload_schema_zip", help="released metadata schema zip file")
+    parser.add_argument("-m", "--metadata_lane_seq", dest="metadata_lane_seq",
                         help="json file containing experiment, read_group and file information for sequence preprocessing")
-    parser.add_argument("-fu", "--file_to_upload", dest="file_to_upload", help="File to upload to server")
-    parser.add_argument("-lp", "--lane_seq_analysis", dest="lane_seq_analysis", help="Analysis of lane seq submission",
+    parser.add_argument("-f", "--file_to_upload", dest="file_to_upload", help="File to upload to server")
+    parser.add_argument("-a", "--lane_seq_analysis", dest="lane_seq_analysis", help="Analysis of lane seq submission",
                         type=str, nargs='+')
     args = parser.parse_args()
 
