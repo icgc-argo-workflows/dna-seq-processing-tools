@@ -70,6 +70,10 @@ def main():
         if not success:
             sys.exit(p.returncode if p.returncode else 1)
 
+    # write the parameter to stdout
+    output = {"payload_type": "dna_alignment"}
+    print(json.dumps(output))
+
 
 if __name__ == "__main__":
     main()

@@ -50,8 +50,18 @@ outputs:
     outputBinding:
       glob: $(inputs.aligned_basename).cram
     secondaryFiles: [.crai]
+  payload_type:
+    type: string
+    outputBinding:
+      glob: stdout.json
+      loadContents: true
+      outputEval: |
+        ${
+           var data = JSON.parse(self[0].contents)["payload_type"];
+           return data;
+         }
 
-
+stdout: stdout.json
 
 
 
