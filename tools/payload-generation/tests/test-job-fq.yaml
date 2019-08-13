@@ -5,7 +5,7 @@ metadata_lane_seq:
   class: File
   location: input/seq_rg-fq.json
 input_seq_format: "FASTQ"
-payload_type: "lane_seq_submission"
+bundle_type: "lane_seq_submission"
 file_to_upload:
   class: File
   path: input/C0HVY_2.lane.bam

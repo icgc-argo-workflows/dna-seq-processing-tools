@@ -5,7 +5,7 @@ metadata_lane_seq:
   class: File
   location: input/seq_rg.json
 input_seq_format: "BAM"
-payload_type: "lane_seq_submission"
+bundle_type: "lane_seq_submission"
 file_to_upload:
   class: File
   path: input/D0RE2_1.lane.bam

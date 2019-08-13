@@ -1,7 +1,7 @@
 payload_schema_zip:
   class: File
   path: input/0.1.0-rc.1.zip
-payload_type: "dna_alignment"
+bundle_type: "dna_alignment"
 lane_seq_analysis:
   - class: File
     path: input/lane_seq_submission.C0HVY_2.lane.bam.json
