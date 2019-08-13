@@ -51,14 +51,14 @@ outputs:
     outputBinding:
       glob: $(inputs.aligned_basename).cram
     secondaryFiles: [.crai]
-  payload_type:
+  bundle_type:
     type: string
     outputBinding:
       glob: stdout.json
       loadContents: true
       outputEval: |
         ${
-           var data = JSON.parse(self[0].contents)["payload_type"];
+           var data = JSON.parse(self[0].contents)["bundle_type"];
            return data;
          }
 
