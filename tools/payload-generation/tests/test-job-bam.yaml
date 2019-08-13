@@ -1,0 +1,11 @@
+payload_schema_zip:
+  class: File
+  path: input/0.1.0-rc.1.zip
+metadata_lane_seq:
+  class: File
+  location: input/seq_rg.json
+input_seq_format: "BAM"
+payload_type: "lane_seq_submission"
+file_to_upload:
+  class: File
+  path: input/D0RE2_1.lane.bam
