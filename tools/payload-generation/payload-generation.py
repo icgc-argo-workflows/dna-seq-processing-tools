@@ -42,7 +42,6 @@ def main(args):
 
     payload_template = glob.glob("argo-metadata-schemas-*/schemas/_example_docs/*.%s.*.json" % args.payload_type)
 
-    output = {}
     if args.payload_type == 'lane_seq_submission':
         with open(args.metadata_lane_seq, 'r') as f:
             metadata = json.load(f)
@@ -142,9 +141,6 @@ def main(args):
     payload_fname = ".".join([args.payload_type, os.path.basename(args.file_to_upload), 'json'])
     with open(payload_fname, 'w') as f:
         f.write(json.dumps(payload))
-
-    # write the parameter to stdout
-    print(json.dumps(output))
 
 if __name__ == "__main__":
     parser = ArgumentParser()
