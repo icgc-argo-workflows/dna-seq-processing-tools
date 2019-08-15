@@ -12,8 +12,8 @@ def run_command(cmd):
     return (p.returncode, p.stdout, p.stderr)
 
 
-def object_exist(object_key):
-    ret = run_command('aws s3 ls %s' % object_key)
+def object_exist(endpoint_url, object_key):
+    ret = run_command('aws --endpoint-url %s s3 ls %s' % (endpoint_url, object_key))
     if ret[0] == 0:
         return True
     else:
@@ -25,8 +25,6 @@ def copy_credential_file(credential_file):
 
 
 def main(args):
-    print(args)  # debug
-
     filename_to_file = {}
     for f in args.upload_files:
         filename_to_file[os.path.basename(f)] = f
@@ -51,9 +49,12 @@ def main(args):
 
     if args.bundle_type == 'lane_seq_submission':
         read_group_submitter_id = payload['inputs']['read_group_submitter_id']
-        payload_s3_path = "lane_seq_submission/%s/%s.json" % (read_group_submitter_id, bundle_id)
-        if not object_exist(payload_s3_path):
-            sys.exit('Payload object does not exist in s3 store: %s' % payload_s3_path)
+        payload_object_key = "%s/lane_seq_submission/%s/%s.json" % (
+            path_prefix,
+            read_group_submitter_id,
+            bundle_id)
+        if not object_exist(args.s3_endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
+            sys.exit('Not able to access object store, or payload object does not exist: %s' % payload_object_key)
 
         for object in payload['files']:
             object_id = payload['files'][object]['object_id']
@@ -74,8 +75,12 @@ def main(args):
     elif args.bundle_type == 'dna_alignment':
         bam_cram = 'bam'  # TODO: get this from payload
         payload_s3_path = "dna_alignment/%s/%s.json" % (bam_cram, bundle_id)
-        if not object_exist(payload_s3_path):
-            sys.exit('Payload object does not exist in s3: %s' % payload_s3_path)
+        payload_object_key = "%s/dna_alignment/%s/%s.json" % (
+            path_prefix,
+            bam_cram,
+            bundle_id)
+        if not object_exist(args.s3_endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
+            sys.exit('Not able to access object store, or payload object does not exist: %s' % payload_object_key)
 
         # TODO: upload data objects
 
