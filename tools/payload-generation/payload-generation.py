@@ -7,7 +7,7 @@ import re
 from argparse import ArgumentParser
 import hashlib
 import copy
-import requests
+import subprocess
 
 """
 Major steps:
@@ -35,14 +35,13 @@ def get_files_info(file_to_upload):
     return payload_files
 
 def run_cmd(cmd):
-    print('command: %s' % cmd)
     stdout, stderr, p, success = '', '', None, True
     try:
         p = subprocess.Popen([cmd],
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
                              shell=True)
-        stdout, stderr = p.communicate()
+        p.communicate()
     except Exception as e:
         print('Execution failed: %s' % e, file=sys.stderr)
         success = False
@@ -50,9 +49,6 @@ def run_cmd(cmd):
     if p and p.returncode != 0:
         print('Execution failed, none zero code returned.', file=sys.stderr)
         success = False
-
-    print(stdout.decode("utf-8"))
-    print(stderr.decode("utf-8"), file=sys.stderr)
 
     if not success:
         sys.exit(p.returncode if p.returncode else 1)
@@ -69,7 +65,7 @@ def main(args):
             read_group = metadata.get("read_groups")
 
             payload_template_url = "https://raw.githubusercontent.com/icgc-argo/argo-metadata-schemas/%s/schemas/_example_docs/36.lane_seq_submission.01.ok.json" % args.payload_schema_version
-            cmd = "curl -sSL -o template --retry 10 %s" % payload_template_url
+            cmd = "curl -o template --retry 10 %s" % payload_template_url
             run_cmd(cmd)
 
             with open("template", "r") as f:
@@ -89,7 +85,7 @@ def main(args):
             files = metadata.get("files")
 
             payload_template_url = "https://raw.githubusercontent.com/icgc-argo/argo-metadata-schemas/%s/schemas/_example_docs/35.lane_seq_submission.01.ok.json" % args.payload_schema_version
-            cmd = "curl -sSL -o template --retry 10 %s" % payload_template_url
+            cmd = "curl -o template --retry 10 %s" % payload_template_url
             run_cmd(cmd)
 
             with open("template", "r") as f:
@@ -118,7 +114,7 @@ def main(args):
 
     elif args.bundle_type == 'dna_alignment':
         payload_template_url = "https://raw.githubusercontent.com/icgc-argo/argo-metadata-schemas/%s/schemas/_example_docs/40.dna_alignment.01.ok.json" % args.payload_schema_version
-        cmd = "curl -sSL -o template --retry 10 %s" % payload_template_url
+        cmd = "curl -o template --retry 10 %s" % payload_template_url
         run_cmd(cmd)
 
         with open("template", "r") as f:
