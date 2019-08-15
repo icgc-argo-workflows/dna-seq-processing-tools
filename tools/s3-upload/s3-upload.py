@@ -68,12 +68,15 @@ def main(args):
                                                                 object_id)
 
             file_to_upload = filename_to_file[filename]
-            run_command('aws --endpoint-url %s s3 cp %s s3://%s/%s' % (
+            p = run_command('aws --endpoint-url %s s3 cp %s s3://%s/%s' % (
                     args.endpoint_url,
                     file_to_upload,
                     args.bucket_name,
                     object_key)
                 )
+
+            if p[0] != 0:
+                sys.exit('Object upload failed: %s; err: %s' % (object_key, p[2]))
 
     elif args.bundle_type == 'dna_alignment':
         bam_cram = 'bam'
@@ -100,12 +103,15 @@ def main(args):
                                                         object_id)
 
             file_to_upload = filename_to_file[filename]
-            run_command('aws --endpoint-url %s s3 cp %s s3://%s/%s' % (
+            p = run_command('aws --endpoint-url %s s3 cp %s s3://%s/%s' % (
                     args.endpoint_url,
                     file_to_upload,
                     args.bucket_name,
                     object_key)
                 )
+
+            if p[0] != 0:
+                sys.exit('Object upload failed: %s; err: %s' % (object_key, p[2]))
 
     else:
         sys.exit('Unknown or unimplemented bundle_type: %s' % args.bundle_type)
