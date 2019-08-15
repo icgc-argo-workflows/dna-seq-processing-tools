@@ -49,12 +49,15 @@ def main(args):
 
     if args.bundle_type == 'lane_seq_submission':
         read_group_submitter_id = payload['inputs']['read_group_submitter_id']
+
+        """ don't do this for now
         payload_object_key = "%s/lane_seq_submission/%s/%s.json" % (
             path_prefix,
             read_group_submitter_id,
             bundle_id)
-        if not object_exist(args.s3_endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
+        if not object_exist(args.endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
             sys.exit('Not able to access object store, or payload object does not exist: s3://%s/%s' % (args.bucket_name, payload_object_key))
+        """
 
         for object in payload['files']:
             object_id = payload['files'][object]['object_id']
@@ -66,22 +69,42 @@ def main(args):
 
             file_to_upload = filename_to_file[filename]
             run_command('aws --endpoint-url %s s3 cp %s s3://%s/%s' % (
-                    args.s3_endpoint_url,
+                    args.endpoint_url,
                     file_to_upload,
                     args.bucket_name,
                     object_key)
                 )
 
     elif args.bundle_type == 'dna_alignment':
-        bam_cram = 'bam'  # TODO: get this from payload
+        bam_cram = 'bam'
+        for f in filename_to_file:
+            if f.endswith('.cram'):
+                bam_cram = 'cram'
+                break
+
+        """
         payload_object_key = "%s/dna_alignment/%s/%s.json" % (
             path_prefix,
             bam_cram,
             bundle_id)
-        if not object_exist(args.s3_endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
+        if not object_exist(args.endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
             sys.exit('Not able to access object store, or payload object does not exist: s3://%s/%s' % (args.bucket_name, payload_object_key))
+        """
 
-        # TODO: upload data objects
+        for object in payload['files']:
+            object_id = payload['files'][object]['object_id']
+            filename = payload['files'][object]['name']
+            object_key = "%s/dna_alignment/%s/%s" % (path_prefix,
+                                                        bundle_id,
+                                                        object_id)
+
+            file_to_upload = filename_to_file[filename]
+            run_command('aws --endpoint-url %s s3 cp %s s3://%s/%s' % (
+                    args.endpoint_url,
+                    file_to_upload,
+                    args.bucket_name,
+                    object_key)
+                )
 
     else:
         sys.exit('Unknown or unimplemented bundle_type: %s' % args.bundle_type)
@@ -89,7 +112,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-s", "--s3-endpoint-url", dest="s3_endpoint_url")
+    parser.add_argument("-s", "--s3-endpoint-url", dest="endpoint_url")
     parser.add_argument("-b", "--bucket-name", dest="bucket_name")
     parser.add_argument("-t", "--bundle-type", dest="bundle_type")
     parser.add_argument("-m", "--metadata-json", dest="metadata_json")

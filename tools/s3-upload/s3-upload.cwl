@@ -9,7 +9,7 @@ requirements:
 baseCommand: [ 's3-upload.py' ]
 
 inputs:
-  s3_endpoint_url:
+  endpoint_url:
     type: string
     inputBinding:
       prefix: -s
