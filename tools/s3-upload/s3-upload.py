@@ -34,7 +34,7 @@ def main(args):
     with open(args.metadata_json) as f:
         metadata = json.load(f)
 
-    path_prefix = "PCAWG2/%s/%s/%s/%s.%s/" % (
+    path_prefix = "PCAWG2/%s/%s/%s/%s.%s" % (
                                                 metadata['library_strategy'],
                                                 metadata['program'],
                                                 metadata['donor_submitter_id'],
@@ -54,7 +54,7 @@ def main(args):
             read_group_submitter_id,
             bundle_id)
         if not object_exist(args.s3_endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
-            sys.exit('Not able to access object store, or payload object does not exist: %s' % payload_object_key)
+            sys.exit('Not able to access object store, or payload object does not exist: s3://%s/%s' % (args.bucket_name, payload_object_key))
 
         for object in payload['files']:
             object_id = payload['files'][object]['object_id']
@@ -74,13 +74,12 @@ def main(args):
 
     elif args.bundle_type == 'dna_alignment':
         bam_cram = 'bam'  # TODO: get this from payload
-        payload_s3_path = "dna_alignment/%s/%s.json" % (bam_cram, bundle_id)
         payload_object_key = "%s/dna_alignment/%s/%s.json" % (
             path_prefix,
             bam_cram,
             bundle_id)
         if not object_exist(args.s3_endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
-            sys.exit('Not able to access object store, or payload object does not exist: %s' % payload_object_key)
+            sys.exit('Not able to access object store, or payload object does not exist: s3://%s/%s' % (args.bucket_name, payload_object_key))
 
         # TODO: upload data objects
 
