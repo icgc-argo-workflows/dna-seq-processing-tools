@@ -20,7 +20,7 @@ def object_exist(endpoint_url, object_key):
         return False
 
 def copy_credential_file(credential_file):
-    run_command('mk ~/.aws')
+    run_command('mkdir ~/.aws')
     run_command('cp %s ~/.aws/credentials' % credential_file)
 
 
