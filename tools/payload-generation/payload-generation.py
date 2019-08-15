@@ -4,7 +4,6 @@ import os
 import sys
 import json
 import re
-import glob
 from argparse import ArgumentParser
 import hashlib
 import copy
