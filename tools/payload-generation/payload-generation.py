@@ -6,9 +6,9 @@ import json
 import re
 import glob
 from argparse import ArgumentParser
-import zipfile
 import hashlib
 import copy
+import requests
 
 """
 Major steps:
@@ -36,21 +36,16 @@ def get_files_info(file_to_upload):
     return payload_files
 
 def main(args):
-    cwd = os.getcwd()
-    with zipfile.ZipFile(args.payload_schema_zip) as myzip:
-        myzip.extractall(cwd)
-
-    payload_template = glob.glob("argo-metadata-schemas-*/schemas/_example_docs/*.%s.*.json" % args.bundle_type)
 
     if args.bundle_type == 'lane_seq_submission':
         with open(args.metadata_lane_seq, 'r') as f:
             metadata = json.load(f)
         if args.input_seq_format == 'FASTQ':
             read_group = metadata.get("read_groups")
-            for template in payload_template:
-                if not '36.lane_seq_submission.01.ok.json' in template: continue
-                with open(template, 'r') as f:
-                    payload = json.load(f)
+
+            payload_template_url = "https://raw.githubusercontent.com/icgc-argo/argo-metadata-schemas/%s/schemas/_example_docs/36.lane_seq_submission.01.ok.json" % args.payload_schema_version
+            template = requests.get(payload_template_url)
+            payload = json.loads(template.content)
 
             payload['program'] = metadata.get('program')
 
@@ -64,10 +59,10 @@ def main(args):
 
         elif args.input_seq_format == 'BAM':
             files = metadata.get("files")
-            for template in payload_template:
-                if not '35.lane_seq_submission.01.ok.json' in template: continue
-                with open(template, 'r') as f:
-                    payload = json.load(f)
+
+            payload_template_url = "https://raw.githubusercontent.com/icgc-argo/argo-metadata-schemas/%s/schemas/_example_docs/35.lane_seq_submission.01.ok.json" % args.payload_schema_version
+            template = requests.get(payload_template_url)
+            payload = json.loads(template.content)
 
             payload['program'] = metadata.get('program')
 
@@ -91,10 +86,9 @@ def main(args):
         payload['files']['bam_file'].pop('_mocked_system_properties', None)
 
     elif args.bundle_type == 'dna_alignment':
-        for template in payload_template:
-            if not '40.dna_alignment.01.ok.json' in template: continue
-            with open(template, 'r') as f:
-                payload = json.load(f)
+        payload_template_url = "https://raw.githubusercontent.com/icgc-argo/argo-metadata-schemas/%s/schemas/_example_docs/40.dna_alignment.01.ok.json" % args.payload_schema_version
+        template = requests.get(payload_template_url)
+        payload = json.loads(template.content)
 
         lane_seq_list = []
         for res_file in args.lane_seq_analysis:
@@ -117,8 +111,12 @@ def main(args):
         payload['files']['aligned_seq'].update(get_files_info(args.file_to_upload))
 
         #get index files of the payload
-        if not os.path.exists(args.file_to_upload + ".bai"): sys.exit('\n%s: Missing BAI index file')
-        payload['files']['aligned_seq_index'].update(get_files_info(args.file_to_upload + ".bai"))
+        if os.path.exists(args.file_to_upload + ".bai"):
+            payload['files']['aligned_seq_index'].update(get_files_info(args.file_to_upload + ".bai"))
+        elif os.path.exists(args.file_to_upload + ".crai"):
+            payload['files']['aligned_seq_index'].update(get_files_info(args.file_to_upload + ".crai"))
+        else:
+            sys.exit('\n%s: Missing index file')
 
         payload['files']['aligned_seq'].pop('_final_doc', None)
         payload['files']['aligned_seq'].pop('_mocked_system_properties', None)
@@ -148,7 +146,7 @@ if __name__ == "__main__":
                         help="Sequence format")
     parser.add_argument("-t", "--bundle_type", dest="bundle_type",
                         help="Payload type")
-    parser.add_argument("-p", "--payload_schema_zip", dest="payload_schema_zip", help="released metadata schema zip file")
+    parser.add_argument("-p", "--payload_schema_version", dest="payload_schema_version", help="release version of payload schema")
     parser.add_argument("-m", "--metadata_lane_seq", dest="metadata_lane_seq",
                         help="json file containing experiment, read_group and file information for sequence preprocessing")
     parser.add_argument("-f", "--file_to_upload", dest="file_to_upload", help="File to upload to server")

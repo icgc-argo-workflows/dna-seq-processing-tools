@@ -18,8 +18,8 @@ inputs:
     type: string
     inputBinding:
       prefix: -t
-  payload_schema_zip:
-    type: File
+  payload_schema_version:
+    type: string
     inputBinding:
       prefix: -p
   metadata_lane_seq:
