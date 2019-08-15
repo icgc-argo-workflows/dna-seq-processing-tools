@@ -94,7 +94,8 @@ def main(args):
         for object in payload['files']:
             object_id = payload['files'][object]['object_id']
             filename = payload['files'][object]['name']
-            object_key = "%s/dna_alignment/%s/%s" % (path_prefix,
+            object_key = "%s/dna_alignment/%s/%s/%s" % (path_prefix,
+                                                        bam_cram,
                                                         bundle_id,
                                                         object_id)
 
@@ -112,7 +113,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-s", "--s3-endpoint-url", dest="endpoint_url")
+    parser.add_argument("-s", "--endpoint-url", dest="endpoint_url")
     parser.add_argument("-b", "--bucket-name", dest="bucket_name")
     parser.add_argument("-t", "--bundle-type", dest="bundle_type")
     parser.add_argument("-m", "--metadata-json", dest="metadata_json")
