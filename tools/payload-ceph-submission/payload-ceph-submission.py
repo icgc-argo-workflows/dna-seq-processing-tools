@@ -35,8 +35,8 @@ def run_cmd(cmd):
     return
 
 
-def get_uuid5(pid, fid):
-    uuid5 = str(uuid.uuid5(uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"), "%s/%s" % (pid, fid)))
+def get_uuid5(bid, fid):
+    uuid5 = str(uuid.uuid5(uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"), "%s/%s" % (bid, fid)))
     return uuid5
 
 def main(args):
@@ -56,23 +56,24 @@ def main(args):
         "program_id": metadata.get("program", None),
         "submitter_donor_id": metadata.get("submitter_donor_id", None),
         "submitter_sample_id": metadata.get("submitter_sample_id", None),
-        "specimen_type": 'normal' if 'normal' in metadata.get("specimen_type", '').lower() else 'tumour'
+        "specimen_type": metadata.get("specimen_type", None)
     }
 
     # generate object_id
     for key, val in payload['files'].items():
-        val['object_id'] = get_uuid5(payload['info']['program_id'], val['name'])
+        val['object_id'] = get_uuid5(payload['id'], val['name'])
 
     payload_fname = ".".join([payload['id'], 'json'])
     with open(payload_fname, 'w') as f:
         f.write(json.dumps(payload))
 
     # payload bucket basepath
+    specimen_type = 'normal' if 'normal' in metadata.get("specimen_type", '').lower() else 'tumour'
     payload_bucket_basepath = os.path.join(args.bucket_name, 'PCAWG2',
                                         payload['info']['library_strategy'],
                                         payload['info']['program_id'],
                                         payload['info']['submitter_donor_id'],
-                                        payload['info']['submitter_sample_id'] + '.' + payload['info']['specimen_type'],
+                                        payload['info']['submitter_sample_id']+'.'+specimen_type
                                         payload['type'])
 
     if payload['type'] in ['sequencing_experiment', 'dna_alignment_qc']:
