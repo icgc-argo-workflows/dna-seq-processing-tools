@@ -32,7 +32,7 @@
       "object_id": "0ee0d7f2-e96c-4e8c-be55-91267e74670b"
     }
   },
-  "input": {
+  "info": {
     "library_strategy": "WGS",
     "sample_submitter_id": "HCC1143_BAM_INPUT",
     "donor_submitter_id": "HCC1143",
