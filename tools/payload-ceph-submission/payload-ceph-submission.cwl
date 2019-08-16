@@ -1,8 +1,7 @@
 class: CommandLineTool
-cwlVersion: v1.1
+cwlVersion: v1.0
 id: payload-generation
 requirements:
-- class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
   dockerPull: 'quay.io/icgc-argo/payload-ceph-submission:payload-ceph-submission.initial'

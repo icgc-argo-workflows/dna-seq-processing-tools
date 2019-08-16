@@ -73,7 +73,7 @@ def main(args):
                                         payload['info']['library_strategy'],
                                         payload['info']['program_id'],
                                         payload['info']['submitter_donor_id'],
-                                        payload['info']['submitter_sample_id']+'.'+specimen_type
+                                        payload['info']['submitter_sample_id']+'.'+specimen_type,
                                         payload['type'])
 
     if payload['type'] in ['sequencing_experiment', 'dna_alignment_qc']:
