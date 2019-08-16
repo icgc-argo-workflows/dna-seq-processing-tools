@@ -21,10 +21,6 @@ inputs:
     type: string
     inputBinding:
       prefix: -t
-  metadata_json:
-    type: File
-    inputBinding:
-      prefix: -m
   payload_json:
     type: File
     inputBinding:

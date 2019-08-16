@@ -93,5 +93,11 @@
       "checksum_type": "md5",
       "object_id": "79c196c7-62c8-44d7-ba8d-2c1980046ac3"
     }
+  },
+  "input": {
+    "library_strategy": "WGS",
+    "sample_submitter_id": "HCC1143_BAM_INPUT",
+    "donor_submitter_id": "HCC1143",
+    "specimen_type": "Cell line - derived from tumour"
   }
 }

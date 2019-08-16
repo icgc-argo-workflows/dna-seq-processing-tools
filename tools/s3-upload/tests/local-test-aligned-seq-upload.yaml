@@ -1,9 +1,6 @@
 endpoint_url: "https://object.cancercollaboratory.org:9080"
 bucket_name: "argo-test"
 bundle_type: "dna_alignment"
-metadata_json:
-  class: File
-  path: input/exp-rg.json
 payload_json:
   class: File
   path: input/dna_alignment.test.json

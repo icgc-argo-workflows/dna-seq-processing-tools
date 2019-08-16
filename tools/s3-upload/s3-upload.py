@@ -8,16 +8,16 @@ import subprocess
 
 
 def run_command(cmd):
-    p = subprocess.run(cmd, capture_output=True, shell=True)
-    return (p.returncode, p.stdout, p.stderr)
+    return subprocess.run(cmd, capture_output=True, shell=True)
 
 
-def object_exist(endpoint_url, object_key):
+def object_exists(endpoint_url, object_key):
     ret = run_command('aws --endpoint-url %s s3 ls %s' % (endpoint_url, object_key))
-    if ret[0] == 0:
+    if ret.returncode == 0:
         return True
     else:
         return False
+
 
 def copy_credential_file(credential_file):
     run_command('mkdir ~/.aws')
@@ -31,21 +31,22 @@ def main(args):
 
     copy_credential_file(args.s3_credential_file)
 
-    with open(args.metadata_json) as f:
-        metadata = json.load(f)
-
-    path_prefix = "PCAWG2/%s/%s/%s/%s.%s" % (
-                                                metadata['library_strategy'],
-                                                metadata['program'],
-                                                metadata['donor_submitter_id'],
-                                                metadata['sample_submitter_id'],
-                                                'normal' if 'normal' in metadata['specimen_type'].lower() else 'tumour'
-                                            )
-
     with open(args.payload_json) as f:
         payload = json.load(f)
 
+    if args.bundle_type != payload['type']:
+        sys.exit("Specified bundle type '%s' does not match what's defined in the payload: '%s'" % \
+            (args.bundle_type, payload['type']))
+
     bundle_id = payload['id']
+
+    path_prefix = "PCAWG2/%s/%s/%s/%s.%s" % (
+                                                payload['info']['library_strategy'],
+                                                payload['program'],
+                                                payload['info']['donor_submitter_id'],
+                                                payload['info']['sample_submitter_id'],
+                                                'normal' if 'normal' in payload['info']['specimen_type'].lower() else 'tumour'
+                                            )
 
     if args.bundle_type == 'lane_seq_submission':
         read_group_submitter_id = payload['inputs']['read_group_submitter_id']
@@ -55,7 +56,7 @@ def main(args):
             path_prefix,
             read_group_submitter_id,
             bundle_id)
-        if not object_exist(args.endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
+        if not object_exists(args.endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
             sys.exit('Not able to access object store, or payload object does not exist: s3://%s/%s' % (args.bucket_name, payload_object_key))
         """
 
@@ -75,8 +76,8 @@ def main(args):
                     object_key)
                 )
 
-            if p[0] != 0:
-                sys.exit('Object upload failed: %s; err: %s' % (object_key, p[2]))
+            if p.returncode != 0:
+                sys.exit('Object upload failed: %s; err: %s' % (object_key, p.stderr))
 
     elif args.bundle_type == 'dna_alignment':
         bam_cram = 'bam'
@@ -90,7 +91,7 @@ def main(args):
             path_prefix,
             bam_cram,
             bundle_id)
-        if not object_exist(args.endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
+        if not object_exists(args.endpoint_url, 's3://%s/%s' % (args.bucket_name, payload_object_key)):
             sys.exit('Not able to access object store, or payload object does not exist: s3://%s/%s' % (args.bucket_name, payload_object_key))
         """
 
@@ -110,8 +111,8 @@ def main(args):
                     object_key)
                 )
 
-            if p[0] != 0:
-                sys.exit('Object upload failed: %s; err: %s' % (object_key, p[2]))
+            if p.returncode != 0:
+                sys.exit('Object upload failed: %s; err: %s' % (object_key, p.stderr))
 
     else:
         sys.exit('Unknown or unimplemented bundle_type: %s' % args.bundle_type)
@@ -122,7 +123,6 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--endpoint-url", dest="endpoint_url")
     parser.add_argument("-b", "--bucket-name", dest="bucket_name")
     parser.add_argument("-t", "--bundle-type", dest="bundle_type")
-    parser.add_argument("-m", "--metadata-json", dest="metadata_json")
     parser.add_argument("-p", "--payload-json", dest="payload_json")
     parser.add_argument("-c", "--s3-credential-file", dest="s3_credential_file")
     parser.add_argument("-f", "--upload-files", dest="upload_files", type=str, nargs='+')
