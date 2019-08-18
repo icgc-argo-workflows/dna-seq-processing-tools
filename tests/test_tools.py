@@ -57,7 +57,7 @@ def test_app(app, rootDir):
 
     os.makedirs(cwl_outdir)
 
-    cmd = "cwltool --non-strict --outdir %s %s %s" % \
+    cmd = "cwltool --non-strict --no-read-only --outdir %s %s %s" % \
         (cwl_outdir, cwl_file, test_job_file)
 
     p = subprocess.Popen(
