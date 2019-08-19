@@ -6,17 +6,17 @@ from argparse import ArgumentParser
 import json
 import subprocess
 
-def bam_check(args):
-    with open(args.metadata_json, 'r') as f:
-        metadata = json.load(f)
+def bam_check(metadata, seq_files):
 
     files = metadata.get('files')
 
     for _file in files:
-        file_with_path = os.path.join(args.seq_files_dir, _file.get('name'))
-
-        # check whether the file exist
-        if not os.path.isfile(file_with_path): sys.exit('\n The file: %s does not exist!' % file_with_path)
+        file_with_path = None
+        for seq_file in seq_files:
+            if not _file.get('name') in seq_file: continue
+            file_with_path = seq_file
+        if not file_with_path or not os.path.isfile(file_with_path):
+            sys.exit('\n The file: %s do not exist!' % file_with_path)
 
         rg_metadata = set()
         for rg in _file.get('read_groups'):
@@ -51,11 +51,14 @@ def fastq_check(args):
 
 
 def run_validation(args):
+    with open(args.metadata_json, 'r') as f:
+        metadata = json.load(f)
+
     output_json = {}
 
-    if args.seq_format == "BAM":
-        valid = bam_check(args)
-    elif args.seq_format == "FASTQ":
+    if metadata.get("input_seq_format") == "BAM":
+        valid = bam_check(metadata, args.seq_files)
+    elif metadata.get("input_seq_format") == "FASTQ":
         valid = fastq_check(args)
     else:
         sys.exit('\nError: The input files should have format in BAM or FASTQ.')
@@ -70,9 +73,7 @@ def run_validation(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-i", "--seq_format", dest="seq_format",
-                        help="Sequence format")
-    parser.add_argument("-d", "--seq_files_dir", dest="seq_files_dir", help="Directory with seq files to submit and process")
+    parser.add_argument("-d", "--seq_files", dest="seq_files", help="Seq files to submit and process", type=str, nargs='+')
     parser.add_argument("-p", "--metadata_json", dest="metadata_json",
                         help="json file containing experiment, read_group and file information for sequence preprocessing")
     args = parser.parse_args()
