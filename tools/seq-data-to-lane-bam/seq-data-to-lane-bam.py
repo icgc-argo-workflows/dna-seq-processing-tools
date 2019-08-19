@@ -13,6 +13,10 @@ from argparse import ArgumentParser
 Major steps:
 - convert input Seq to unaligned BAM for each read group
 """
+def get_uuid5(bid, fid):
+    uuid5 = str(uuid.uuid5(uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"), "%s/%s" % (bid, fid)))
+    return uuid5
+
 
 def main(args):
     with open(args.metadata_json, 'r') as f:
@@ -100,7 +104,8 @@ def main(args):
     else:
         sys.exit('\n%s: Input files format are not FASTQ or BAM')
 
-    output['aligned_basename'] = '.'.join([metadata.get('sample_submitter_id'), str(metadata.get('read_group_count')), datetime.date.today().strftime("%Y%m%d"), 'wgs', 'grch38'])
+    uuid_prefix = get_uuid5(metadata.get('program'), metadata.get('sample_submitter_id'))
+    output['aligned_basename'] = '.'.join([uuid_prefix, str(metadata.get('read_group_count')), datetime.date.today().strftime("%Y%m%d"), 'wgs', 'grch38'])
     output['bundle_type'] = "lane_seq_submission"
 
     # write the parameter to stdout
