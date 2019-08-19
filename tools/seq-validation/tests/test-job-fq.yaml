@@ -1,7 +1,7 @@
 seq_rg_json:
   class: File
   path: input/seq_rg-fq.json
-seq_files_dir:
+seq_files:
   - class: File
     path: input/D0RH0.2_r1.fq
   - class: File
