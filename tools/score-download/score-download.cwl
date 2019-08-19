@@ -16,6 +16,7 @@ baseCommand: [ 'score-download.py' ]
 inputs:
   seq_files:
     type: File[]?
+    default: []
     inputBinding:
       prefix: -s
   files_tsv:

@@ -1,4 +1,3 @@
-seq_files: []
 files_tsv:
   class: File
   path: input/file-fq.sm.tsv
