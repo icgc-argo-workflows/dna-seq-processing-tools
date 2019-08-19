@@ -24,15 +24,48 @@ def copy_credential_file(credential_file):
     run_command('cp %s ~/.aws/credentials' % credential_file)
 
 
+def get_payload(filename_to_file, payload_jsons):
+    for pf in payload_jsons:
+        with open(pf) as f:
+            payload = json.load(f)
+
+        match = True
+        if len(payload['files']) != len(filename_to_file):
+            match = False
+            break
+        for f in payload['files']:
+            fname = payload['files'][f]['name']
+            if fname not in filename_to_file:
+                match = False
+                break
+        if match:
+            return payload
+
+    return
+
+
 def main(args):
     filename_to_file = {}
+    sfile_filename_to_file = {}
     for f in args.upload_files:
         filename_to_file[os.path.basename(f)] = f
+        # add secondary files if any
+        for sf in ('.bai', '.crai'):
+            sfile = "%s%s" % (f, sf)
+            if os.path.isfile(sfile):
+                sfile_filename_to_file[os.path.basename(sfile)] = sfile
+
+    if sfile_filename_to_file:
+        filename_to_file = {**filename_to_file, **sfile_filename_to_file}
 
     copy_credential_file(args.s3_credential_file)
 
-    with open(args.payload_json) as f:
-        payload = json.load(f)
+    # find the corresponding payload from provided list of payloads
+    payload = get_payload(filename_to_file, args.payload_jsons)
+    if not payload:
+        sys.exit("Could not find payload matching the files to be uploaded. Files to be uploaded: %s" %
+            ", ".join(list(filename_to_file.keys()))
+        )
 
     if args.bundle_type != payload['type']:
         sys.exit("Specified bundle type '%s' does not match what's defined in the payload: '%s'" % \
@@ -123,7 +156,7 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--endpoint-url", dest="endpoint_url")
     parser.add_argument("-b", "--bucket-name", dest="bucket_name")
     parser.add_argument("-t", "--bundle-type", dest="bundle_type")
-    parser.add_argument("-p", "--payload-json", dest="payload_json")
+    parser.add_argument("-p", "--payload-jsons", dest="payload_jsons", type=str, nargs='+')
     parser.add_argument("-c", "--s3-credential-file", dest="s3_credential_file")
     parser.add_argument("-f", "--upload-files", dest="upload_files", type=str, nargs='+')
     args = parser.parse_args()

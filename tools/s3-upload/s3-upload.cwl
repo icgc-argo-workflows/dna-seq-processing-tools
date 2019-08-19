@@ -1,8 +1,10 @@
 class: CommandLineTool
-cwlVersion: v1.0
+cwlVersion: v1.1
 id: s3-upload
 requirements:
 - class: ShellCommandRequirement
+- class: NetworkAccess
+  networkAccess: true
 - class: DockerRequirement
   dockerPull: 'quay.io/icgc-argo/s3-upload:s3-upload.init'
 
@@ -21,8 +23,8 @@ inputs:
     type: string
     inputBinding:
       prefix: -t
-  payload_json:
-    type: File
+  payload_jsons:
+    type: File[]
     inputBinding:
       prefix: -p
   s3_credential_file:
@@ -31,6 +33,7 @@ inputs:
       prefix: -c
   upload_files:
     type: File[]
+    secondaryFiles: [ ".bai?", ".crai?" ]
     inputBinding:
       prefix: -f
 
