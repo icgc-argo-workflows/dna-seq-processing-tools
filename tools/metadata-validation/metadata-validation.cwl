@@ -4,7 +4,7 @@ id: metadata-validation
 requirements:
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:0.1.1'
+  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:metadata-validation.update'
 
 baseCommand: [ 'metadata-validation.py' ]
 
