@@ -54,7 +54,7 @@ def main(args):
     payload['info'] = {
         "library_strategy": metadata.get("library_strategy", None),
         "program_id": metadata.get("program", None),
-        "submitter_donor_id": metadata.get("submitter_donor_id", None),
+        "donor_submitter_id": metadata.get("donor_submitter_id", None),
         "sample_submitter_id": metadata.get("sample_submitter_id", None),
         "specimen_type": metadata.get("specimen_type", None)
     }
