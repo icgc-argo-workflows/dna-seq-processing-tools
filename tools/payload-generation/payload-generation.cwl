@@ -1,7 +1,10 @@
 class: CommandLineTool
 cwlVersion: v1.1
 id: payload-generation
+
 requirements:
+- class: NetworkAccess
+  networkAccess: true
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
@@ -10,10 +13,6 @@ requirements:
 baseCommand: [ 'payload-generation.py' ]
 
 inputs:
-  input_seq_format:
-    type: string?
-    inputBinding:
-      prefix: -s
   bundle_type:
     type: string
     inputBinding:
@@ -22,7 +21,7 @@ inputs:
     type: string
     inputBinding:
       prefix: -p
-  metadata_lane_seq:
+  input_metadata_lane_seq:
     type: File?
     inputBinding:
       prefix: -m
@@ -31,7 +30,7 @@ inputs:
     inputBinding:
       prefix: -f
     secondaryFiles: [.bai?, .crai?]
-  lane_seq_analysis:
+  input_metadata_aligned_seq:
     type: File[]?
     inputBinding:
       prefix: -a

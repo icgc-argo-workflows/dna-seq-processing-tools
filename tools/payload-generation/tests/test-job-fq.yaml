@@ -1,8 +1,7 @@
 payload_schema_version: 0.1.0-rc.1
-metadata_lane_seq:
+input_metadata_lane_seq:
   class: File
   location: input/seq_rg-fq.json
-input_seq_format: "FASTQ"
 bundle_type: "lane_seq_submission"
 file_to_upload:
   class: File

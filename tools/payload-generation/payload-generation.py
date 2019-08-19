@@ -59,9 +59,10 @@ def run_cmd(cmd):
 def main(args):
 
     if args.bundle_type == 'lane_seq_submission':
-        with open(args.metadata_lane_seq, 'r') as f:
+        with open(args.input_metadata_lane_seq, 'r') as f:
             metadata = json.load(f)
-        if args.input_seq_format == 'FASTQ':
+
+        if metadata.get("input_seq_format") == 'FASTQ':
             read_group = metadata.get("read_groups")
 
             payload_template_url = "https://raw.githubusercontent.com/icgc-argo/argo-metadata-schemas/%s/schemas/_example_docs/36.lane_seq_submission.01.ok.json" % args.payload_schema_version
@@ -81,7 +82,7 @@ def main(args):
                 payload['inputs']['read_group_submitter_id'] = rg_id
                 payload['inputs']['files']['fastq'] = rg.get('files')
 
-        elif args.input_seq_format == 'BAM':
+        elif metadata.get("input_seq_format") == 'BAM':
             files = metadata.get("files")
 
             payload_template_url = "https://raw.githubusercontent.com/icgc-argo/argo-metadata-schemas/%s/schemas/_example_docs/35.lane_seq_submission.01.ok.json" % args.payload_schema_version
@@ -121,7 +122,7 @@ def main(args):
             payload = json.load(f)
 
         lane_seq_list = []
-        for res_file in args.lane_seq_analysis:
+        for res_file in args.input_metadata_aligned_seq:
             lane_seq = {}
             with open(res_file, 'r') as f:
                 res_json = json.load(f)
@@ -172,15 +173,13 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-s", "--input_seq_format", dest="input_seq_format",
-                        help="Sequence format")
     parser.add_argument("-t", "--bundle_type", dest="bundle_type",
                         help="Payload type")
     parser.add_argument("-p", "--payload_schema_version", dest="payload_schema_version", help="release version of payload schema")
-    parser.add_argument("-m", "--metadata_lane_seq", dest="metadata_lane_seq",
+    parser.add_argument("-m", "--input_metadata_lane_seq", dest="input_metadata_lane_seq",
                         help="json file containing experiment, read_group and file information for sequence preprocessing")
     parser.add_argument("-f", "--file_to_upload", dest="file_to_upload", help="File to upload to server")
-    parser.add_argument("-a", "--lane_seq_analysis", dest="lane_seq_analysis", help="Analysis of lane seq submission",
+    parser.add_argument("-a", "--input_metadata_aligned_seq", dest="input_metadata_aligned_seq", help="Analysis of lane seq submission",
                         type=str, nargs='+')
     args = parser.parse_args()
 
