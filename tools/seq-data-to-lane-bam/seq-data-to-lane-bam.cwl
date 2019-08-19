@@ -10,26 +10,16 @@ requirements:
 baseCommand: [ 'seq-data-to-lane-bam.py' ]
 
 inputs:
-  seq_format:
-    type: string
-    inputBinding:
-      position: 1
-      prefix: -i
   seq_rg_json:
     type: File
     inputBinding:
       position: 2
       prefix: -p
-  seq_files_dir:
-    type: Directory
+  seq_files:
+    type: File[]
     inputBinding:
       position: 3
       prefix: -d
-  picard_jar:
-    type: File?
-    inputBinding:
-      position: 4
-      prefix: -j
 
 
 outputs:

@@ -17,19 +17,19 @@ Major steps:
 def main(args):
     with open(args.metadata_json, 'r') as f:
         metadata = json.load(f)
-    picard = args.picard_jar
     cwd = os.getcwd()
     output = {}
-    if args.seq_format == 'FASTQ':
+    if metadata.get("input_seq_format") == 'FASTQ':
         readGroups = metadata.get('read_groups')
         for rg in readGroups:
             readGroupId = rg.get('submitter_id')
             files = rg.get('files')
             file_with_path = []
             for _file in files:
-                file_path = os.path.join(args.seq_files_dir, _file.get('name'))
-                if not os.path.isfile(file_path): sys.exit('\n The file: %s do not exist!' % file_path)
-                file_with_path.append(file_path)
+                for seq_file in args.seq_files:
+                    if not _file.get('name') in seq_file: continue
+                    if not os.path.isfile(seq_file): sys.exit('\n The file: %s do not exist!' % seq_file)
+                    file_with_path.append(seq_file)
 
             # detect whether there are more than two fastq files for each read_group
             if not len(file_with_path) == 2:
@@ -52,7 +52,7 @@ def main(args):
             # convert readGroupId to filename friendly
             rg_fname = "".join([ c if re.match(r"[a-zA-Z0-9\-_]", c) else "_" for c in readGroupId ])
             try:
-                subprocess.run(['java', '-jar', picard,
+                subprocess.run(['java', '-jar', '/tools/picard.jar',
                                 'FastqToSam', 'FASTQ=%s' % file_with_path[0],
                                 'FASTQ2=%s' % file_with_path[1],
                                 'OUTPUT=%s' % os.path.join(cwd, rg_fname+'.lane.bam')] + rg_args, check=True)
@@ -60,17 +60,19 @@ def main(args):
                 sys.exit('\n%s: FastqToSam failed: %s and %s' % (e, file_with_path[0], file_with_path[1]))
 
     # the inputs are BAM
-    elif args.seq_format == 'BAM':
+    elif metadata.get("input_seq_format") == 'BAM':
         files = metadata.get('files')
 
         for _file in files:
-            file_path = os.path.join(args.seq_files_dir, _file.get('name'))
+            for seq_file in args.seq_files:
+                if not _file.get('name') in seq_file: continue
+                file_path = seq_file
             if not os.path.isfile(file_path): sys.exit('\n The file: %s do not exist!' % file_path)
 
             # Revert the bam to unaligned and lane level bam sorted by query name
             # Suggested options from: https://github.com/broadinstitute/picard/issues/849#issuecomment-313128088
             try:
-                subprocess.run(['java', '-jar', picard,
+                subprocess.run(['java', '-jar', '/tools/picard.jar',
                                 'RevertSam',
                                 'I=%s' % file_path,
                                 'SANITIZE=true',
@@ -106,13 +108,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-i", "--seq_format", dest="seq_format",
-                        help="Sequence format")
-    parser.add_argument("-d", "--seq_files_dir", dest="seq_files_dir", help="Directory with seq files to submit and process")
+    parser.add_argument("-d", "--seq_files", dest="seq_files", help="Seq files to submit and process", type=str, nargs='+')
     parser.add_argument("-p", "--metadata_json", dest="metadata_json",
                         help="json file containing experiment, read_group and file information for sequence preprocessing")
-    parser.add_argument("-j", "--picard_jar", dest="picard_jar", default="/tools/picard.jar",
-                        help="Picard jar file")
     args = parser.parse_args()
 
     main(args)
