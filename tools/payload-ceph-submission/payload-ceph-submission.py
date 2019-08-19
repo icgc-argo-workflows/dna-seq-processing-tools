@@ -55,7 +55,7 @@ def main(args):
         "library_strategy": metadata.get("library_strategy", None),
         "program_id": metadata.get("program", None),
         "submitter_donor_id": metadata.get("submitter_donor_id", None),
-        "submitter_sample_id": metadata.get("submitter_sample_id", None),
+        "sample_submitter_id": metadata.get("sample_submitter_id", None),
         "specimen_type": metadata.get("specimen_type", None)
     }
 
@@ -72,8 +72,8 @@ def main(args):
     payload_bucket_basepath = os.path.join(args.bucket_name, 'PCAWG2',
                                         payload['info']['library_strategy'],
                                         payload['info']['program_id'],
-                                        payload['info']['submitter_donor_id'],
-                                        payload['info']['submitter_sample_id']+'.'+specimen_type,
+                                        payload['info']['donor_submitter_id'],
+                                        payload['info']['sample_submitter_id']+'.'+specimen_type,
                                         payload['type'])
 
     if payload['type'] in ['sequencing_experiment', 'dna_alignment_qc']:
