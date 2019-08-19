@@ -8,7 +8,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:payload-generation.initial'
+  dockerPull: 'quay.io/icgc-argo/payload-generation:payload-generation.initial'
 
 baseCommand: [ 'payload-generation.py' ]
 

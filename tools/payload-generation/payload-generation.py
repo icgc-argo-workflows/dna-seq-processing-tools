@@ -43,11 +43,11 @@ def run_cmd(cmd):
                              shell=True)
         p.communicate()
     except Exception as e:
-        print('Execution failed: %s' % e, file=sys.stderr)
+        print('Execution failed: %s' % e)
         success = False
 
     if p and p.returncode != 0:
-        print('Execution failed, none zero code returned.', file=sys.stderr)
+        print('Execution failed, none zero code returned.')
         success = False
 
     if not success:
