@@ -95,7 +95,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-s", "--s3-endpoint-url", dest="endpoint_url")
+    parser.add_argument("-s", "--endpoint-url", dest="endpoint_url")
     parser.add_argument("-b", "--bucket-name", dest="bucket_name")
     parser.add_argument("-m", "--metadata", dest="metadata", help="Metadata file contains the information user submit")
     parser.add_argument("-p", "--payload", dest="payload", help="Payload file")

@@ -1,23 +1,21 @@
 class: CommandLineTool
-cwlVersion: v1.0
+cwlVersion: v1.1
 id: payload-generation
 requirements:
+- class: NetworkAccess
+  networkAccess: true
 - class: ShellCommandRequirement
 - class: DockerRequirement
   dockerPull: 'quay.io/icgc-argo/payload-ceph-submission:payload-ceph-submission.initial'
 - class: EnvVarRequirement
   envDef:
-    - envName: "AWS_CONFIG_FILE"
-      envValue: $(inputs.aws_config_file.path)
     - envName: "AWS_SHARED_CREDENTIALS_FILE"
-      envValue: $(inputs.aws_shared_credentials_file.path)
+      envValue: $(inputs.credentials_file.path)
 
 baseCommand: [ 'payload-ceph-submission.py' ]
 
 inputs:
-  aws_config_file:
-    type: File
-  aws_shared_credentials_file:
+  credentials_file:
     type: File
   payload:
     type: File
