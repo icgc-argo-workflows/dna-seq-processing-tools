@@ -13,12 +13,12 @@ inputs:
   seq_rg_json:
     type: File
     inputBinding:
-      position: 2
+      position: 1
       prefix: -p
   seq_files:
     type: File[]
     inputBinding:
-      position: 3
+      position: 2
       prefix: -d
 
 
