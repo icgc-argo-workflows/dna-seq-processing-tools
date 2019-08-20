@@ -7,6 +7,6 @@ payload_jsons:
 s3_credential_file:
   class: File
   path: input/fake_credential
-upload_files:
-- class: File
+upload_file:
+  class: File
   path: input/C0HVY_2.lane.bam

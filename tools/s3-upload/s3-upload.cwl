@@ -31,8 +31,8 @@ inputs:
     type: File
     inputBinding:
       prefix: -c
-  upload_files:
-    type: File[]
+  upload_file:
+    type: File
     secondaryFiles: [ ".bai?", ".crai?" ]
     inputBinding:
       prefix: -f

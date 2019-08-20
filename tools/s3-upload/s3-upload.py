@@ -47,13 +47,13 @@ def get_payload(filename_to_file, payload_jsons):
 def main(args):
     filename_to_file = {}
     sfile_filename_to_file = {}
-    for f in args.upload_files:
-        filename_to_file[os.path.basename(f)] = f
-        # add secondary files if any
-        for sf in ('.bai', '.crai'):
-            sfile = "%s%s" % (f, sf)
-            if os.path.isfile(sfile):
-                sfile_filename_to_file[os.path.basename(sfile)] = sfile
+    f = args.upload_file
+    filename_to_file[os.path.basename(f)] = f
+    # add secondary files if any
+    for sf in ('.bai', '.crai'):
+        sfile = "%s%s" % (f, sf)
+        if os.path.isfile(sfile):
+            sfile_filename_to_file[os.path.basename(sfile)] = sfile
 
     if sfile_filename_to_file:
         filename_to_file = {**filename_to_file, **sfile_filename_to_file}
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--bundle-type", dest="bundle_type")
     parser.add_argument("-p", "--payload-jsons", dest="payload_jsons", type=str, nargs='+')
     parser.add_argument("-c", "--s3-credential-file", dest="s3_credential_file")
-    parser.add_argument("-f", "--upload-files", dest="upload_files", type=str, nargs='+')
+    parser.add_argument("-f", "--upload-file", dest="upload_file")
     args = parser.parse_args()
 
     main(args)
