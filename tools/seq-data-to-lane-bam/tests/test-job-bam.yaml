@@ -1,7 +1,7 @@
 seq_rg_json:
   class: File
   path: input/seq_rg.json
-seq_files_dir:
-  class: Directory
-  location: input
+seq_files:
+  - class: File
+    path: input/test_rg_3.bam
 seq_format: "BAM"

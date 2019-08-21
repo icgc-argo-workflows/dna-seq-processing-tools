@@ -1,7 +1,17 @@
 seq_rg_json:
   class: File
   path: input/seq_rg-fq.json
-seq_files_dir:
-  class: Directory
-  location: input
+seq_files:
+  - class: File
+    path: input/D0RH0.2_r1.fq
+  - class: File
+    path: input/D0RH0.2_r2.fq
+  - class: File
+    path: input/D0RE2.1_r1.fq
+  - class: File
+    path: input/D0RE2.1_r2.fq
+  - class: File
+    path: input/C0HVY.2_r1.fq
+  - class: File
+    path: input/C0HVY.2_r2.fq
 seq_format: "FASTQ"

@@ -5,31 +5,21 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:0.1.1'
+  dockerPull: 'quay.io/icgc-argo/seq-data-to-lane-bam:seq-data-to-lane-bam.update'
 
 baseCommand: [ 'seq-data-to-lane-bam.py' ]
 
 inputs:
-  seq_format:
-    type: string
-    inputBinding:
-      position: 1
-      prefix: -i
   seq_rg_json:
     type: File
     inputBinding:
-      position: 2
+      position: 1
       prefix: -p
-  seq_files_dir:
-    type: Directory
+  seq_files:
+    type: File[]
     inputBinding:
-      position: 3
+      position: 2
       prefix: -d
-  picard_jar:
-    type: File?
-    inputBinding:
-      position: 4
-      prefix: -j
 
 
 outputs:
@@ -47,6 +37,17 @@ outputs:
            var data = JSON.parse(self[0].contents)["aligned_basename"];
            return data;
          }
+  bundle_type:
+    type: string
+    outputBinding:
+      glob: preprocess.json
+      loadContents: true
+      outputEval: |
+        ${
+           var data = JSON.parse(self[0].contents)["bundle_type"];
+           return data;
+         }
+
 
 stdout: preprocess.json
 
