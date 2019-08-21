@@ -5,6 +5,7 @@ import csv
 from argparse import ArgumentParser
 import json
 import datetime
+import copy
 
 def set_default(obj):
     if isinstance(obj, datetime.datetime):
@@ -113,22 +114,22 @@ def generate_metadata(args):
 
 def run_validation(args):
 
-    output = {}
-
     # generate the exp_json with experiment, read_group, file info
     if args.meta_format == 'tsv':
-        output["input_format"] = get_input_format(args.file_tsv)
+        input_seq_format = get_input_format(args.file_tsv)
         exp_json = generate_metadata(args)
     else:
         exp_json = args.exp_json
 
     # generate metadata from exp_json by reshaping the exp_json in condition of the input_format
     # cross check the read_group id for BAM
-    if output["input_format"] == "BAM":
+    if input_seq_format == "BAM":
         metadata = reshape_metadata(exp_json)
+        metadata["input_seq_format"] = "BAM"
 
-    elif output["input_format"] == "FASTQ":
-        metadata = exp_json
+    elif input_seq_format == "FASTQ":
+        metadata = copy.deepcopy(exp_json)
+        metadata["input_seq_format"] = "FASTQ"
 
     else:
         sys.exit('\nError: The input files should have format in BAM or FASTQ.')
@@ -146,9 +147,6 @@ def run_validation(args):
     # write the exp_rg.json file for later submission
     with open(args.exp_rg_json, 'w') as f:
         f.write(json.dumps(exp_json, default=set_default))
-
-    # write the parameter to stdout
-    print(json.dumps(output))
 
 
 if __name__ == "__main__":

@@ -2,10 +2,9 @@ class: CommandLineTool
 cwlVersion: v1.0
 id: metadata-validation
 requirements:
-- class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:0.1.1'
+  dockerPull: 'quay.io/icgc-argo/metadata-validation:metadata-validation.update'
 
 baseCommand: [ 'metadata-validation.py' ]
 
@@ -48,15 +47,3 @@ outputs:
     type: File
     outputBinding:
       glob: $(inputs.seq_rg_json_name)
-  input_format:
-    type: string
-    outputBinding:
-      glob: input_validation.json
-      loadContents: true
-      outputEval: |
-        ${
-           var data = JSON.parse(self[0].contents)["input_format"];
-           return data;
-         }
-
-stdout: input_validation.json
