@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:seq-data-to-lane-bam.update'
+  dockerPull: 'quay.io/icgc-argo/seq-data-to-lane-bam:seq-data-to-lane-bam.update'
 
 baseCommand: [ 'seq-data-to-lane-bam.py' ]
 
