@@ -6,7 +6,7 @@ requirements:
 - class: NetworkAccess
   networkAccess: true
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/s3-upload:s3-upload.init'
+  dockerPull: 'quay.io/icgc-argo/s3-upload:s3-upload.0.1.2'
 
 baseCommand: [ 's3-upload.py' ]
 
