@@ -2,9 +2,10 @@ class: CommandLineTool
 cwlVersion: v1.0
 id: bam-merge-sort-markdup
 requirements:
+- class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:0.1.1'
+  dockerPull: 'quay.io/icgc-argo/bam-merge-sort-markdup:bam-merge-sort-markdup.update'
 
 baseCommand: [ 'bam-merge-sort-markdup.py' ]
 
@@ -50,8 +51,18 @@ outputs:
     outputBinding:
       glob: $(inputs.aligned_basename).cram
     secondaryFiles: [.crai]
+  bundle_type:
+    type: string
+    outputBinding:
+      glob: stdout.json
+      loadContents: true
+      outputEval: |
+        ${
+           var data = JSON.parse(self[0].contents)["bundle_type"];
+           return data;
+         }
 
-
+stdout: stdout.json
 
 
 

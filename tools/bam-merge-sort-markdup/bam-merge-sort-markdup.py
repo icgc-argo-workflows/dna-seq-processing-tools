@@ -5,6 +5,7 @@ import sys
 import subprocess
 import argparse
 from multiprocessing import cpu_count
+import json
 
 
 def main():
@@ -48,7 +49,7 @@ def main():
         cmd.append('|'.join([merge, bai]))
 
     for c in cmd:
-        print('command: %s' % c)
+        # print('command: %s' % c)
         stdout, stderr, p, success = '', '', None, True
         try:
             p = subprocess.Popen([c],
@@ -64,11 +65,15 @@ def main():
             print('Execution failed, none zero code returned.', file=sys.stderr)
             success = False
 
-        print(stdout.decode("utf-8"))
-        print(stderr.decode("utf-8"), file=sys.stderr)
+        # print(stdout.decode("utf-8"))
+        # print(stderr.decode("utf-8"), file=sys.stderr)
 
         if not success:
             sys.exit(p.returncode if p.returncode else 1)
+
+    # write the parameter to stdout
+    output = {"bundle_type": "dna_alignment"}
+    print(json.dumps(output))
 
 
 if __name__ == "__main__":
