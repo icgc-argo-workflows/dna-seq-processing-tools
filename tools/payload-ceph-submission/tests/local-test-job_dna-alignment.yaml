@@ -1,0 +1,11 @@
+metadata:
+  class: File
+  location: input/seq_rg.json
+payload:
+  class: File
+  path: input/dna_alignment.test.json
+credentials_file:
+  class: File
+  path: input/fake-credentials
+endpoint_url: "https://object.cancercollaboratory.org:9080"
+bucket_name: "argo-test"
