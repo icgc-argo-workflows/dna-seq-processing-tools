@@ -6,7 +6,7 @@ requirements:
   networkAccess: true
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/payload-ceph-submission:payload-ceph-submission.initial'
+  dockerPull: 'quay.io/icgc-argo/payload-ceph-submission:payload-ceph-submission.0.1.2'
 - class: EnvVarRequirement
   envDef:
     - envName: "AWS_SHARED_CREDENTIALS_FILE"
