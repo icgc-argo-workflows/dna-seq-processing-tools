@@ -1,0 +1,13 @@
+seq_files:
+- class: File
+  path: input/C0HVY.2_r1.fq
+- class: File
+  path: input/C0HVY.2_r2.fq
+- class: File
+  path: input/D0RE2.1_r1.fq
+- class: File
+  path: input/D0RE2.1_r2.fq
+- class: File
+  path: input/D0RH0.2_r1.fq
+- class: File
+  path: input/D0RH0.2_r2.fq
