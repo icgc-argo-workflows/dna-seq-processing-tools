@@ -18,6 +18,27 @@ def get_uuid5(bid, fid):
     uuid5 = str(uuid.uuid5(uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"), "%s/%s" % (bid, fid)))
     return uuid5
 
+def run_cmd(cmd):
+    stdout, stderr, p, success = '', '', None, True
+    try:
+        p = subprocess.Popen(cmd,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             shell=True)
+        p.communicate()
+    except Exception as e:
+        print('Execution failed: %s' % e)
+        success = False
+
+    if p and p.returncode != 0:
+        print('Execution failed, none zero code returned. %s' % p.returncode)
+        success = False
+
+    if not success:
+        sys.exit(p.returncode if p.returncode else 1)
+
+    return
+
 
 def main(args):
     with open(args.metadata_json, 'r') as f:
@@ -34,7 +55,13 @@ def main(args):
                 for seq_file in args.seq_files:
                     if not _file.get('name') in seq_file: continue
                     if not os.path.isfile(seq_file): sys.exit('\n The file: %s do not exist!' % seq_file)
-                    file_with_path.append(seq_file)
+                    if seq_file.endswith(".bz2"):
+                        seq_file_unzip = os.path.join(os.environ["TMPDIR"], _file.get('name').replace('.bz2', ''))
+                        cmd = 'bunzip2 -k -c %s > %s' % (seq_file, seq_file_unzip)
+                        run_cmd(cmd)
+                        file_with_path.append(seq_file_unzip)
+                    else:
+                        file_with_path.append(seq_file)
 
             # detect whether there are more than two fastq files for each read_group
             if not len(file_with_path) == 2:
