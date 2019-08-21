@@ -4,7 +4,7 @@ id: bwa-mem-aligner
 requirements:
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/dna-seq-processing-tools:0.1.1'
+  dockerPull: 'quay.io/icgc-argo/bwa-mem-aligner:bwa-mem-aligner.0.1.2'
 
 baseCommand: [ 'bwa-mem-aligner.py' ]
 
