@@ -7,11 +7,6 @@ import subprocess
 from argparse import ArgumentParser
 import uuid
 
-"""
-Major steps:
-- convert input Seq to unaligned BAM for each read group
-"""
-
 
 def run_cmd(cmd):
     stdout, stderr, p, success = '', '', None, True
@@ -60,12 +55,10 @@ def main(args):
     }
 
     # generate object_id
-    for key, val in payload['files'].items():
+    for key, val in payload.get('files', {}).items():  # some payloads may not have file
         val['object_id'] = get_uuid5(payload['id'], val['name'])
 
     payload_fname = ".".join([payload['id'], 'json'])
-    with open(payload_fname, 'w') as f:
-        f.write(json.dumps(payload))
 
     # payload bucket basepath
     specimen_type = 'normal' if 'normal' in metadata.get("specimen_type", '').lower() else 'tumour'
@@ -78,6 +71,8 @@ def main(args):
 
     if payload['type'] in ['sequencing_experiment', 'dna_alignment_qc']:
         payload_object = os.path.join(payload_bucket_basepath, payload_fname)
+        if payload['type'] == 'sequencing_experiment':
+            payload.pop('info', None)  # sequencing_experiment does not need it
     elif payload['type'] in ['lane_seq_submission', 'lane_seq_qc']:
         payload_object = os.path.join(payload_bucket_basepath, payload['inputs']['read_group_submitter_id'], payload_fname)
 
@@ -87,6 +82,9 @@ def main(args):
 
     else:
         sys.exit('Unknown payload type!')
+
+    with open(payload_fname, 'w') as f:
+        f.write(json.dumps(payload, indent=2))
 
     cmd = "aws --endpoint-url %s s3 cp %s s3://%s" % (args.endpoint_url, payload_fname, payload_object)
     run_cmd(cmd)
