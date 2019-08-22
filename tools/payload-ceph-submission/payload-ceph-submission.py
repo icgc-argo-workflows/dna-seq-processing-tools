@@ -59,8 +59,6 @@ def main(args):
         val['object_id'] = get_uuid5(payload['id'], val['name'])
 
     payload_fname = ".".join([payload['id'], 'json'])
-    with open(payload_fname, 'w') as f:
-        f.write(json.dumps(payload))
 
     # payload bucket basepath
     specimen_type = 'normal' if 'normal' in metadata.get("specimen_type", '').lower() else 'tumour'
@@ -84,6 +82,9 @@ def main(args):
 
     else:
         sys.exit('Unknown payload type!')
+
+    with open(payload_fname, 'w') as f:
+        f.write(json.dumps(payload, indent=2))
 
     cmd = "aws --endpoint-url %s s3 cp %s s3://%s" % (args.endpoint_url, payload_fname, payload_object)
     run_cmd(cmd)
