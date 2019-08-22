@@ -7,11 +7,6 @@ import subprocess
 from argparse import ArgumentParser
 import uuid
 
-"""
-Major steps:
-- convert input Seq to unaligned BAM for each read group
-"""
-
 
 def run_cmd(cmd):
     stdout, stderr, p, success = '', '', None, True
@@ -60,7 +55,7 @@ def main(args):
     }
 
     # generate object_id
-    for key, val in payload['files'].items():
+    for key, val in payload.get('files', {}).items():  # some payloads may not have file
         val['object_id'] = get_uuid5(payload['id'], val['name'])
 
     payload_fname = ".".join([payload['id'], 'json'])
