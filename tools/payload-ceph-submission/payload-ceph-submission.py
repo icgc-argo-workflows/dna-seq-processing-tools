@@ -73,6 +73,8 @@ def main(args):
 
     if payload['type'] in ['sequencing_experiment', 'dna_alignment_qc']:
         payload_object = os.path.join(payload_bucket_basepath, payload_fname)
+        if payload['type'] == 'sequencing_experiment':
+            payload.pop('info', None)  # sequencing_experiment does not need it
     elif payload['type'] in ['lane_seq_submission', 'lane_seq_qc']:
         payload_object = os.path.join(payload_bucket_basepath, payload['inputs']['read_group_submitter_id'], payload_fname)
 
