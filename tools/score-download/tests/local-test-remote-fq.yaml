@@ -1,4 +1,4 @@
-files_tsv:
+file_tsv:
   class: File
   path: input/file-fq.sm.tsv
 repository: collab
