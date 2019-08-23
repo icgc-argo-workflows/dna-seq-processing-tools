@@ -21,8 +21,8 @@ def main(args):
     if args.seq_files:  # if provided as local file
         return  # do nothing
     else:
-        if not (args.files_tsv and args.repository and args.token_file):
-            sys.exit('Error, when seq-files is missing must provide files-tsv, repository and token-file')
+        if not (args.file_tsv and args.repository and args.token_file):
+            sys.exit('Error, when seq-files is missing must provide file-tsv, repository and token-file')
 
         # read access token and set ENV variable
         with open(args.token_file, 'r') as f:
@@ -30,7 +30,7 @@ def main(args):
 
         files_to_download = set()
         # read TSV to get all unique files for download
-        with open(args.files_tsv) as f:
+        with open(args.file_tsv) as f:
             rd = csv.DictReader(f, delimiter="\t")
             for row in rd:
                 files_to_download.add((row['local_path'], row['name']))
@@ -62,7 +62,7 @@ def main(args):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-s", "--seq-files", dest="seq_files", nargs="+")
-    parser.add_argument("-f", "--files-tsv", dest="files_tsv")
+    parser.add_argument("-f", "--file-tsv", dest="file_tsv")
     parser.add_argument("-r", "--repository", dest="repository", choices=['collab','aws'])
     parser.add_argument("-t", "--token-file", dest="token_file")
     args = parser.parse_args()

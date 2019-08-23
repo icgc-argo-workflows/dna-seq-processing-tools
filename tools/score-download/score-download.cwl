@@ -9,7 +9,7 @@ requirements:
 - class: InitialWorkDirRequirement
   listing: $(inputs.seq_files)
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/score-download:score-download.0.1.2'
+  dockerPull: 'quay.io/icgc-argo/score-download:score-download.0.1.3'
 
 baseCommand: [ 'score-download.py' ]
 
@@ -19,7 +19,7 @@ inputs:
     default: []
     inputBinding:
       prefix: -s
-  files_tsv:
+  file_tsv:
     type: File?
     inputBinding:
       prefix: -f
