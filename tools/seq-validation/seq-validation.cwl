@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/seq-validation:seq-validation.0.1.2'
+  dockerPull: 'quay.io/icgc-argo/seq-validation:seq-validation.0.1.3'
 
 baseCommand: [ 'seq-validation.py' ]
 
