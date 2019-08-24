@@ -53,7 +53,7 @@ def main(args):
             file_with_path = []
             for _file in files:
                 for seq_file in args.seq_files:
-                    if not _file.get('name') in seq_file: continue
+                    if _file.get('name') != os.path.basename(seq_file): continue
                     if not os.path.isfile(seq_file): sys.exit('\n The file: %s do not exist!' % seq_file)
                     if seq_file.endswith(".bz2"):
                         seq_file_unzip = os.path.join(os.environ["TMPDIR"], _file.get('name').replace('.bz2', ''))
@@ -97,7 +97,7 @@ def main(args):
 
         for _file in files:
             for seq_file in args.seq_files:
-                if not _file.get('name') in seq_file: continue
+                if _file.get('name') != os.path.basename(seq_file): continue
                 file_path = seq_file
             if not os.path.isfile(file_path): sys.exit('\n The file: %s do not exist!' % file_path)
 

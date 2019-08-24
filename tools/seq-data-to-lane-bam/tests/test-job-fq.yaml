@@ -14,4 +14,3 @@ seq_files:
     path: input/C0HVY.2_r1.fq
   - class: File
     path: input/C0HVY.2_r2.fq
-seq_format: "FASTQ"

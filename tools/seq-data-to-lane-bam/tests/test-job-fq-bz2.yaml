@@ -6,4 +6,3 @@ seq_files:
     path: input/C0HVY.2_r1.fq.bz2
   - class: File
     path: input/C0HVY.2_r2.fq.bz2
-seq_format: "FASTQ"
