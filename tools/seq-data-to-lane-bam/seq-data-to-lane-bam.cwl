@@ -20,7 +20,12 @@ inputs:
     inputBinding:
       position: 2
       prefix: -d
-
+  reads_max_discard_fraction:
+    type: float?
+    default: 0.05
+    inputBinding:
+      position: 3
+      prefix: -m
 
 outputs:
   lane_bams:
