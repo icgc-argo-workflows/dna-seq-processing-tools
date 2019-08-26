@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/seq-data-to-lane-bam:seq-data-to-lane-bam.0.1.2'
+  dockerPull: 'quay.io/icgc-argo/seq-data-to-lane-bam:seq-data-to-lane-bam.0.1.3'
 
 baseCommand: [ 'seq-data-to-lane-bam.py' ]
 
@@ -20,7 +20,12 @@ inputs:
     inputBinding:
       position: 2
       prefix: -d
-
+  reads_max_discard_fraction:
+    type: float?
+    default: 0.05
+    inputBinding:
+      position: 3
+      prefix: -m
 
 outputs:
   lane_bams:

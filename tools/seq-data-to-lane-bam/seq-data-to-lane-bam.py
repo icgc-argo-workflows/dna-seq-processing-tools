@@ -53,7 +53,7 @@ def main(args):
             file_with_path = []
             for _file in files:
                 for seq_file in args.seq_files:
-                    if not _file.get('name') in seq_file: continue
+                    if _file.get('name') != os.path.basename(seq_file): continue
                     if not os.path.isfile(seq_file): sys.exit('\n The file: %s do not exist!' % seq_file)
                     if seq_file.endswith(".bz2"):
                         seq_file_unzip = os.path.join(os.environ["TMPDIR"], _file.get('name').replace('.bz2', ''))
@@ -97,7 +97,7 @@ def main(args):
 
         for _file in files:
             for seq_file in args.seq_files:
-                if not _file.get('name') in seq_file: continue
+                if _file.get('name') != os.path.basename(seq_file): continue
                 file_path = seq_file
             if not os.path.isfile(file_path): sys.exit('\n The file: %s do not exist!' % file_path)
 
@@ -119,6 +119,7 @@ def main(args):
                                 'REMOVE_ALIGNMENT_INFORMATION=true',
                                 'OUTPUT_BY_READGROUP=true',
                                 'VALIDATION_STRINGENCY=LENIENT',
+                                'MAX_DISCARD_FRACTION=%s' % args.max_discard_fraction,
                                 'O=%s' % cwd], check=True)
             except Exception as e:
                 sys.exit('\n%s: RevertSam failed: %s' %(e, file_path))
@@ -144,6 +145,10 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--seq_files", dest="seq_files", help="Seq files to submit and process", type=str, nargs='+')
     parser.add_argument("-p", "--metadata_json", dest="metadata_json",
                         help="json file containing experiment, read_group and file information for sequence preprocessing")
+    parser.add_argument("-m", "--max_discard_fraction",
+                        dest="max_discard_fraction",
+                        default=0.05, type=float,
+                        help="Max fraction of reads allowed to be discarded when reverting aligned BAM to unaligned")
     args = parser.parse_args()
 
     main(args)

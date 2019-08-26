@@ -4,4 +4,4 @@ seq_rg_json:
 seq_files:
   - class: File
     path: input/test_rg_3.bam
-seq_format: "BAM"
+reads_max_discard_fraction: 0.02
