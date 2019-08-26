@@ -13,7 +13,7 @@ def bam_check(metadata, seq_files):
     for _file in files:
         file_with_path = None
         for seq_file in seq_files:
-            if not _file.get('name') in seq_file: continue
+            if _file.get('name') != os.path.basename(seq_file): continue
             file_with_path = seq_file
         if not file_with_path or not os.path.isfile(file_with_path):
             sys.exit('\n The file: %s do not exist!' % file_with_path)
