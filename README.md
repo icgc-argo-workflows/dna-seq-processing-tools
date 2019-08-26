@@ -35,9 +35,8 @@ we'd like to follow additional guidelines.
    to point to tool's development branch.
 6. Create PR for review when ready.
 7. Review and update as needed until all tests (Travis + local tests) pass and PR approved.
-8. Merge feature branch to master, and delete the branch.
-9. When ready for a new release, create a new release from the current master branch, use the same tag as
-   the tool development branch, eg `score-download.0.1.4`.
+8. Merge feature branch to master, and delete the branch. Create a new release from the current master branch,
+   use the same tag as the tool development branch that was just merged and deleted, eg `score-download.0.1.4`.
 10. Note that if the work involves changing the sharded base docker (ie, /docker/Dockerfile) with new or
    updated installed dependencies all tools that use the base docker should be updated individually going
    through the above process.
