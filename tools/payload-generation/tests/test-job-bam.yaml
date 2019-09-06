@@ -1,8 +1,0 @@
-payload_schema_version: 0.1.0-rc.1
-input_metadata_lane_seq:
-  class: File
-  location: input/seq_rg.json
-bundle_type: "lane_seq_submission"
-file_to_upload:
-  class: File
-  path: input/D0RE2_1.lane.bam
