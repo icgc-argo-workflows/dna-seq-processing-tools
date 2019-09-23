@@ -3,7 +3,7 @@
 
 This repository keeps a collect of data processing tools for DNA-Seq analysis. All tools are defined using Common Workflow Language (CWL).
 
-Eevery tool is self-sufficient, can be independently developed, tested, released and used. This clean isolation allows maximum flexibility, maintainability and portability.
+Every tool is self-sufficient, can be independently developed, tested, released and used. This clean isolation allows maximum flexibility, maintainability and portability.
 
 These tools are building blocks to create multi-step data analysis workflows as needed, like the
 workflows here: https://github.com/icgc-argo/dna-seq-processing-wfs
