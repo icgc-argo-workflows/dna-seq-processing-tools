@@ -63,13 +63,13 @@ def main():
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE,
                                  shell=True)
-            p.communicate()
+            stdout, stderr = p.communicate()
         except Exception as e:
-            print('Execution failed: %s' % e, file=sys.stderr)
+            print('Execution failed: %s' % e)
             success = False
 
         if p and p.returncode != 0:
-            print('Execution failed, none zero code returned.', file=sys.stderr)
+            print('Execution failed, none zero code returned. Error msg: %s', stderr)
             success = False
 
 
