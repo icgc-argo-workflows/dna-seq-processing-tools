@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/bam-merge-sort-markdup:bam-merge-sort-markdup.0.1.3'
+  dockerPull: 'quay.io/icgc-argo/bam-merge-sort-markdup:bam-merge-sort-markdup.test'
 
 baseCommand: [ 'bam-merge-sort-markdup.py' ]
 
@@ -28,13 +28,17 @@ inputs:
     inputBinding:
       prefix: -b
   markdup:
-    type: boolean
+    type: boolean?
     inputBinding:
       prefix: -d
   output_format:
     type: string[]?
     inputBinding:
       prefix: -o
+  lossy:
+    type: boolean?
+    inputBinding:
+      prefix: -l
 
 outputs:
   aligned_bam:
