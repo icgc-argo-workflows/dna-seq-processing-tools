@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/bam-merge-sort-markdup:bam-merge-sort-markdup.test'
+  dockerPull: 'quay.io/icgc-argo/bam-merge-sort-markdup:bam-merge-sort-markdup.0.1.3'
 
 baseCommand: [ 'bam-merge-sort-markdup.py' ]
 
