@@ -57,21 +57,20 @@ def main():
 
     for c in cmd:
 
-        stdout, stderr, p, success = '', '', None, True
+        stderr, p, success = '', None, True
         try:
             p = subprocess.Popen([c],
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE,
                                  shell=True)
-            stdout, stderr = p.communicate()
+            stderr = p.communicate()[1].decode('utf-8')
         except Exception as e:
-            print('Execution failed: %s' % e)
+            print('Execution failed: %s' % e, file=sys.stderr)
             success = False
 
         if p and p.returncode != 0:
-            print('Execution failed, none zero code returned. Error msg: %s', stderr)
+            print('Execution failed, none zero code returned. \nSTDERR: %s' % repr(stderr), file=sys.stderr)
             success = False
-
 
         if not success:
             sys.exit(p.returncode if p.returncode else 1)
