@@ -20,7 +20,7 @@ def main():
     parser.add_argument("-n", "--cpus", dest='cpus', type=int, default=cpu_count())
     parser.add_argument("-d", "--mdup", dest='mdup', action='store_true')
     parser.add_argument("-l", "--lossy", dest='lossy', action='store_true')
-    parser.add_argument("-o", "--output-format", dest='output_format', nargs='+', choices=['bam', 'cram'])
+    parser.add_argument("-o", "--output-format", dest='output_format', choices=['bam', 'cram'], default=['cram'], nargs='+')
 
     args = parser.parse_args()
 
