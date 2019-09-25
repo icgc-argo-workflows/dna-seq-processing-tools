@@ -29,6 +29,7 @@ inputs:
       prefix: -b
   markdup:
     type: boolean?
+    default: true
     inputBinding:
       prefix: -d
   output_format:
@@ -37,6 +38,7 @@ inputs:
       prefix: -o
   lossy:
     type: boolean?
+    default: false
     inputBinding:
       prefix: -l
 
