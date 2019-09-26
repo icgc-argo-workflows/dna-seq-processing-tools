@@ -5,7 +5,7 @@ requirements:
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/bam-merge-sort-markdup:bam-merge-sort-markdup.0.1.2'
+  dockerPull: 'quay.io/icgc-argo/bam-merge-sort-markdup:bam-merge-sort-markdup.0.1.3'
 
 baseCommand: [ 'bam-merge-sort-markdup.py' ]
 
@@ -26,28 +26,34 @@ inputs:
   aligned_basename:
     type: string
     inputBinding:
-      prefix: -o
+      prefix: -b
   markdup:
-    type: boolean
+    type: boolean?
+    default: true
     inputBinding:
       prefix: -d
-  cram:
-    type: boolean
+  output_format:
+    type: string[]?
     inputBinding:
-      prefix: -c
+      prefix: -o
+  lossy:
+    type: boolean?
+    default: false
+    inputBinding:
+      prefix: -l
 
 outputs:
   aligned_bam:
-    type: File
+    type: ["null", File]
     outputBinding:
       glob: $(inputs.aligned_basename).bam
     secondaryFiles: [.bai]
-  aligned_bam_duplicate_metrics:
-    type: File
+  aligned_duplicate_metrics:
+    type: ["null", File]
     outputBinding:
-      glob: $(inputs.aligned_basename).bam.duplicates-metrics.txt
+      glob: $(inputs.aligned_basename).duplicates-metrics.txt
   aligned_cram:
-    type: File
+    type: ["null", File]
     outputBinding:
       glob: $(inputs.aligned_basename).cram
     secondaryFiles: [.crai]
