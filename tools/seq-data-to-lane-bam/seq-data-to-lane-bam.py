@@ -10,28 +10,25 @@ import glob
 import datetime
 from argparse import ArgumentParser
 
-"""
-Major steps:
-- convert input Seq to unaligned BAM for each read group
-"""
+
 def get_uuid5(bid, fid):
     uuid5 = str(uuid.uuid5(uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"), "%s/%s" % (bid, fid)))
     return uuid5
 
 def run_cmd(cmd):
-    stdout, stderr, p, success = '', '', None, True
+    p, success = None, True
     try:
-        p = subprocess.Popen(cmd,
+        p = subprocess.run(cmd,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
                              shell=True)
-        p.communicate()
     except Exception as e:
         print('Execution failed: %s' % e)
         success = False
 
     if p and p.returncode != 0:
-        print('Execution failed, none zero code returned. %s' % p.returncode)
+        print('Error occurred, return code: %s. Details: %s' % \
+                (p.returncode, p.stderr.decode("utf-8")), file=sys.stderr)
         success = False
 
     if not success:
@@ -48,7 +45,7 @@ def main(args):
     if metadata.get("input_seq_format") == 'FASTQ':
         readGroups = metadata.get('read_groups')
         for rg in readGroups:
-            readGroupId = rg.get('submitter_id')
+            readGroupId = rg.get('submitter_read_group_id')
             files = rg.get('files')
             file_with_path = []
             for _file in files:
@@ -68,7 +65,7 @@ def main(args):
                 sys.exit('\nThe number of fastq files is not equal to 2 for %s' % readGroupId)
 
             rg_args = ['READ_GROUP_NAME=%s' % readGroupId,
-                       'SAMPLE_NAME=%s' % metadata.get('sample_submitter_id'),
+                       'SAMPLE_NAME=%s' % metadata.get('submitter_sample_id'),
                        'LIBRARY_NAME=%s' % rg.get('library_name'),
                        'PLATFORM_UNIT=%s' % rg.get('platform_unit'),
                        'PLATFORM=%s' % metadata.get('platform')]
@@ -133,7 +130,7 @@ def main(args):
     else:
         sys.exit('\n%s: Input files format are not FASTQ or BAM')
 
-    uuid_prefix = get_uuid5(metadata.get('program'), metadata.get('sample_submitter_id'))
+    uuid_prefix = get_uuid5(metadata.get('program_id'), metadata.get('submitter_sample_id'))
     output['aligned_basename'] = '.'.join([uuid_prefix, str(metadata.get('read_group_count')), datetime.date.today().strftime("%Y%m%d"), 'wgs', 'grch38'])
     output['bundle_type'] = "lane_seq_submission"
 
