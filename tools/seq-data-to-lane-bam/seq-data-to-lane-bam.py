@@ -131,7 +131,8 @@ def main(args):
         sys.exit('\n%s: Input files format are not FASTQ or BAM')
 
     uuid_prefix = get_uuid5(metadata.get('program_id'), metadata.get('submitter_sample_id'))
-    output['aligned_basename'] = '.'.join([uuid_prefix, str(metadata.get('read_group_count')), datetime.date.today().strftime("%Y%m%d"), 'wgs', 'grch38'])
+    library_strategy = metadata.get('library_strategy').lower()
+    output['aligned_basename'] = '.'.join([uuid_prefix, str(metadata.get('read_group_count')), datetime.date.today().strftime("%Y%m%d"), library_strategy, 'grch38'])
     output['bundle_type'] = "lane_seq_submission"
 
     # write the parameter to stdout
