@@ -52,7 +52,6 @@ def build_entity_map(entity_tsv, pointer_id):
             if not entity_dict.get(l[pointer_id]): entity_dict[l[pointer_id]] = []
             sub_entity_dict = {}
             for field in reader.fieldnames:
-                # if field == pointer_id and not field == "submitter_id": continue
                 if field in ['read_group_count', 'read_length_r1', 'read_length_r2', 'insert_size', 'size']:
                     sub_entity_dict[field] = int(l.get(field))
                 elif l.get(field) in ['True', 'true', 'TRUE']:
@@ -77,14 +76,14 @@ def get_input_format(file_tsv):
 
 def generate_metadata(args):
 
-    # build {read_group_submitter_id: [files]} map
-    rg_file_map = build_entity_map(args.file_tsv, "read_group_submitter_id")
+    # build {submitter_read_group_id: [files]} map
+    rg_file_map = build_entity_map(args.file_tsv, "submitter_read_group_id")
 
-    # build {experiment_submitter_id: [readgroups]} map
-    exp_rg_map = build_entity_map (args.rg_tsv, "experiment_submitter_id")
+    # build {submitter_sequencing_experiment_id: [readgroups]} map
+    exp_rg_map = build_entity_map (args.rg_tsv, "submitter_sequencing_experiment_id")
 
     # build metadata based on schema
-    exp_json_map = build_entity_map(args.exp_tsv, "submitter_id")
+    exp_json_map = build_entity_map(args.exp_tsv, "submitter_sequencing_experiment_id")
 
     # only permit one experiment input
     if not len(exp_json_map) == 1: sys.exit('\nError: The input should only contain one experiment!')
@@ -94,15 +93,15 @@ def generate_metadata(args):
     for key, val in exp_json_map.items():
         exp_id.add(key)
         exp_json = val[0]
-        if not exp_rg_map.get(exp_json.get('submitter_id')):
+        if not exp_rg_map.get(exp_json.get('submitter_sequencing_experiment_id')):
             sys.exit('\nError: The input experiment.tsv and read_group.tsv have mismatch experiment IDs!')
-        exp_json['read_groups'] = exp_rg_map.get(exp_json.get('submitter_id'))
+        exp_json['read_groups'] = exp_rg_map.get(exp_json.get('submitter_sequencing_experiment_id'))
         rg_id = set()
         for rg in exp_json['read_groups']:
-            rg_id.add(rg.get('submitter_id'))
-            if not rg_file_map.get(rg.get('submitter_id')):
+            rg_id.add(rg.get('submitter_read_group_id'))
+            if not rg_file_map.get(rg.get('submitter_read_group_id')):
                 sys.exit('\nError: The input read_group.tsv and file.tsv have mismatch read_group IDs!')
-            rg['files'] = rg_file_map.get(rg.get('submitter_id'))
+            rg['files'] = rg_file_map.get(rg.get('submitter_read_group_id'))
 
         # validate read_group ids match across read_group.tsv and file.tsv
         if not rg_id == set(rg_file_map.keys()): sys.exit('\nError: The input read_group.tsv and file.tsv have mismatch read_group IDs!')
@@ -136,7 +135,7 @@ def run_validation(args):
 
 
     with open(args.metadata_json, 'w') as f:
-        f.write(json.dumps(metadata, default=set_default))
+        f.write(json.dumps(metadata, default=set_default, indent=2))
 
 
     # remove files from the exp_json
@@ -146,7 +145,7 @@ def run_validation(args):
 
     # write the exp_rg.json file for later submission
     with open(args.exp_rg_json, 'w') as f:
-        f.write(json.dumps(exp_json, default=set_default))
+        f.write(json.dumps(exp_json, default=set_default, indent=2))
 
 
 if __name__ == "__main__":
