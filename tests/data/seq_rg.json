@@ -15,7 +15,7 @@
       "read_groups": [
         {
           "type": "read_group",
-          "submitter_id": "C0HVY.2",
+          "submitter_read_group_id": "C0HVY.2",
           "platform_unit": "74_8",
           "is_paired_end": true,
           "read_length_r1": 150,
@@ -23,11 +23,11 @@
           "insert_size": 298,
           "sample_barcode": "",
           "library_name": "Pond-147580",
-          "experiment_submitter_id": "TEST_EXP"
+          "submitter_sequencing_experiment_id": "TEST_EXP"
         },
         {
           "type": "read_group",
-          "submitter_id": "D0RE2.1",
+          "submitter_read_group_id": "D0RE2.1",
           "platform_unit": "74_8",
           "is_paired_end": true,
           "read_length_r1": 150,
@@ -35,11 +35,11 @@
           "insert_size": 298,
           "sample_barcode": "",
           "library_name": "Pond-147580",
-          "experiment_submitter_id": "TEST_EXP"
+          "submitter_sequencing_experiment_id": "TEST_EXP"
         },
         {
           "type": "read_group",
-          "submitter_id": "D0RH0.2",
+          "submitter_read_group_id": "D0RH0.2",
           "platform_unit": "74_8",
           "is_paired_end": true,
           "read_length_r1": 150,
@@ -47,12 +47,12 @@
           "insert_size": 298,
           "sample_barcode": "",
           "library_name": "Pond-147580",
-          "experiment_submitter_id": "TEST_EXP"
+          "submitter_sequencing_experiment_id": "TEST_EXP"
         }
       ],
       "name": "test_rg_3.bam",
       "size": 133684363564,
-      "read_group_submitter_id": [
+      "submitter_read_group_id": [
         "D0RH0.2",
         "C0HVY.2",
         "D0RE2.1"

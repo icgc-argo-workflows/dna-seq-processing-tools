@@ -20,7 +20,7 @@ def bam_check(metadata, seq_files):
 
         rg_metadata = set()
         for rg in _file.get('read_groups'):
-            rg_metadata.add(rg.get('submitter_id'))
+            rg_metadata.add(rg.get('submitter_read_group_id'))
 
         # retrieve the @RG from BAM header
         try:
