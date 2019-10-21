@@ -11,8 +11,7 @@ ref_genome:
 cpus: 1
 aligned_basename: "HCC1143.3.20190726.wgs.grch38"
 markdup: true
-lossy: true
+lossy: false
 output_format:
   - cram
-  - bam
 
