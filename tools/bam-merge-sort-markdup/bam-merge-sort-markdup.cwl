@@ -43,20 +43,20 @@ inputs:
       prefix: -l
 
 outputs:
-  aligned_bam:
-    type: ["null", File]
+  aligned_seq:
+    type:
+      - "null"
+      - type: array
+        items: File
     outputBinding:
-      glob: $(inputs.aligned_basename).bam
-    secondaryFiles: [.bai]
+      glob:
+        - '$(inputs.aligned_basename).bam'
+        - '$(inputs.aligned_basename).cram'
+    secondaryFiles: ['.bai', '.crai']
   aligned_duplicate_metrics:
     type: ["null", File]
     outputBinding:
       glob: $(inputs.aligned_basename).duplicates-metrics.txt
-  aligned_cram:
-    type: ["null", File]
-    outputBinding:
-      glob: $(inputs.aligned_basename).cram
-    secondaryFiles: [.crai]
   bundle_type:
     type: string
     outputBinding:
