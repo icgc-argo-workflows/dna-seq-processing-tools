@@ -123,6 +123,8 @@ def main(args):
 
             for filename in glob.glob(os.path.join(cwd, "*.bam")):
                 # bug here: should exclude the original input BAM
+                if os.path.basename(filename) == _file.get('name'): continue
+
                 # convert readGroupId to filename friendly
                 readGroupId = os.path.basename(filename).replace(".bam", "")
                 rg_fname = "".join([c if re.match(r"[a-zA-Z0-9\-_]", c) else "_" for c in readGroupId])
