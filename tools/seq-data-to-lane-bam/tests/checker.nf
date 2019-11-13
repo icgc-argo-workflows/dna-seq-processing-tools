@@ -29,15 +29,11 @@ params.reads_max_discard_fraction = -1
 
 include '../seq-data-to-lane-bam' params(params)
 
-Channel
-  .fromFilePairs(params.seq_files, checkIfExists: true)
-  .set { seq_files_ch }
-
 workflow {
   main:
     seqDataToLaneBamWf(
       file(params.seq_rg_json),
-      seq_files_ch,
+      file(params.seq_files),
       params.reads_max_discard_fraction
     )
     seqDataToLaneBamWf.out.lane_bams.view()
