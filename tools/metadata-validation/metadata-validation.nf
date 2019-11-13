@@ -33,7 +33,7 @@ params.seq_rg_json_name = "seq_rg-fq.json"
 
 
 process metadataValidation {
-  container 'quay.io/icgc-argo/metadata-validation:metadata-validation.0.1.3'
+  container 'quay.io/icgc-argo/metadata-validation:metadata-validation.0.1.3.1'
 
   input:
     val meta_format
@@ -45,8 +45,8 @@ process metadataValidation {
     val seq_rg_json_name
 
   output:
-    path "${seq_exp_json_name}"
-    path "${seq_rg_json_name}"
+    path "${seq_exp_json_name}", emit: payload
+    path "${seq_rg_json_name}", emit: metadata
 
   script:
     args_exp_json = exp_json.length() > 0 ? "-j ${exp_json}" : ""
