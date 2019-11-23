@@ -1,0 +1,5 @@
+{
+  "seq_rg_json": "input/seq_rg.json",
+  "seq_files": "input/test_rg_3.bam",
+  "reads_max_discard_fraction": 0.02
+}
