@@ -1,9 +1,9 @@
 {
-  "meta_format": "tsv",
-  "exp_json": "",
-  "exp_tsv": "input/experiment-fq.tsv",
-  "rg_tsv": "input/read_group-fq.tsv",
-  "file_tsv": "input/file-fq.tsv",
-  "seq_exp_json_name": "seq_exp-fq.json",
-  "seq_rg_json_name": "seq_rg-fq.json"
+    "meta_format": "tsv",
+    "exp_json": "",
+    "exp_tsv": "input/experiment-fq.tsv",
+    "rg_tsv": "input/read_group-fq.tsv",
+    "file_tsv": "input/file-fq.tsv",
+    "seq_exp_json_name": "seq_exp-fq.json",
+    "seq_rg_json_name": "seq_rg-fq.json"
 }
