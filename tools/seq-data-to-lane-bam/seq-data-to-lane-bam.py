@@ -122,7 +122,6 @@ def main(args):
                 sys.exit('\n%s: RevertSam failed: %s' %(e, file_path))
 
             for filename in glob.glob(os.path.join(cwd, "*.bam")):
-                # bug here: should exclude the original input BAM
                 if os.path.basename(filename) == _file.get('name'): continue
 
                 # convert readGroupId to filename friendly
