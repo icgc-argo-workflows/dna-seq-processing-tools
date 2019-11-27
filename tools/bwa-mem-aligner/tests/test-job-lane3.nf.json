@@ -1,0 +1,5 @@
+{
+    "input_bam": ["input/C0HVY_2.lane.bam", "input/D0RE2_1.lane.bam", "input/D0RH0_2.lane.bam"],
+    "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
+    "cpus": 3
+}
