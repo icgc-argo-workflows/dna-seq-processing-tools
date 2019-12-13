@@ -1,5 +1,4 @@
 {
-  "type": "sequencing_experiment",
   "program": "TEST-PRO",
   "submitter_sequencing_experiment_id": "TEST_EXP",
   "submitter_donor_id": "HCC1143",
@@ -7,6 +6,7 @@
   "submitter_specimen_id": "HCC1143_BAM_INPUT",
   "tumour_normal_designation": "Normal - EBV immortalized",
   "submitter_sample_id": "HCC1143_BAM_INPUT",
+  "sample_type": "DNA",
   "submitter_matched_normal_sample_id": "",
   "sequencing_center": "EXT",
   "platform": "Illumina",
@@ -16,7 +16,6 @@
   "read_group_count": 3,
   "read_groups": [
     {
-      "type": "read_group",
       "submitter_read_group_id": "C0HVY.2",
       "platform_unit": "74_8",
       "is_paired_end": true,
@@ -29,7 +28,6 @@
       "file_name_r2": "test_rg_3.bam"
     },
     {
-      "type": "read_group",
       "submitter_read_group_id": "D0RE2.1",
       "platform_unit": "74_8",
       "is_paired_end": true,
@@ -42,7 +40,6 @@
       "file_name_r2": "test_rg_3.bam"
     },
     {
-      "type": "read_group",
       "submitter_read_group_id": "D0RH0.2",
       "platform_unit": "74_8",
       "is_paired_end": true,
@@ -62,8 +59,7 @@
       "checksum": "e4fe8353ae62045642a2124909c5cfa5",
       "checksum_type": "md5",
       "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
-      "format": "BAM",
-      "type": "file"
+      "format": "BAM"
     }
   ]
 }
