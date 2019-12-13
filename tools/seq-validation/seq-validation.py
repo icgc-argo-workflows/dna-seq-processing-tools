@@ -5,48 +5,115 @@ import os
 from argparse import ArgumentParser
 import json
 import subprocess
+import hashlib
+
+
+def run_cmd(cmd):
+    p = subprocess.Popen(cmd,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         shell=True)
+    stdout, stderr = p.communicate()
+
+    return (p, stdout, stderr)
+
+
+def calculate_md5(file_path):
+    md5 = hashlib.md5()
+    with open(file_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b''):
+            md5.update(chunk)
+    return md5.hexdigest()
+
+
+def picard_validate_bam(bam_file):
+    # to be implemented
+    pass
+
+
+def get_rg_from_bam_header(bam_file, rg_info):
+    cmd = "samtools view -H %s |grep '^@RG'" % bam_file
+    p, stdout, stderr = run_cmd(cmd)
+    if p.returncode != 0:
+        sys.exit("Unable to run 'samtools' to get header, BAM file: %s. Error: %s" % (bam_file, stderr))
+
+    for r in stdout.decode("utf-8").splitlines():
+        rg = {}
+        for kv in r.split('\t'):
+            if ':' not in kv: continue
+            tokens = kv.split(':')
+            if tokens[0] in rg:
+                sys.exit("@RG header error, TAG '%s' occurred more than once in '%s' from BAM file: %s" % \
+                    (tokens[0], r, bam_file))
+
+            rg[tokens[0]] = ':'.join(tokens[1:])
+
+        rg_id = rg.get('ID')
+        if not rg_id: sys.exit("@RG header error, ID not defined in '%s' from BAM file: %s" % (r, bam_file))
+
+        rg['file'] = bam_file
+
+        if rg_id in rg_info: # same RG ID appeared before
+            sys.exit("Same RG ID (%s) exists more than once. First in '%s', second in '%s'" % \
+                (rg_id, rg_info[rg_id]['file'], rg['file']))
+
+        rg_info[rg_id] = rg
+
+
+def rg_info_validation(metadata, rg_info):
+    # to be implemented
+    print(rg_info)
+
+
+def file_check(metadata, seq_files):
+    file_name_to_path = {}
+    for f in seq_files:
+        file_name_to_path[os.path.basename(f)] = f
+
+    for f in metadata.get('files'):
+        file_name = f.get('name')
+
+        # file existence check: a.1
+        if not os.path.isfile(file_name_to_path.get(file_name, "")):
+            sys.exit("Specified file does not exist: %s" % file_name)
+
+        # file size check: a.2
+        actual_file_size = os.path.getsize(file_name_to_path.get(file_name))
+        if actual_file_size != f.get('size'):
+            sys.exit("Size of file '%s' does not match what specified in file TSV: %s vs %s" % \
+                (file_name, actual_file_size, f.get('size')))
+
+        # file md5sum check: a.3
+        actual_file_md5sum = calculate_md5(file_name_to_path.get(file_name))
+        if actual_file_md5sum != f.get('checksum'):
+            sys.exit("Md5sum of file '%s' does not match what specified in file TSV: %s vs %s" % \
+                (file_name, actual_file_md5sum, f.get('checksum')))
+
 
 def bam_check(metadata, seq_files):
+    file_name_to_path = {}
+    for f in seq_files:
+        file_name_to_path[os.path.basename(f)] = f
 
-    files = metadata.get('files')
+    rg_info = {}  # RG ID as first key, value would be key-value of RG fields
 
-    for _file in files:
-        file_with_path = None
-        for seq_file in seq_files:
-            if _file.get('name') != os.path.basename(seq_file): continue
-            file_with_path = seq_file
-        if not file_with_path or not os.path.isfile(file_with_path):
-            sys.exit('\n The file: %s do not exist!' % file_with_path)
+    for f in metadata.get('files'):
+        if not f.get('format') == 'BAM': continue
 
-        rg_metadata = set()
-        for rg in _file.get('read_groups'):
-            rg_metadata.add(rg.get('submitter_read_group_id'))
+        file_name = f.get('name')
+        bam_file = file_name_to_path.get(file_name)
 
-        # retrieve the @RG from BAM header
-        try:
-            header = subprocess.check_output(['samtools', 'view', '-H', file_with_path])
+        # run picard tool ValidateSamFile: b.12
+        picard_validate_bam(bam_file)
 
-        except Exception as e:
-            sys.exit('\n%s: Retrieve BAM header failed: %s' % (e, file_with_path))
+        # get @RG lines from BAM header
+        get_rg_from_bam_header(bam_file, rg_info)
 
-        # get @RG
-        header_array = header.decode('utf-8').rstrip().split('\n')
-        rg_bam = set()
-        for line in header_array:
-            if not line.startswith("@RG"): continue
-            rg_array = line.rstrip().split('\t')[1:]
-            for element in rg_array:
-                if not element.startswith("ID"): continue
-                rg_bam.add(element.replace("ID:", ""))
-
-        # compare the RG ids
-        if not rg_metadata == rg_bam:
-            sys.exit('\nThe read group Ids in metadata do not match with those in BAM file: %s!' % file_with_path)  # die fast
-
-    return True
+    # perform checks on read group metadata
+    rg_info_validation(metadata, rg_info)
 
 
-def fastq_check(args):
+def fastq_check(metadata, seq_files):
     return True
 
 
@@ -54,22 +121,17 @@ def run_validation(args):
     with open(args.metadata_json, 'r') as f:
         metadata = json.load(f)
 
-    output_json = {}
+    file_check(metadata, args.seq_files)
 
-    if metadata.get("input_seq_format") == "BAM":
-        valid = bam_check(metadata, args.seq_files)
-    elif metadata.get("input_seq_format") == "FASTQ":
-        valid = fastq_check(args)
-    else:
-        sys.exit('\nError: The input files should have format in BAM or FASTQ.')
+    bam_check(metadata, args.seq_files)
 
-    if not valid:
-        sys.exit('\nError: The input files failed at the validation.')
+    fastq_check(metadata, args.seq_files)
 
-    output_json['valid'] = 'valid'
+    # reaching this point means no error found, reporting valid
+    print(json.dumps({
+        'valid': 'valid'
+    }))
 
-    # write the parameter to stdout
-    print(json.dumps(output_json))
 
 if __name__ == "__main__":
     parser = ArgumentParser()
