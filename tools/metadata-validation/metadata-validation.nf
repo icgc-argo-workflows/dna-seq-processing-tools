@@ -32,16 +32,16 @@ process metadataValidation {
   container 'quay.io/icgc-argo/metadata-validation:metadata-validation.0.1.4.0'
 
   input:
-    file exp_tsv
-    file rg_tsv
-    file file_tsv
+    path exp_tsv
+    path rg_tsv
+    path file_tsv
 
   output:
     path "metadata.json", emit: metadata
 
   script:
     """
-    metadata-validation.py
+    metadata-validation.py \
       -e ${exp_tsv} \
       -r ${rg_tsv} \
       -f ${file_tsv}

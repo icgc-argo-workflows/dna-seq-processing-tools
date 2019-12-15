@@ -23,26 +23,18 @@
 
 nextflow.preview.dsl=2
 
-params.meta_format = "tsv"  // tsv or json
-params.exp_json = ""  // optional json string of exp metadata
 params.exp_tsv = "input/experiment-fq.tsv"
 params.rg_tsv = "input/read_group-fq.tsv"
 params.file_tsv = "input/file-fq.tsv"
-params.seq_exp_json_name = "seq_exp-fq.json"
-params.seq_rg_json_name = "seq_rg-fq.json"
 
 include '../metadata-validation' params(params)
 
 workflow {
   main:
     metadataValidation(
-      params.meta_format,
-      params.exp_json,
       file(params.exp_tsv),
       file(params.rg_tsv),
-      file(params.file_tsv),
-      params.seq_exp_json_name,
-      params.seq_rg_json_name
+      file(params.file_tsv)
     )
   publish:
     metadataValidation.out to: "outdir", mode: 'copy', overwrite: true
