@@ -17,79 +17,23 @@ def set_default(obj):
     raise TypeError
 
 
-# def build_entity_map(entity_tsv, pointer_id):
-#     with open(entity_tsv, 'r', encoding='utf-8-sig') as f:
-#         reader = csv.DictReader(f, delimiter='\t')
-#         entity_dict = {}
-#         for l in reader:
-#             if not entity_dict.get(l[pointer_id]): entity_dict[l[pointer_id]] = []
-#             sub_entity_dict = {}
-#             for field in reader.fieldnames:
-#                 if field in ['read_group_count', 'read_length_r1', 'read_length_r2', 'insert_size', 'size']:
-#                     sub_entity_dict[field] = int(l.get(field))
-#                 elif l.get(field) in ['True', 'true', 'TRUE']:
-#                     sub_entity_dict[field] = True
-#                 elif l.get(field) in ['False', 'false', 'FALSE']:
-#                     sub_entity_dict[field] = False
-#                 else:
-#                     sub_entity_dict[field] = l.get(field, None)
-#             entity_dict[l[pointer_id]].append(sub_entity_dict)
-#     return entity_dict
-#
-#
-# def generate_metadata(args):
-#
-#     # build {submitter_read_group_id: [files]} map
-#     files = build_entity_map(args.file_tsv, "submitter_read_group_id")
-#
-#     # build {submitter_sequencing_experiment_id: [readgroups]} map
-#     read_groups = build_entity_map(args.rg_tsv, "submitter_sequencing_experiment_id")
-#
-#     # build experiment dict
-#     experiment = build_entity_map(args.exp_tsv, "submitter_sequencing_experiment_id")
-#
-#     # only permit one experiment input
-#     if not len(experiment) == 1: sys.exit('\nError: The input should only contain one experiment!')
-#
-#     exp_id = set()
-#     metadata = {}
-#     for key, val in experiment.items():
-#         exp_id.add(key)
-#         metadata = val[0]
-#         if not read_groups.get(key):
-#             sys.exit('\nError: The input experiment.tsv and read_group.tsv have mismatch experiment IDs!')
-#         metadata['read_groups'] = read_groups.get(key)
-#         rg_id = set()
-#         for rg in metadata['read_groups']:
-#             rg_id.add(rg.get('submitter_read_group_id'))
-#             if not files.get(rg.get('submitter_read_group_id')):
-#                 sys.exit('\nError: The input read_group.tsv and file.tsv have mismatch read_group IDs!')
-#             metadata['files'] = rg_file_map.get(rg.get('submitter_read_group_id'))
-#
-#         # validate read_group ids match across read_group.tsv and file.tsv
-#         if not rg_id == set(rg_file_map.keys()): sys.exit('\nError: The input read_group.tsv and file.tsv have mismatch read_group IDs!')
-#
-#     # validate experiment ids match across experiment.tsv and read_group.tsv
-#     if not exp_id == set(exp_rg_map.keys()): sys.exit('\nError: The input experiment.tsv and read_group.tsv have mismatch experiment IDs!')
-#
-#     return metadata
-
 def check_experiment(exp_tsv):
     exp_id = set()
     with open(exp_tsv, 'r', encoding='utf-8-sig') as f:
         reader = csv.DictReader(f, delimiter='\t')
         # only permit one experiment input
-        if not len(reader) == 1: sys.exit('\nError: The input should only contain one experiment!')
+        for l in reader:
+            experiment_dict = {}
+            for field in reader.fieldnames:
+                if field not in ['submitter_matched_normal_sample_id', 'sequencing_center', 'sequencing_date', 'type'] and l.get(field) is None:
+                    sys.exit('\nError: Missing required field: %s in experiment.tsv!' % field)
+                elif field in ['read_group_count']:
+                    experiment_dict[field] = int(l.get(field))
+                else:
+                    experiment_dict[field] = l.get(field)
+            exp_id.add(l.get('submitter_sequencing_experiment_id'))
 
-        experiment_dict = {}
-        for field in reader[0].fieldnames:
-            if not field in ['submitter_matched_normal_sample_id', 'sequencing_center', 'sequencing_date', 'type'] and reader[0].get(field) is None:
-                sys.exit('\nError: Missing required field: %s in experiment.tsv!' % field)
-            elif field in ['read_group_count']:
-                experiment_dict[field] = int(reader[0].get(field))
-            else:
-                experiment_dict[field] = reader[0].get(field)
-        exp_id.add(experiment_dict.get('submitter_sequencing_experiment_id'))
+        if not len(exp_id) == 1: sys.exit('\nError: The input should only contain one experiment!')
 
     return (experiment_dict, exp_id)
 
@@ -104,9 +48,11 @@ def check_files(file_tsv):
             if not files_dict.get(l["name"]): files_dict[l["name"]] = {}
             for field in ['name', 'size', 'md5sum', 'path', 'format']:
                 if not files_dict[l["name"]].get(field): files_dict[l["name"]][field] = set()
-                files_dict[l["name"]][field].add(l.get(field))
+                value = int(l.get(field)) if field == 'size' else l.get(field)
+                files_dict[l["name"]][field].add(value)
 
-            rg_file[l.get('submitter_read_group_id')] = {}
+            if not rg_file.get(l.get('submitter_read_group_id')):
+                rg_file[l.get('submitter_read_group_id')] = {}
             if not l.get('r1_r2') in ['r1/r2', 'r1', 'r2']:
                 sys.exit('\nError: Invalid value of r1_r2 in file.tsv!')
             elif l.get('r1_r2') == 'r1/r2':
@@ -120,24 +66,24 @@ def check_files(file_tsv):
     files = []
     for value in files_dict.values():
         for key in value.keys():
-            if len(value[key]) > 1:
+            if isinstance(value[key], set) and len(value[key]) > 1:
                 sys.exit('\nError: Inconsistent values of field: %s in file.tsv!' % key)
         files.append(value)
 
     return (files, rg_file)
 
-def check_read_group(rg_tsv, rg_file, exp_id):
+def check_read_group(rg_tsv, rg_file):
     read_group_dict = {}
     experiment_id = set()
+    read_group_id = set()
     with open(rg_tsv, 'r', encoding='utf-8-sig') as f:
         reader = csv.DictReader(f, delimiter='\t')
         for l in reader:
             for field in reader.fieldnames:
-                if not field in ['read_length_r2', 'insert_size', 'sample_barcode'] and l.get(field) is None:
+                if field not in ['read_length_r2', 'insert_size', 'sample_barcode'] and l.get(field) is None:
                     sys.exit('\nError: Missing value of field: %s in read_group.tsv!' % field)
-
-
             experiment_id.add(l.get('submitter_sequencing_experiment_id'))
+            read_group_id.add(l.get('submitter_read_group_id'))
 
             if not read_group_dict.get(l['submitter_read_group_id']): read_group_dict[l['submitter_read_group_id']] = {}
             read_group_dict.get(l['submitter_read_group_id']).update(rg_file.get(l['submitter_read_group_id']))
@@ -145,19 +91,24 @@ def check_read_group(rg_tsv, rg_file, exp_id):
                 if field in ['type', 'submitter_sequencing_experiment_id']: continue
                 if not read_group_dict.get(l['submitter_read_group_id']).get(field):
                     read_group_dict.get(l['submitter_read_group_id'])[field] = set()
-                read_group_dict.get(l['submitter_read_group_id'])[field].add(l.get(field))
+                if field in ['read_length_r1', 'read_length_r2', 'insert_size']:
+                    value = int(l.get(field))
+                elif l.get(field) in ['True', 'true', 'TRUE']:
+                    value = True
+                elif l.get(field) in ['False', 'false', 'FALSE']:
+                    value = False
+                else:
+                    value = l.get(field)
+                read_group_dict.get(l['submitter_read_group_id'])[field].add(value)
 
     read_groups = []
     for value in read_group_dict.values():
         for key in value.keys():
-            if len(value[key]) > 1:
+            if isinstance(value[key], set) and len(value[key]) > 1:
                 sys.exit('\nError: Inconsistent values of field: %s in read_group.tsv!' % key)
         read_groups.append(value)
 
-    if not exp_id == experiment_id:
-        sys.exit('\nError: The input experiment.tsv and read_group.tsv have mismatch experiment IDs!')
-
-    return read_groups
+    return (read_groups, experiment_id, read_group_id)
 
 def run_validation(args):
 
@@ -168,22 +119,29 @@ def run_validation(args):
 
     # check experiment.tsv
     # input experiment.tsv
-    # output experiment dict
+    # output experiment dict, exp_id
     experiment_dict, exp_id = check_experiment(args.exp_tsv)
 
     # check read_group.tsv
     # input read_group.tsv, rg_file_map
     # output read_groups dict
-    read_groups = check_read_group(args.rg_tsv, rg_file)
+    read_groups, experiment_id, read_group_id = check_read_group(args.rg_tsv, rg_file)
+
+    # additional checks
+    if not set(rg_file.keys()) == read_group_id:
+        sys.exit('\nError: The input read_group.tsv and file.tsv have mismatch read_group IDs!')
+
+    if not exp_id == experiment_id:
+        sys.exit('\nError: The input experiment.tsv and read_group.tsv have mismatch experiment IDs!')
+
+    if not experiment_dict['read_group_count'] == len(read_groups):
+        sys.exit('\nError: The input read_group.tsv and experiment.tsv has mismatch read_group_count')
 
     # generate the metadata with experiment, read_groups, files dict
     metadata = {}
     metadata.update(experiment_dict)
     metadata['files'] = files
     metadata['read_groups'] = read_groups
-
-    # additional checks
-
 
     # write the metadata.json as output
     with open('metadata.json', 'w') as f:

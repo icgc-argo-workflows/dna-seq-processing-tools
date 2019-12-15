@@ -23,40 +23,27 @@
 
 nextflow.preview.dsl=2
 
-params.meta_format = "tsv"  // tsv or json
-params.exp_json = ""  // optional json string of exp metadata
 params.exp_tsv = "tests/input/experiment-fq.tsv"
 params.rg_tsv = "tests/input/read_group-fq.tsv"
 params.file_tsv = "tests/input/file-fq.tsv"
-params.seq_exp_json_name = "seq_exp-fq.json"
-params.seq_rg_json_name = "seq_rg-fq.json"
 
 
 process metadataValidation {
-  container 'quay.io/icgc-argo/metadata-validation:metadata-validation.0.1.3.1'
+  container 'quay.io/icgc-argo/metadata-validation:metadata-validation.0.1.4.0'
 
   input:
-    val meta_format
-    val exp_json
     file exp_tsv
     file rg_tsv
     file file_tsv
-    val seq_exp_json_name
-    val seq_rg_json_name
 
   output:
-    path "${seq_exp_json_name}", emit: payload
-    path "${seq_rg_json_name}", emit: metadata
+    path "metadata.json", emit: metadata
 
   script:
-    args_exp_json = exp_json.length() > 0 ? "-j ${exp_json}" : ""
     """
-    metadata-validation.py ${args_exp_json} \
-      -m ${meta_format} \
+    metadata-validation.py
       -e ${exp_tsv} \
       -r ${rg_tsv} \
-      -f ${file_tsv} \
-      -o ${seq_exp_json_name} \
-      -p ${seq_rg_json_name}
+      -f ${file_tsv}
     """
 }
