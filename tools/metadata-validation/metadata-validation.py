@@ -18,6 +18,7 @@ def set_default(obj):
 
 
 def check_experiment(exp_tsv):
+    # not cover e9
     exp_id = set()
     with open(exp_tsv, 'r', encoding='utf-8-sig') as f:
         reader = csv.DictReader(f, delimiter='\t')
@@ -38,6 +39,7 @@ def check_experiment(exp_tsv):
     return (experiment_dict, exp_id)
 
 def check_files(file_tsv):
+    # not cover f10
     rg_file = {}
     files_dict = {}
     with open(file_tsv, 'r', encoding='utf-8-sig') as f:
@@ -73,6 +75,7 @@ def check_files(file_tsv):
     return (files, rg_file)
 
 def check_read_group(rg_tsv, rg_file):
+    # not cover g7, g8
     read_group_dict = {}
     experiment_id = set()
     read_group_id = set()
