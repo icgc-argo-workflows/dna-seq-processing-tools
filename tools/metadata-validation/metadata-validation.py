@@ -2,153 +2,180 @@
 
 import sys
 import csv
+import re
 from argparse import ArgumentParser
 import json
 import datetime
 
 
-def set_default(obj):
-    if isinstance(obj, datetime.datetime):
-        return obj.isoformat()
-    if isinstance(obj, set) and len(obj) > 1:
-        return list(obj)
-    if isinstance(obj, set) and len(obj) == 1:
-        return obj.pop()
-    raise TypeError
+tsv_fields = {
+    'experiment': [
+        'type', 'program_id', 'submitter_sequencing_experiment_id', 'submitter_donor_id', 'gender',
+        'submitter_specimen_id', 'tumour_normal_designation', 'specimen_tissue_source', 'submitter_sample_id',
+        'sample_type', 'submitter_matched_normal_sample_id', 'sequencing_center', 'platform', 'platform_model',
+        'library_strategy', 'sequencing_date', 'read_group_count'
+    ],
+    'read_group': [
+        'type', 'submitter_read_group_id', 'submitter_sequencing_experiment_id', 'platform_unit',
+        'is_paired_end', 'read_length_r1', 'read_length_r2', 'insert_size', 'sample_barcode', 'library_name'
+    ],
+    'file': [
+        'type', 'name',	'size', 'submitter_read_group_id', 'md5sum', 'path', 'format', 'r1_r2'
+    ]
+}
 
 
-def check_experiment(exp_tsv):
-    # not cover e9
-    exp_id = set()
-    with open(exp_tsv, 'r', encoding='utf-8-sig') as f:
-        reader = csv.DictReader(f, delimiter='\t')
-        # only permit one experiment input
-        for l in reader:
-            experiment_dict = {}
-            for field in reader.fieldnames:
-                if field not in ['submitter_matched_normal_sample_id', 'sequencing_center', 'sequencing_date', 'type'] and l.get(field) is None:
-                    sys.exit('\nError: Missing required field: %s in experiment.tsv!' % field)
-                elif field in ['read_group_count']:
-                    experiment_dict[field] = int(l.get(field))
+def tsv_confomity_check(ftype, tsv):
+    expected_fields = tsv_fields[ftype]
+
+    header_processed = False
+    with open(tsv, 'r') as t:
+        uniq_row = {}
+        for l in t:
+            l = l.rstrip('\n').rstrip('\r')  # remove trailing newline, remove windows `\r` (just in case)
+            if not header_processed:  # it's header
+                fields = l.split('\t')
+                if len(fields) != len(set(fields)):
+                    sys.exit("Error found: Field duplicated in input TSV: %s, offending header: %s\n" % (tsv, l))
+
+                missed_fields = set(expected_fields) - set(fields)
+                if missed_fields:  # missing fields
+                    sys.exit("Error found: Field missing in input TSV: %s, offending header: %s. Missed field(s): %s\n" % \
+                        (tsv, l, ', '.join(missed_fields)))
+
+                unexpected_fields = set(fields) - set(expected_fields)
+                if unexpected_fields:  # unexpected fields
+                    sys.exit("Error found: Unexpected field in input TSV: %s, offending header: %s. Unexpected field(s): %s\n" % \
+                        (tsv, l, ', '.join(unexpected_fields)))
+
+                header_processed = True
+
+            else:  # it's data row
+                # at this point we only check whether number of values matches number of expected fields and uniqueness check,
+                # later steps will perform more sophisticated content check
+                values = l.split('\t')
+                if len(expected_fields) != len(values):
+                    sys.exit("Error found: number of fields: %s does not match expected: %s, offending data row: %s\n" % \
+                        (len(values), len(expected_fields), l))
+
+                if l in uniq_row:
+                    sys.exit("Error found: data row repeated in file: %s, offending data row: %s\n" % (tsv, l))
                 else:
-                    experiment_dict[field] = l.get(field)
-            exp_id.add(l.get('submitter_sequencing_experiment_id'))
+                    uniq_row[l] = True
 
-        if not len(exp_id) == 1: sys.exit('\nError: The input should only contain one experiment!')
 
-    return (experiment_dict, exp_id)
+def load_all_tsvs(exp_tsv, rg_tsv, file_tsv):
+    metadata_dict = {}
+    with open(exp_tsv, 'r') as f:
+        rows = list(csv.DictReader(f, delimiter='\t'))
+        if len(rows) != 1:
+            sys.exit("Error found: experiment TSV expects exactly one data row, offending file: %s has %s row(s)\n" % \
+                (exp_tsv, len(rows)))
+        metadata_dict.update(rows[0])
 
-def check_files(file_tsv):
-    # not cover f10
-    rg_file = {}
-    files_dict = {}
-    with open(file_tsv, 'r', encoding='utf-8-sig') as f:
-        reader = csv.DictReader(f, delimiter='\t')
-        for l in reader:
-            for field in reader.fieldnames:
-                if l.get(field) is None: sys.exit('\nError: Missing required field: %s in file.tsv!' % field)
-            if not files_dict.get(l["name"]): files_dict[l["name"]] = {}
-            for field in ['name', 'size', 'md5sum', 'path', 'format']:
-                if not files_dict[l["name"]].get(field): files_dict[l["name"]][field] = set()
-                value = int(l.get(field)) if field == 'size' else l.get(field)
-                files_dict[l["name"]][field].add(value)
+    with open(rg_tsv, 'r') as f:
+        metadata_dict['read_groups'] = list(csv.DictReader(f, delimiter='\t'))
+        if len(metadata_dict['read_groups']) == 0:
+            sys.exit("Error found: read group TSV does not contain any read group information\n")
 
-            if not rg_file.get(l.get('submitter_read_group_id')):
-                rg_file[l.get('submitter_read_group_id')] = {}
-            if not l.get('r1_r2') in ['r1/r2', 'r1', 'r2']:
-                sys.exit('\nError: Invalid value of r1_r2 in file.tsv!')
-            elif l.get('r1_r2') == 'r1/r2':
-                rg_file[l.get('submitter_read_group_id')]['file_r1'] = l.get('name')
-                rg_file[l.get('submitter_read_group_id')]['file_r2'] = l.get('name')
-            elif l.get('r1_r2') == 'r1':
-                rg_file[l.get('submitter_read_group_id')]['file_r1'] = l.get('name')
-            else:
-                rg_file[l.get('submitter_read_group_id')]['file_r2'] = l.get('name')
+    with open(file_tsv, 'r') as f:
+        metadata_dict['files'] = list(csv.DictReader(f, delimiter='\t'))
+        if len(metadata_dict['files']) == 0:
+            sys.exit("Error found: file TSV does not contain any file information\n")
 
-    files = []
-    for value in files_dict.values():
-        for key in value.keys():
-            if isinstance(value[key], set) and len(value[key]) > 1:
-                sys.exit('\nError: Inconsistent values of field: %s in file.tsv!' % key)
-        files.append(value)
+    return metadata_dict
 
-    return (files, rg_file)
 
-def check_read_group(rg_tsv, rg_file):
-    # not cover g7, g8
-    read_group_dict = {}
-    experiment_id = set()
-    read_group_id = set()
-    with open(rg_tsv, 'r', encoding='utf-8-sig') as f:
-        reader = csv.DictReader(f, delimiter='\t')
-        for l in reader:
-            for field in reader.fieldnames:
-                if field not in ['read_length_r2', 'insert_size', 'sample_barcode'] and l.get(field) is None:
-                    sys.exit('\nError: Missing value of field: %s in read_group.tsv!' % field)
-            experiment_id.add(l.get('submitter_sequencing_experiment_id'))
-            read_group_id.add(l.get('submitter_read_group_id'))
+def check_relationships(metadata_dict):
+    # first let's make sure all entities have PK populated
+    # submitter_sequencing_experiment_id must match regex: e.3
+    submitter_sequencing_experiment_id = metadata_dict.get('submitter_sequencing_experiment_id')
+    if not re.match(r'[a-zA-Z0-9_\.\-]+', submitter_sequencing_experiment_id):
+        sys.exit("Error found: invalid submitter_sequencing_experiment_id: '%s' in experiment TSV\n" % \
+            submitter_sequencing_experiment_id)
 
-            if not read_group_dict.get(l['submitter_read_group_id']): read_group_dict[l['submitter_read_group_id']] = {}
-            read_group_dict.get(l['submitter_read_group_id']).update(rg_file.get(l['submitter_read_group_id']))
-            for field in reader.fieldnames:
-                if field in ['type', 'submitter_sequencing_experiment_id']: continue
-                if not read_group_dict.get(l['submitter_read_group_id']).get(field):
-                    read_group_dict.get(l['submitter_read_group_id'])[field] = set()
-                if field in ['read_length_r1', 'read_length_r2', 'insert_size']:
-                    value = int(l.get(field))
-                elif l.get(field) in ['True', 'true', 'TRUE']:
-                    value = True
-                elif l.get(field) in ['False', 'false', 'FALSE']:
-                    value = False
-                else:
-                    value = l.get(field)
-                read_group_dict.get(l['submitter_read_group_id'])[field].add(value)
+    # submitter_read_group_id must match regex, unique: g.2
+    uniq_rg = {}
+    for rg in metadata_dict['read_groups']:
+        submitter_read_group_id = rg.get('submitter_read_group_id')
+        if not re.match(r'[a-zA-Z0-9_\:\.\-]+', submitter_read_group_id):
+            sys.exit("Error found: invalid submitter_read_group_id: '%s' in read group TSV\n" % \
+                submitter_read_group_id)
+        if submitter_read_group_id in uniq_rg:  # read group id not unique
+            sys.exit("Error found: submitter_read_group_id: '%s' duplicated in read group TSV\n" % \
+                submitter_read_group_id)
+        else:
+            uniq_rg[submitter_read_group_id] = True
 
-    read_groups = []
-    for value in read_group_dict.values():
-        for key in value.keys():
-            if isinstance(value[key], set) and len(value[key]) > 1:
-                sys.exit('\nError: Inconsistent values of field: %s in read_group.tsv!' % key)
-        read_groups.append(value)
+    # submitter_read_group_id in file TSV must exist in read group TSV: f.2
+    for f in metadata_dict['files']:
+        submitter_read_group_id = f.get('submitter_read_group_id')
+        if not re.match(r'[a-zA-Z0-9_\:\.\-]+', submitter_read_group_id):
+            sys.exit("Error found: invalid submitter_read_group_id: '%s' in file TSV\n" % \
+                submitter_read_group_id)
+        if not submitter_read_group_id in uniq_rg:
+            sys.exit("Error found: submitter_read_group_id: '%s' in file TSV does not exist in read group TSV\n" % \
+                submitter_read_group_id)
 
-    return (read_groups, experiment_id, read_group_id)
+    # all read groups must have this field with value matching that in experiment
+    for rg in metadata_dict['read_groups']:
+        if rg.get('submitter_sequencing_experiment_id') != submitter_sequencing_experiment_id:
+            sys.exit("Error found: submitter_sequencing_experiment_id in read group '%s' does not match '%s'\n" % \
+                (rg.get('submitter_read_group_id'), submitter_sequencing_experiment_id))
+
+    # read_group_count in experiment TSV must match total number of read groups: g.2
+    read_group_count = metadata_dict['read_group_count']
+    if not re.match(r'[0-9]+', read_group_count):
+            sys.exit("Error found: read_group_count %s in experiment TSV is not a positive integer\n" % \
+                read_group_count)
+
+    # now convert from str to int
+    metadata_dict['read_group_count'] = int(read_group_count)
+
+    if metadata_dict['read_group_count'] != len(metadata_dict['read_groups']):
+        sys.exit("Error found: specified read_group_count %s in experiment TSV does not match number of read groups %s in read group TSV\n" % \
+            (metadata_dict['read_group_count'], len(metadata_dict['read_groups'])))
+
+
+def check_experiment(metadata_dict):
+    # check individual fields, it's also a good time to convert value to correct type
+    pass
+
+
+def check_read_groups(metadata_dict):
+    # check individual fields, it's also a good time to convert value to correct type
+    pass
+
+
+def check_files(metadata_dict):
+    # check individual fields, it's also a good time to convert value to correct type
+    pass
+
 
 def run_validation(args):
+    # fistly TSV format conformity check, if not well-formed no point to continue
+    tsv_confomity_check('experiment', args.exp_tsv)
+    tsv_confomity_check('read_group', args.rg_tsv)
+    tsv_confomity_check('file', args.file_tsv)
 
-    # check file.tsv
-    # input file.tsv
-    # output files dict, rg_file_map={rg_id: file_name_r1, file_name_r2}
-    files, rg_file = check_files(args.file_tsv)
+    # all TSV are well-formed, let's load them
+    metadata_dict = load_all_tsvs(args.exp_tsv, args.rg_tsv, args.file_tsv)
 
-    # check experiment.tsv
-    # input experiment.tsv
-    # output experiment dict, exp_id
-    experiment_dict, exp_id = check_experiment(args.exp_tsv)
+    # check relationships
+    check_relationships(metadata_dict)
 
-    # check read_group.tsv
-    # input read_group.tsv, rg_file_map
-    # output read_groups dict
-    read_groups, experiment_id, read_group_id = check_read_group(args.rg_tsv, rg_file)
+    # check experiment
+    check_experiment(metadata_dict)
 
-    # additional checks
-    if not set(rg_file.keys()) == read_group_id:
-        sys.exit('\nError: The input read_group.tsv and file.tsv have mismatch read_group IDs!')
+    # check read groups
+    check_read_groups(metadata_dict)
 
-    if not exp_id == experiment_id:
-        sys.exit('\nError: The input experiment.tsv and read_group.tsv have mismatch experiment IDs!')
-
-    if not experiment_dict['read_group_count'] == len(read_groups):
-        sys.exit('\nError: The input read_group.tsv and experiment.tsv has mismatch read_group_count')
-
-    # generate the metadata with experiment, read_groups, files dict
-    metadata = {}
-    metadata.update(experiment_dict)
-    metadata['files'] = files
-    metadata['read_groups'] = read_groups
+    # check files
+    check_files(metadata_dict)
 
     # write the metadata.json as output
     with open('metadata.json', 'w') as f:
-        f.write(json.dumps(metadata, default=set_default, indent=2))
+        f.write(json.dumps(metadata_dict, indent=2) + "\n")
 
 
 if __name__ == "__main__":

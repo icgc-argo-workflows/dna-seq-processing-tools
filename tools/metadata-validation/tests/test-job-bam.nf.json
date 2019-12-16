@@ -1,5 +1,5 @@
 {
-    "exp_tsv": "input/experiment.tsv",
-    "rg_tsv": "input/read_group.tsv",
-    "file_tsv": "input/file.tsv"
+    "exp_tsv": "input/experiment.v2.tsv",
+    "rg_tsv": "input/read_group.v2.tsv",
+    "file_tsv": "input/file.v2.tsv"
 }
