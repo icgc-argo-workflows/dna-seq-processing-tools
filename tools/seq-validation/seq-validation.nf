@@ -23,7 +23,7 @@
 
 nextflow.preview.dsl=2
 
-params.seq_rg_json = "tests/input/seq_rg.json"
+params.seq_rg_json = "tests/input/seq-exp.bam.metadata.json"
 params.seq_files = "tests/input/test_rg_3.bam"
 
 process seqValidation {

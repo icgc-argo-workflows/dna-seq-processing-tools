@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
 
+"""
+ Copyright (c) 2019, Ontario Institute for Cancer Research (OICR).
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published
+ by the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+ You should have received a copy of the GNU Affero General Public License
+ along with this program. If not, see <https://www.gnu.org/licenses/>.
+ Authors:
+   Linda Xiang <linda.xiang@oicr.on.ca>
+   Junjun Zhang <junjun.zhang@oicr.on.ca>
+ """
+
 import sys
 import os
 from argparse import ArgumentParser
@@ -85,9 +102,9 @@ def file_check(metadata, seq_files):
 
         # file md5sum check: a.3
         actual_file_md5sum = calculate_md5(file_name_to_path.get(file_name))
-        if actual_file_md5sum != f.get('checksum'):
+        if actual_file_md5sum != f.get('md5sum'):
             sys.exit("Md5sum of file '%s' does not match what specified in file TSV: %s vs %s" % \
-                (file_name, actual_file_md5sum, f.get('checksum')))
+                (file_name, actual_file_md5sum, f.get('md5sum')))
 
 
 def bam_check(metadata, seq_files):
@@ -135,8 +152,8 @@ def run_validation(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-d", "--seq_files", dest="seq_files", help="Seq files to submit and process", type=str, nargs='+')
-    parser.add_argument("-p", "--metadata_json", dest="metadata_json",
+    parser.add_argument("-d", "--seq-files", dest="seq_files", help="Seq files to submit and process", type=str, nargs='+')
+    parser.add_argument("-p", "--metadata-json", dest="metadata_json",
                         help="json file containing experiment, read_group and file information for sequence preprocessing")
     args = parser.parse_args()
 

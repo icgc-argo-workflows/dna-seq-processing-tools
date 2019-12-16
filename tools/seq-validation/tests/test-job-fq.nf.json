@@ -1,5 +1,5 @@
 {
-  "seq_rg_json": "input/seq_rg-fq.json",
+  "seq_rg_json": "input/seq-exp.fq.metadata.json",
   "seq_files": [
     "input/D0RH0.2_r1.fq",
     "input/D0RH0.2_r2.fq",
