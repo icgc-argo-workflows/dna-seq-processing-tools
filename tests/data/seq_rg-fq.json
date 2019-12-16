@@ -1,69 +1,18 @@
 {
   "type": "sequencing_experiment",
+  "input_seq_format": "FASTQ",
   "program_id": "TEST-PRO",
   "submitter_sequencing_experiment_id": "TEST_EXP",
-  "submitter_donor_id": "HCC1143",
-  "gender": "female",
-  "submitter_specimen_id": "HCC1143_FASTQ_INPUT",
-  "tumour_normal_designation": "Cell line - derived from tumour",
-  "specimen_tissue_source": "Blood derived",
   "submitter_sample_id": "HCC1143_FASTQ_INPUT",
-  "sample_type": "DNA",
-  "submitter_matched_normal_sample_id": " HCC1143_BAM_INPUT",
   "sequencing_center": "EXT",
   "platform": "Illumina",
   "platform_model": "HiSeq 2000",
   "library_strategy": "WGS",
   "sequencing_date": "2014-12-12",
   "read_group_count": 3,
-  "files": [
-    {
-      "name": "C0HVY.2_r1.fq",
-      "size": 133684363564,
-      "md5sum": "e4fe8353ae62045642a2124909c5cfa5",
-      "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
-      "format": "FASTQ"
-    },
-    {
-      "name": "C0HVY.2_r2.fq",
-      "size": 133684363564,
-      "md5sum": "e4fe8353ae62045642a2124909c5cfa5",
-      "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
-      "format": "FASTQ"
-    },
-    {
-      "name": "D0RE2.1_r1.fq",
-      "size": 133684363564,
-      "md5sum": "e4fe8353ae62045642a2124909c5cfa5",
-      "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
-      "format": "FASTQ"
-    },
-    {
-      "name": "D0RE2.1_r2.fq",
-      "size": 133684363564,
-      "md5sum": "e4fe8353ae62045642a2124909c5cfa5",
-      "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
-      "format": "FASTQ"
-    },
-    {
-      "name": "D0RH0.2_r1.fq",
-      "size": 133684363564,
-      "md5sum": "e4fe8353ae62045642a2124909c5cfa5",
-      "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
-      "format": "FASTQ"
-    },
-    {
-      "name": "D0RH0.2_r2.fq",
-      "size": 133684363564,
-      "md5sum": "e4fe8353ae62045642a2124909c5cfa5",
-      "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
-      "format": "FASTQ"
-    }
-  ],
   "read_groups": [
     {
-      "file_r1": "C0HVY.2_r1.fq",
-      "file_r2": "C0HVY.2_r2.fq",
+      "type": "read_group",
       "submitter_read_group_id": "C0HVY.2",
       "platform_unit": "74_8",
       "is_paired_end": true,
@@ -71,11 +20,33 @@
       "read_length_r2": 150,
       "insert_size": 298,
       "sample_barcode": "",
-      "library_name": "Pond-147580"
+      "library_name": "Pond-147580",
+      "submitter_sequencing_experiment_id": "TEST_EXP",
+      "files": [
+        {
+          "name": "C0HVY.2_r1.fq",
+          "size": 133684363564,
+          "submitter_read_group_id": "C0HVY.2",
+          "checksum": "e4fe8353ae62045642a2124909c5cfa5",
+          "checksum_type": "md5",
+          "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
+          "format": "FASTQ",
+          "type": "sequencing_file"
+        },
+        {
+          "name": "C0HVY.2_r2.fq",
+          "size": 133684363564,
+          "submitter_read_group_id": "C0HVY.2",
+          "checksum": "e4fe8353ae62045642a2124909c5cfa5",
+          "checksum_type": "md5",
+          "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
+          "format": "FASTQ",
+          "type": "sequencing_file"
+        }
+      ]
     },
     {
-      "file_r1": "D0RE2.1_r1.fq",
-      "file_r2": "D0RE2.1_r2.fq",
+      "type": "read_group",
       "submitter_read_group_id": "D0RE2.1",
       "platform_unit": "74_8",
       "is_paired_end": true,
@@ -83,11 +54,33 @@
       "read_length_r2": 150,
       "insert_size": 298,
       "sample_barcode": "",
-      "library_name": "Pond-147580"
+      "library_name": "Pond-147580",
+      "submitter_sequencing_experiment_id": "TEST_EXP",
+      "files": [
+        {
+          "name": "D0RE2.1_r1.fq",
+          "size": 133684363564,
+          "submitter_read_group_id": "D0RE2.1",
+          "checksum": "e4fe8353ae62045642a2124909c5cfa5",
+          "checksum_type": "md5",
+          "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
+          "format": "FASTQ",
+          "type": "sequencing_file"
+        },
+        {
+          "name": "D0RE2.1_r2.fq",
+          "size": 133684363564,
+          "submitter_read_group_id": "D0RE2.1",
+          "checksum": "e4fe8353ae62045642a2124909c5cfa5",
+          "checksum_type": "md5",
+          "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
+          "format": "FASTQ",
+          "type": "sequencing_file"
+        }
+      ]
     },
     {
-      "file_r1": "D0RH0.2_r1.fq",
-      "file_r2": "D0RH0.2_r2.fq",
+      "type": "read_group",
       "submitter_read_group_id": "D0RH0.2",
       "platform_unit": "74_8",
       "is_paired_end": true,
@@ -95,7 +88,30 @@
       "read_length_r2": 150,
       "insert_size": 298,
       "sample_barcode": "",
-      "library_name": "Pond-147580"
+      "library_name": "Pond-147580",
+      "submitter_sequencing_experiment_id": "TEST_EXP",
+      "files": [
+        {
+          "name": "D0RH0.2_r1.fq",
+          "size": 133684363564,
+          "submitter_read_group_id": "D0RH0.2",
+          "checksum": "e4fe8353ae62045642a2124909c5cfa5",
+          "checksum_type": "md5",
+          "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
+          "format": "FASTQ",
+          "type": "sequencing_file"
+        },
+        {
+          "name": "D0RH0.2_r2.fq",
+          "size": 133684363564,
+          "submitter_read_group_id": "D0RH0.2",
+          "checksum": "e4fe8353ae62045642a2124909c5cfa5",
+          "checksum_type": "md5",
+          "path": "score://collaboratory/EGAZ00001018588/7aba9867-ffba-5e57-96d0-300c80839504",
+          "format": "FASTQ",
+          "type": "sequencing_file"
+        }
+      ]
     }
   ]
 }
