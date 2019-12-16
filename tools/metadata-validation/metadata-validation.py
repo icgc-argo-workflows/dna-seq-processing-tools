@@ -8,7 +8,7 @@ import json
 import datetime
 
 
-tsv_fields = {
+TSV_FIELDS = {
     'experiment': [
         'type', 'program_id', 'submitter_sequencing_experiment_id', 'submitter_donor_id', 'gender',
         'submitter_specimen_id', 'tumour_normal_designation', 'specimen_tissue_source', 'submitter_sample_id',
@@ -26,7 +26,7 @@ tsv_fields = {
 
 
 def tsv_confomity_check(ftype, tsv):
-    expected_fields = tsv_fields[ftype]
+    expected_fields = TSV_FIELDS[ftype]
 
     header_processed = False
     with open(tsv, 'r') as t:
@@ -87,16 +87,24 @@ def load_all_tsvs(exp_tsv, rg_tsv, file_tsv):
 
 
 def check_relationships(metadata_dict):
-    # first let's make sure all entities have PK populated
+    # first let's make sure all entities have type and PK populated
+    if metadata_dict.get('type') != 'sequencing_experiment':  # check: e.1
+        sys.exit("Error found: type field in experiment TSV must be 'sequencing_experiment', %s found\n" % \
+            metadata_dict.get('type'))
+
     # submitter_sequencing_experiment_id must match regex: e.3
     submitter_sequencing_experiment_id = metadata_dict.get('submitter_sequencing_experiment_id')
     if not re.match(r'[a-zA-Z0-9_\.\-]+', submitter_sequencing_experiment_id):
         sys.exit("Error found: invalid submitter_sequencing_experiment_id: '%s' in experiment TSV\n" % \
             submitter_sequencing_experiment_id)
 
-    # submitter_read_group_id must match regex, unique: g.2
     uniq_rg = {}
     for rg in metadata_dict['read_groups']:
+        if rg.get('type') != 'read_group':  # check: g.1
+            sys.exit("Error found: type field in read group TSV must be 'read_group', %s found\n" % \
+                rg.get('type'))
+
+        # submitter_read_group_id must match regex, and be unique: g.2
         submitter_read_group_id = rg.get('submitter_read_group_id')
         if not re.match(r'[a-zA-Z0-9_\:\.\-]+', submitter_read_group_id):
             sys.exit("Error found: invalid submitter_read_group_id: '%s' in read group TSV\n" % \
@@ -107,8 +115,12 @@ def check_relationships(metadata_dict):
         else:
             uniq_rg[submitter_read_group_id] = True
 
-    # submitter_read_group_id in file TSV must exist in read group TSV: f.2
     for f in metadata_dict['files']:
+        if f.get('type') != 'file':  # check: f.1
+            sys.exit("Error found: type field in file TSV must be 'file', %s found\n" % \
+                f.get('type'))
+
+        # submitter_read_group_id in file TSV must exist in read group TSV: f.2
         submitter_read_group_id = f.get('submitter_read_group_id')
         if not re.match(r'[a-zA-Z0-9_\:\.\-]+', submitter_read_group_id):
             sys.exit("Error found: invalid submitter_read_group_id: '%s' in file TSV\n" % \
@@ -117,7 +129,7 @@ def check_relationships(metadata_dict):
             sys.exit("Error found: submitter_read_group_id: '%s' in file TSV does not exist in read group TSV\n" % \
                 submitter_read_group_id)
 
-    # all read groups must have this field with value matching that in experiment
+    # all read groups must have submitter_sequencing_experiment_id with value matching that in experiment: g.3
     for rg in metadata_dict['read_groups']:
         if rg.get('submitter_sequencing_experiment_id') != submitter_sequencing_experiment_id:
             sys.exit("Error found: submitter_sequencing_experiment_id in read group '%s' does not match '%s'\n" % \
@@ -125,13 +137,11 @@ def check_relationships(metadata_dict):
 
     # read_group_count in experiment TSV must match total number of read groups: g.2
     read_group_count = metadata_dict['read_group_count']
-    if not re.match(r'[0-9]+', read_group_count):
+    if not re.match(r'[1-9]{1}[0-9]*', read_group_count):
             sys.exit("Error found: read_group_count %s in experiment TSV is not a positive integer\n" % \
                 read_group_count)
 
-    # now convert from str to int
-    metadata_dict['read_group_count'] = int(read_group_count)
-
+    metadata_dict['read_group_count'] = int(read_group_count)  # now convert from str to int and compare
     if metadata_dict['read_group_count'] != len(metadata_dict['read_groups']):
         sys.exit("Error found: specified read_group_count %s in experiment TSV does not match number of read groups %s in read group TSV\n" % \
             (metadata_dict['read_group_count'], len(metadata_dict['read_groups'])))

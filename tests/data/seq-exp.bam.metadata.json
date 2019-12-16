@@ -9,7 +9,7 @@
   "specimen_tissue_source": "Blood derived",
   "submitter_sample_id": "HCC1143_BAM_INPUT",
   "sample_type": "DNA",
-  "submitter_matched_normal_sample_id": "HCC1143_BAM_INPUT",
+  "submitter_matched_normal_sample_id": null,
   "sequencing_center": "EXT",
   "platform": "ILLUMINA",
   "platform_model": "HiSeq 2000",
@@ -26,7 +26,7 @@
       "read_length_r1": 150,
       "read_length_r2": 150,
       "insert_size": 298,
-      "sample_barcode": "",
+      "sample_barcode": null,
       "library_name": "Pond-147580"
     },
     {
@@ -38,7 +38,7 @@
       "read_length_r1": 150,
       "read_length_r2": 150,
       "insert_size": 298,
-      "sample_barcode": "",
+      "sample_barcode": null,
       "library_name": "Pond-147580"
     },
     {
@@ -50,7 +50,7 @@
       "read_length_r1": 150,
       "read_length_r2": 150,
       "insert_size": 298,
-      "sample_barcode": "",
+      "sample_barcode": null,
       "library_name": "Pond-147580"
     }
   ],
