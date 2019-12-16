@@ -20,7 +20,7 @@ TSV_FIELDS = {
         'is_paired_end', 'read_length_r1', 'read_length_r2', 'insert_size', 'sample_barcode', 'library_name'
     ],
     'file': [
-        'type', 'name',	'size', 'submitter_read_group_id', 'md5sum', 'path', 'format', 'r1_r2'
+        'type', 'name', 'size', 'submitter_read_group_id', 'md5sum', 'path', 'format', 'r1_r2'
     ]
 }
 
@@ -149,7 +149,9 @@ def check_relationships(metadata_dict):
 
 def check_experiment(metadata_dict):
     # check individual fields, it's also a good time to convert value to correct type
-    pass
+    if not re.match(r'[A-Z]{1}[A-Z0-9\-]+', metadata_dict.get('program_id')):  # check: e.2
+        sys.exit("Error found: invalid program_id in experiment TSV: %s\n" % \
+            metadata_dict.get('program_id'))
 
 
 def check_read_groups(metadata_dict):

@@ -23,9 +23,9 @@
 
 nextflow.preview.dsl=2
 
-params.exp_tsv = "input/experiment-fq.tsv"
-params.rg_tsv = "input/read_group-fq.tsv"
-params.file_tsv = "input/file-fq.tsv"
+params.exp_tsv = "input/experiment-fq.v2.tsv"
+params.rg_tsv = "input/read_group-fq.v2.tsv"
+params.file_tsv = "input/file-fq.v2.tsv"
 
 include '../metadata-validation' params(params)
 
