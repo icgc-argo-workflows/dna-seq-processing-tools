@@ -1,8 +1,0 @@
-seq_rg_json:
-  class: File
-  path: input/seq_rg.json
-seq_files:
-  - class: File
-    path: input/test_rg_3.bam
-  - class: File
-    path: input/test_rg_3.bam.bai
