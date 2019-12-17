@@ -65,8 +65,8 @@
       "type": "file",
       "name": "test_rg_3.bam",
       "format": "BAM",
-      "size": 14899,
-      "md5sum": "247581f6d2324ee3860158334fe517c8",
+      "size": 14911,
+      "md5sum": "178f97f7b1ca8bfc28fd5586bdd56799",
       "path": "test_rg_3.bam"
     }
   ]
