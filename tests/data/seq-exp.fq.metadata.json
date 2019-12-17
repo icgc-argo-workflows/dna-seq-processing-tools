@@ -21,8 +21,10 @@
       "type": "read_group",
       "submitter_read_group_id": "C0HVY.2",
       "submitter_sequencing_experiment_id": "TEST_EXP",
-      "platform_unit": "74_8",
+      "platform_unit": "74_8a",
       "is_paired_end": true,
+      "file_r1": "C0HVY.2_r1.fq",
+      "file_r2": "C0HVY.2_r2.fq",
       "read_length_r1": 150,
       "read_length_r2": 150,
       "insert_size": 298,
@@ -33,8 +35,10 @@
       "type": "read_group",
       "submitter_read_group_id": "D0RE2.1",
       "submitter_sequencing_experiment_id": "TEST_EXP",
-      "platform_unit": "74_8",
+      "platform_unit": "74_8b",
       "is_paired_end": true,
+      "file_r1": "D0RE2.1_r1.fq",
+      "file_r2": "D0RE2.1_r2.fq",
       "read_length_r1": 150,
       "read_length_r2": 150,
       "insert_size": 298,
@@ -45,8 +49,10 @@
       "type": "read_group",
       "submitter_read_group_id": "D0RH0.2",
       "submitter_sequencing_experiment_id": "TEST_EXP",
-      "platform_unit": "74_8",
+      "platform_unit": "74_8c",
       "is_paired_end": true,
+      "file_r1": "D0RH0.2_r1.fq",
+      "file_r2": "D0RH0.2_r2.fq",
       "read_length_r1": 150,
       "read_length_r2": 150,
       "insert_size": 298,
@@ -58,62 +64,50 @@
     {
       "type": "file",
       "name": "C0HVY.2_r1.fq",
-      "submitter_read_group_id": "C0HVY.2",
+      "format": "FASTQ",
       "size": 5381,
       "md5sum": "6584ebb05edfbd6f59be6307556bd871",
-      "path": "C0HVY.2_r1.fq",
-      "format": "FASTQ",
-      "r1_r2": "r1"
+      "path": "C0HVY.2_r1.fq"
     },
     {
       "type": "file",
       "name": "C0HVY.2_r2.fq",
-      "submitter_read_group_id": "C0HVY.2",
+      "format": "FASTQ",
       "size": 5381,
       "md5sum": "d649696f346eb75b95b68e8ecd45f44f",
-      "path": "C0HVY.2_r2.fq",
-      "format": "FASTQ",
-      "r1_r2": "r2"
+      "path": "C0HVY.2_r2.fq"
     },
     {
       "type": "file",
       "name": "D0RE2.1_r1.fq",
-      "submitter_read_group_id": "D0RE2.1",
+      "format": "FASTQ",
       "size": 6148,
       "md5sum": "058510bbdab2dccc14a2d7402a21248d",
-      "path": "D0RE2.1_r1.fq",
-      "format": "FASTQ",
-      "r1_r2": "r1"
+      "path": "D0RE2.1_r1.fq"
     },
     {
       "type": "file",
       "name": "D0RE2.1_r2.fq",
-      "submitter_read_group_id": "D0RE2.1",
+      "format": "FASTQ",
       "size": 6148,
       "md5sum": "5fb35647198666b6a06e8539074282fd",
-      "path": "D0RE2.1_r2.fq",
-      "format": "FASTQ",
-      "r1_r2": "r2"
+      "path": "D0RE2.1_r2.fq"
     },
     {
       "type": "file",
       "name": "D0RH0.2_r1.fq",
-      "submitter_read_group_id": "D0RH0.2",
+      "format": "FASTQ",
       "size": 4784,
       "md5sum": "eb109b8774df03084024bc09a86721be",
-      "path": "D0RH0.2_r1.fq",
-      "format": "FASTQ",
-      "r1_r2": "r1"
+      "path": "D0RH0.2_r1.fq"
     },
     {
       "type": "file",
       "name": "D0RH0.2_r2.fq",
-      "submitter_read_group_id": "D0RH0.2",
+      "format": "FASTQ",
       "size": 4784,
       "md5sum": "ed209fda15a5928087104253a6bfb42d",
-      "path": "D0RH0.2_r2.fq",
-      "format": "FASTQ",
-      "r1_r2": "r2"
+      "path": "D0RH0.2_r2.fq"
     }
   ]
 }
