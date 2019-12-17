@@ -1,4 +1,2 @@
-type	name	size	submitter_read_group_id	md5sum	path	format	r1_r2
-file	test_rg_3.bam	14899	C0HVY.2	247581f6d2324ee3860158334fe517c8	test_rg_3.bam	BAM	r1/r2
-file	test_rg_3.bam	14899	D0RE2.1	247581f6d2324ee3860158334fe517c8	test_rg_3.bam	BAM	r1/r2
-file	test_rg_3.bam	14899	D0RH0.2	247581f6d2324ee3860158334fe517c8	test_rg_3.bam	BAM	r1/r2
+type	name	format	size	md5sum	path
+file	test_rg_3.bam	BAM	14899	247581f6d2324ee3860158334fe517c8	test_rg_3.bam

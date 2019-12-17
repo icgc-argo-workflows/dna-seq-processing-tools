@@ -21,36 +21,42 @@
       "type": "read_group",
       "submitter_read_group_id": "C0HVY.2",
       "submitter_sequencing_experiment_id": "TEST_EXP",
-      "platform_unit": "74_8",
+      "platform_unit": "74_8a",
       "is_paired_end": true,
+      "file_r1": "test_rg_3.bam",
+      "file_r2": "test_rg_3.bam",
       "read_length_r1": 150,
       "read_length_r2": 150,
       "insert_size": 298,
-      "sample_barcode": null,
+      "sample_barcode": "",
       "library_name": "Pond-147580"
     },
     {
       "type": "read_group",
       "submitter_read_group_id": "D0RE2.1",
       "submitter_sequencing_experiment_id": "TEST_EXP",
-      "platform_unit": "74_8",
+      "platform_unit": "74_8b",
       "is_paired_end": true,
+      "file_r1": "test_rg_3.bam",
+      "file_r2": "test_rg_3.bam",
       "read_length_r1": 150,
       "read_length_r2": 150,
       "insert_size": 298,
-      "sample_barcode": null,
+      "sample_barcode": "",
       "library_name": "Pond-147580"
     },
     {
       "type": "read_group",
       "submitter_read_group_id": "D0RH0.2",
       "submitter_sequencing_experiment_id": "TEST_EXP",
-      "platform_unit": "74_8",
+      "platform_unit": "74_8c",
       "is_paired_end": true,
+      "file_r1": "test_rg_3.bam",
+      "file_r2": "test_rg_3.bam",
       "read_length_r1": 150,
       "read_length_r2": 150,
       "insert_size": 298,
-      "sample_barcode": null,
+      "sample_barcode": "",
       "library_name": "Pond-147580"
     }
   ],
@@ -58,32 +64,10 @@
     {
       "type": "file",
       "name": "test_rg_3.bam",
-      "size": 14899,
-      "submitter_read_group_id": "C0HVY.2",
-      "md5sum": "247581f6d2324ee3860158334fe517c8",
-      "path": "test_rg_3.bam",
       "format": "BAM",
-      "r1_r2": "r1/r2"
-    },
-    {
-      "type": "file",
-      "name": "test_rg_3.bam",
       "size": 14899,
-      "submitter_read_group_id": "D0RE2.1",
       "md5sum": "247581f6d2324ee3860158334fe517c8",
-      "path": "test_rg_3.bam",
-      "format": "BAM",
-      "r1_r2": "r1/r2"
-    },
-    {
-      "type": "file",
-      "name": "test_rg_3.bam",
-      "size": 14899,
-      "submitter_read_group_id": "D0RH0.2",
-      "md5sum": "247581f6d2324ee3860158334fe517c8",
-      "path": "test_rg_3.bam",
-      "format": "BAM",
-      "r1_r2": "r1/r2"
+      "path": "test_rg_3.bam"
     }
   ]
 }
