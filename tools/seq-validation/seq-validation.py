@@ -52,7 +52,7 @@ def get_rg_from_bam_header(bam_file, rg_info):
     cmd = "samtools view -H %s |grep '^@RG'" % bam_file
     p, stdout, stderr = run_cmd(cmd)
     if p.returncode != 0:
-        sys.exit("Unable to run 'samtools' to get header, BAM file: %s. Error: %s" % (bam_file, stderr))
+        sys.exit("Unable to run 'samtools' to get header, BAM file: %s. Error: %s\n" % (bam_file, stderr))
 
     for r in stdout.decode("utf-8").splitlines():
         rg = {}
@@ -60,26 +60,71 @@ def get_rg_from_bam_header(bam_file, rg_info):
             if ':' not in kv: continue
             tokens = kv.split(':')
             if tokens[0] in rg:
-                sys.exit("@RG header error, TAG '%s' occurred more than once in '%s' from BAM file: %s" % \
+                sys.exit("Error found: @RG header error, TAG '%s' occurred more than once in '%s' from BAM file: %s\n" % \
                     (tokens[0], r, bam_file))
 
             rg[tokens[0]] = ':'.join(tokens[1:])
 
         rg_id = rg.get('ID')
-        if not rg_id: sys.exit("@RG header error, ID not defined in '%s' from BAM file: %s" % (r, bam_file))
+        if not rg_id: sys.exit("Error found: @RG header error, ID not defined in '%s' from BAM file: %s\n" % (r, bam_file))
 
         rg['file'] = bam_file
 
         if rg_id in rg_info: # same RG ID appeared before
-            sys.exit("Same RG ID (%s) exists more than once. First in '%s', second in '%s'" % \
+            sys.exit("Error found: Same RG ID %s exists more than once. First in file '%s', second in file '%s'\n" % \
                 (rg_id, rg_info[rg_id]['file'], rg['file']))
 
         rg_info[rg_id] = rg
 
 
-def rg_info_validation(metadata, rg_info):
-    # to be implemented
-    print(rg_info)
+def bam_header_rg_info_validation(metadata, bam_header_rg_info):
+    # @RG: ID must match submitter_read_group_id in read group
+    sm_in_bam_header = set([])
+    for rg in metadata.get('read_groups'):
+        if not rg.get('file_r1').endswith('.bam'): continue  # not a BAM
+
+        submitter_read_group_id = rg.get('submitter_read_group_id')
+
+        if submitter_read_group_id not in bam_header_rg_info:  # check: b.2
+            sys.exit("Error found: submitter_read_group_id %s not found in any BAM file\n" % submitter_read_group_id)
+
+        if metadata.get('platform') != bam_header_rg_info[submitter_read_group_id].get('PL'):
+            sys.exit("Error found: platform %s in experiment metadata does not match PL %s for submitter_read_group_id %s in BAM %s\n" % \
+                (
+                    metadata.get('platform'),
+                    bam_header_rg_info[submitter_read_group_id].get('PL'),
+                    submitter_read_group_id,
+                    rg.get('file_r1')
+                ))
+
+        if rg.get('platform_unit') != bam_header_rg_info[submitter_read_group_id].get('PU'):
+            sys.exit("Error found: platform_unit %s in submitter_read_group_id %s does not match PU %s in BAM %s\n" % \
+                (
+                    rg.get('platform_unit'),
+                    submitter_read_group_id,
+                    bam_header_rg_info[submitter_read_group_id].get('PU'),
+                    rg.get('file_r1')
+                ))
+
+        if rg.get('library_name') != bam_header_rg_info[submitter_read_group_id].get('LB'):
+            sys.exit("Error found: library_name %s in submitter_read_group_id %s does not match LB %s in BAM %s\n" % \
+                (
+                    rg.get('platform_unit'),
+                    submitter_read_group_id,
+                    bam_header_rg_info[submitter_read_group_id].get('LB'),
+                    rg.get('file_r1')
+                ))
+
+        sm = bam_header_rg_info[submitter_read_group_id].get('SM')
+        if not sm:
+            sys.exit("Error found: no SM defined for submitter_read_group_id %s in BAM %s\n" % \
+                (submitter_read_group_id, rg.get('file_r1')))
+        else:
+            sm_in_bam_header.add(sm)
+
+    if len(sm_in_bam_header) > 1:
+        sys.exit("Error found: more than one SM value observed in BAM header: %s\n" % \
+            ', '.join(sm_in_bam_header))
 
 
 def file_check(metadata, seq_files):
@@ -112,7 +157,7 @@ def bam_check(metadata, seq_files):
     for f in seq_files:
         file_name_to_path[os.path.basename(f)] = f
 
-    rg_info = {}  # RG ID as first key, value would be key-value of RG fields
+    bam_header_rg_info = {}  # RG ID as first key, value would be key-value of RG fields
 
     for f in metadata.get('files'):
         if not f.get('format') == 'BAM': continue
@@ -124,10 +169,10 @@ def bam_check(metadata, seq_files):
         picard_validate_bam(bam_file)
 
         # get @RG lines from BAM header
-        get_rg_from_bam_header(bam_file, rg_info)
+        get_rg_from_bam_header(bam_file, bam_header_rg_info)
 
     # perform checks on read group metadata
-    rg_info_validation(metadata, rg_info)
+    bam_header_rg_info_validation(metadata, bam_header_rg_info)
 
 
 def fastq_check(metadata, seq_files):
