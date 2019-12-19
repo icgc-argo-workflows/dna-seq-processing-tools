@@ -1,0 +1,86 @@
+{
+  "analysisId": "551cebc0-8625-4201-948e-8f98fc1c2bb7",
+  "study": "TEST-PRO",
+  "analysisState": "PUBLISHED",
+  "sample": [
+    {
+      "info": {},
+      "sampleId": "2648e53f-cb71-5eaf-b7ec-6b4766d50e2a",
+      "specimenId": "2648e53f-cb71-5eaf-b7ec-6b4766d50e2a",
+      "sampleSubmitterId": "HCC1143_FASTQ_INPUT",
+      "sampleType": "DNA",
+      "specimen": {
+        "info": {},
+        "specimenId": "2648e53f-cb71-5eaf-b7ec-6b4766d50e2a",
+        "donorId": "96c05977-b40e-5c00-8bc6-3aaa8fbdda35",
+        "specimenSubmitterId": "HCC1143_FASTQ_INPUT",
+        "specimenClass": "Tumour",
+        "specimenType": "Primary tumour - solid tissue"
+      },
+      "donor": {
+        "donorId": "96c05977-b40e-5c00-8bc6-3aaa8fbdda35",
+        "donorSubmitterId": "HCC1143",
+        "studyId": "TEST-PRO",
+        "donorGender": "female",
+        "info": {}
+      }
+    }
+  ],
+  "file": [
+    {
+      "info": {},
+      "objectId": "21b3cfe4-f2d2-45a5-be03-9f4e2ef5abf2",
+      "studyId": "TEST-PRO",
+      "analysisId": "551cebc0-8625-4201-948e-8f98fc1c2bb7",
+      "fileName": "C0HVY.2_r2.fq.bz2",
+      "fileSize": 2034,
+      "fileType": "FASTQ",
+      "fileMd5sum": "9a3f32c80aff08e56965a6fd6dbb4d1f",
+      "fileAccess": "controlled"
+    },
+    {
+      "info": {},
+      "objectId": "e157513b-7f7a-4a24-b19d-57193973ba50",
+      "studyId": "TEST-PRO",
+      "analysisId": "551cebc0-8625-4201-948e-8f98fc1c2bb7",
+      "fileName": "C0HVY.2_r1.fq.bz2",
+      "fileSize": 2001,
+      "fileType": "FASTQ",
+      "fileMd5sum": "ad7f4f429506a8def523f068c60d2305",
+      "fileAccess": "controlled"
+    }
+  ],
+  "analysisType": {
+    "name": "sequencing_experiment",
+    "version": 10
+  },
+  "workflow": {
+    "name": "sequencing-data-submission",
+    "run_id": "nasty_montalcini",
+    "version": "0.4.0",
+    "short_name": "seq-submission"
+  },
+  "experiment": {
+    "platform": "ILLUMINA",
+    "platform_model": "HiSeq 2000",
+    "sequencing_date": "2014-12-12",
+    "library_strategy": "WGS",
+    "sequencing_center": "EXT"
+  },
+  "read_groups": [
+    {
+      "file_r1": "C0HVY.2_r1.fq.bz2",
+      "file_r2": "C0HVY.2_r2.fq.bz2",
+      "insert_size": 298,
+      "library_name": "Pond-147580",
+      "is_paired_end": true,
+      "platform_unit": "74_8a",
+      "read_length_r1": 150,
+      "read_length_r2": 150,
+      "sample_barcode": null,
+      "submitter_read_group_id": "C0HVY.2"
+    }
+  ],
+  "read_group_count": 3,
+  "submitter_sequencing_experiment_id": "TEST_EXP"
+}
