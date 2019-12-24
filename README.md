@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/icgc-argo/dna-seq-processing-tools.svg?branch=master)](https://travis-ci.org/icgc-argo/dna-seq-processing-tools)
 # DNA sequencing reads processing
 
-This repository keeps a collect of data processing tools for DNA-Seq analysis. All tools are defined using Common Workflow Language (CWL).
+This repository keeps a collect of data processing tools for DNA-Seq analysis. All tools are defined using Nextflow workflow language.
 
 Every tool is self-sufficient, can be independently developed, tested, released and used. This clean isolation allows maximum flexibility, maintainability and portability.
 
@@ -22,7 +22,7 @@ we'd like to follow additional guidelines.
 2. If the planned work affects only one tool, name the branch with the tool's name as prefix,
    followed by '.release_version' (which is the same as the next new release tag, eg, `score-download.0.1.4`).
    During development, no code/file not related to this tool should be changed.
-3. In the tool CWL file update docker image and tag in dockerPull to include the same
+3. In the tool's Nextflow process file update docker image and tag in 'container' to include the same
    release version, for example: `quay.io/icgc-argo/score-download:score-download.0.1.4`.
 4. During the tool development, when it's ready local commits should be pushed to the git server to
    trigger automated Travis CI tests. Note that first trigger of the test may fail due to missing docker
