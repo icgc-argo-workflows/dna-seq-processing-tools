@@ -2,7 +2,8 @@ FROM ubuntu:18.04
 
 RUN apt-get update && \
     apt-get install -y python3-pip python3-dev software-properties-common curl && \
-    apt-get install -y samtools libz-dev pkg-config libtool m4 autotools-dev automake
+    apt-get install -y samtools libz-dev pkg-config libtool m4 autotools-dev automake && \
+    apt-get install -y -s samtools=1.7-1
 
 RUN mkdir /tools
 
