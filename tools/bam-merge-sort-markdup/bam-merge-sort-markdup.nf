@@ -36,7 +36,7 @@ def getFaiFile(main_file){  //this is kind of like CWL's secondary files
 }
 
 process bamMergeSortMarkdup {
-  container 'quay.io/icgc-argo/bam-merge-sort-markdup:bam-merge-sort-markdup.0.1.4.1'
+  container 'quay.io/icgc-argo/bam-merge-sort-markdup:bam-merge-sort-markdup.0.1.5.0'
 
   input:
     path aligned_lane_bams

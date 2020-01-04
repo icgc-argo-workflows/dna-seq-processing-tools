@@ -1,4 +1,4 @@
-FROM quay.io/icgc-argo/dna-seq-processing-tools:base-docker.0.1.0
+FROM quay.io/icgc-argo/dna-seq-processing-tools:base-docker.0.1.1
 
 # cramtools installation
 # the current master has commit hash 0b5c9ece97dba616226405bec4a053e5b04c53d1
