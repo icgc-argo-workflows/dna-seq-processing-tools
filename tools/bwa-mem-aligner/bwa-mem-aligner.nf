@@ -37,7 +37,7 @@ def getBwaSecondaryFiles(main_file){  //this is kind of like CWL's secondary fil
 }
 
 process bwaMemAligner {
-  container 'quay.io/icgc-argo/bwa-mem-aligner:bwa-mem-aligner.0.1.2'
+  container 'quay.io/icgc-argo/bwa-mem-aligner:bwa-mem-aligner.0.1.3.0'
 
   input:
     path input_bam
