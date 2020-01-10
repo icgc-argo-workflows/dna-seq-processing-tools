@@ -31,7 +31,7 @@ params.reads_max_discard_fraction = -1
 
 
 process seqDataToLaneBam {
-  container 'quay.io/icgc-argo/seq-data-to-lane-bam:seq-data-to-lane-bam.0.1.6.0'
+  container 'quay.io/icgc-argo/seq-data-to-lane-bam:seq-data-to-lane-bam.0.1.7.0'
 
   input:
     path metadata_json
