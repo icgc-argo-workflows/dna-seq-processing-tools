@@ -33,7 +33,7 @@ def group_readgroup_by_filepair(seq_experiment_analysis):
     # all validation checks in sequencing experiment submission
     for rg in seq_experiment_analysis.get('read_groups'):
         rg['experiment'] = seq_experiment_analysis['experiment']  # let read group carry experiment
-        rg['submitter_sample_id'] = seq_experiment_analysis['sample'][0]['sampleSubmitterId']  # let read group carry submitter_sample_id
+        rg['submitter_sample_id'] = seq_experiment_analysis['samples'][0]['submitterSampleId']  # let read group carry submitter_sample_id
 
         file_r1_r2 = (rg.get('file_r1'), rg.get('file_r2'))  # tuple
 
