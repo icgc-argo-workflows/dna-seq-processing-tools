@@ -1,4 +1,4 @@
-#!/bin/bash nextflow
+#!/usr/bin/env nextflow
 
 /*
  * Copyright (c) 2019, Ontario Institute for Cancer Research (OICR).
@@ -25,7 +25,6 @@ nextflow.preview.dsl=2
 
 params.aligned_lane_bams = "input/grch38-aligned.*.lane.bam"
 params.ref_genome = "reference/tiny-grch38-chr11-530001-537000.fa"
-params.cpus = -1  // optional input param
 params.aligned_basename = "HCC1143.3.20190726.wgs.grch38"
 params.markdup = true
 params.output_format = 'cram'
@@ -49,16 +48,12 @@ workflow {
       aligned_lane_bams_ch.collect(),
       file(params.ref_genome),
       ref_genome_fai_ch.collect(),
-      params.cpus,
       params.aligned_basename,
       params.markdup,
       params.output_format,
       params.lossy
     )
-    bamMergeSortMarkdup.out.merged_seq.view()
-    bamMergeSortMarkdup.out.merged_seq_idx.view()
-    bamMergeSortMarkdup.out.duplicates_metrics.view()
 
   publish:
-    bamMergeSortMarkdup.out to: "outdir", mode: 'copy', overwrite: true
+    bamMergeSortMarkdup.out to: "outdir", overwrite: true
 }
