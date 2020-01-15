@@ -1,4 +1,4 @@
-#!/bin/bash nextflow
+#!/usr/bin/env nextflow
 
 /*
  * Copyright (c) 2019, Ontario Institute for Cancer Research (OICR).
@@ -37,5 +37,5 @@ workflow {
       file(params.file_tsv)
     )
   publish:
-    metadataValidation.out to: "outdir", mode: 'copy', overwrite: true
+    metadataValidation.out to: "outdir", overwrite: true
 }
