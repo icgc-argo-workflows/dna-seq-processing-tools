@@ -75,7 +75,7 @@ workflow {
       file(params.ref_genome_gz),
       ref_genome_gz_ch.collect()
     )
-    bwaMemAligner.out.aligned_bam.view()
+
   publish:
     bwaMemAligner.out to: "outdir", overwrite: true
 }
