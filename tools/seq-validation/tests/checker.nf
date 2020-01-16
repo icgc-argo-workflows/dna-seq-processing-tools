@@ -1,4 +1,4 @@
-#!/bin/bash nextflow
+#!/usr/bin/env nextflow
 
 /*
  * Copyright (c) 2019, Ontario Institute for Cancer Research (OICR).
@@ -23,8 +23,8 @@
 
 nextflow.preview.dsl=2
 
-params.seq_rg_json = "input/seq_rg.json"
-params.seq_files = "input/test_rg_3.bam*"
+params.seq_rg_json = "input/seq-exp.bam.metadata.json"
+params.seq_files = "input/test_rg_3.bam"
 
 include '../seq-validation' params(params)
 

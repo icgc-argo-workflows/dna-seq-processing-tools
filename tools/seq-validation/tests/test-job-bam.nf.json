@@ -1,4 +1,4 @@
 {
-    "seq_rg_json": "input/seq_rg.json",
-    "seq_files": "input/test_rg_3.bam*"
+    "seq_rg_json": "input/seq-exp.bam.metadata.json",
+    "seq_files": "input/test_rg_3.bam"
 }
