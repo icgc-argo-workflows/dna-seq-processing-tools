@@ -1,32 +1,32 @@
 {
   "analysisId": "0ae2c59b-2976-485c-a2c5-9b2976085cbf",
-  "study": "TEST-PRO",
+  "studyId": "TEST-PRO",
   "analysisState": "PUBLISHED",
-  "sample": [
+  "samples": [
     {
       "info": {},
       "sampleId": "2648e53f-cb71-5eaf-b7ec-6b4766d50e2a",
       "specimenId": "2648e53f-cb71-5eaf-b7ec-6b4766d50e2a",
-      "sampleSubmitterId": "HCC1143_FASTQ_INPUT",
+      "submitterSampleId": "HCC1143_FASTQ_INPUT",
       "sampleType": "DNA",
       "specimen": {
         "info": {},
         "specimenId": "2648e53f-cb71-5eaf-b7ec-6b4766d50e2a",
         "donorId": "96c05977-b40e-5c00-8bc6-3aaa8fbdda35",
-        "specimenSubmitterId": "HCC1143_FASTQ_INPUT",
+        "submitterSpecimenId": "HCC1143_FASTQ_INPUT",
         "specimenClass": "Tumour",
         "specimenType": "Primary tumour - solid tissue"
       },
       "donor": {
         "donorId": "96c05977-b40e-5c00-8bc6-3aaa8fbdda35",
-        "donorSubmitterId": "HCC1143",
+        "submitterDonorId": "HCC1143",
         "studyId": "TEST-PRO",
         "donorGender": "female",
         "info": {}
       }
     }
   ],
-  "file": [
+  "files": [
     {
       "info": {},
       "objectId": "1c91b42a-a55a-5cc0-8d3a-f0da81b47def",

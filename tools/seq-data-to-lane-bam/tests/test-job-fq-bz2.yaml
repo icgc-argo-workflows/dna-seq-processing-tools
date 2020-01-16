@@ -1,8 +1,0 @@
-seq_rg_json:
-  class: File
-  path: input/seq_rg-fq.bz2.json
-seq_files:
-  - class: File
-    path: input/C0HVY.2_r1.fq.bz2
-  - class: File
-    path: input/C0HVY.2_r2.fq.bz2
