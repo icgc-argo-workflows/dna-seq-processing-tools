@@ -1,4 +1,4 @@
-#!/bin/bash nextflow
+#!/usr/bin/env nextflow
 
 /*
  * Copyright (c) 2019, Ontario Institute for Cancer Research (OICR).
@@ -23,27 +23,19 @@
 
 nextflow.preview.dsl=2
 
-params.meta_format = "tsv"  // tsv or json
-params.exp_json = ""  // optional json string of exp metadata
-params.exp_tsv = "input/experiment-fq.tsv"
-params.rg_tsv = "input/read_group-fq.tsv"
-params.file_tsv = "input/file-fq.tsv"
-params.seq_exp_json_name = "seq_exp-fq.json"
-params.seq_rg_json_name = "seq_rg-fq.json"
+params.exp_tsv = "input/experiment-fq.v2.tsv"
+params.rg_tsv = "input/read_group-fq.v2.tsv"
+params.file_tsv = "input/file-fq.v2.tsv"
 
 include '../metadata-validation' params(params)
 
 workflow {
   main:
     metadataValidation(
-      params.meta_format,
-      params.exp_json,
       file(params.exp_tsv),
       file(params.rg_tsv),
-      file(params.file_tsv),
-      params.seq_exp_json_name,
-      params.seq_rg_json_name
+      file(params.file_tsv)
     )
   publish:
-    metadataValidation.out to: "outdir", mode: 'copy', overwrite: true
+    metadataValidation.out to: "outdir", overwrite: true
 }
