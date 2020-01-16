@@ -1,4 +1,4 @@
-#!/bin/bash nextflow
+#!/usr/bin/env nextflow
 
 /*
  * Copyright (c) 2019, Ontario Institute for Cancer Research (OICR).
@@ -24,9 +24,9 @@
 nextflow.preview.dsl=2
 
 params.input_bam = "tests/input/?????_?.lane.bam"
-params.cpus = -1  // optional input param
 params.aligned_lane_prefix = 'grch38-aligned'
 params.ref_genome_gz = "tests/reference/tiny-grch38-chr11-530001-537000.fa.gz"
+params.container_version = '0.1.3.0'
 
 def getBwaSecondaryFiles(main_file){  //this is kind of like CWL's secondary files
   def all_files = []
@@ -37,12 +37,11 @@ def getBwaSecondaryFiles(main_file){  //this is kind of like CWL's secondary fil
 }
 
 process bwaMemAligner {
-  container 'quay.io/icgc-argo/bwa-mem-aligner:bwa-mem-aligner.0.1.2'
+  container "quay.io/icgc-argo/bwa-mem-aligner:bwa-mem-aligner.${params.container_version}"
 
   input:
     path input_bam
     val aligned_lane_prefix
-    val cpus
     path ref_genome_gz
     path ref_genome_gz_secondary_files
 
@@ -50,8 +49,33 @@ process bwaMemAligner {
     path "${aligned_lane_prefix}.${input_bam.baseName}.bam", emit: aligned_bam
 
   script:
-    arg_cpus = cpus > 0 ? "-n ${cpus}" : ""
     """
-    bwa-mem-aligner.py -i ${input_bam} -r ${ref_genome_gz} -o ${aligned_lane_prefix} ${arg_cpus}
+    bwa-mem-aligner.py \
+      -i ${input_bam} \
+      -r ${ref_genome_gz} \
+      -o ${aligned_lane_prefix} \
+      -n ${task.cpus}
     """
+}
+
+Channel
+  .fromPath(getBwaSecondaryFiles(params.ref_genome_gz), checkIfExists: true)
+  .set { ref_genome_gz_ch }
+
+Channel
+  .fromPath(params.input_bam, checkIfExists: true)
+  .set { input_bam_ch }
+
+// will not run when import as module
+workflow {
+  main:
+    bwaMemAligner(
+      input_bam_ch,
+      params.aligned_lane_prefix,
+      file(params.ref_genome_gz),
+      ref_genome_gz_ch.collect()
+    )
+
+  publish:
+    bwaMemAligner.out to: "outdir", overwrite: true
 }

@@ -1,4 +1,4 @@
-#!/bin/bash nextflow
+#!/usr/bin/env nextflow
 
 /*
  * Copyright (c) 2019, Ontario Institute for Cancer Research (OICR).
@@ -24,7 +24,6 @@
 nextflow.preview.dsl=2
 
 params.input_bam = "input/?????_?.lane.bam"
-params.cpus = -1  // optional input param
 params.aligned_lane_prefix = 'grch38-aligned'
 params.ref_genome_gz = "reference/tiny-grch38-chr11-530001-537000.fa.gz"
 
@@ -44,11 +43,10 @@ workflow {
     bwaMemAligner(
       input_bam_ch,
       params.aligned_lane_prefix,
-      params.cpus,
       file(params.ref_genome_gz),
       ref_genome_gz_ch.collect()
     )
-    bwaMemAligner.out.aligned_bam.view()
+
   publish:
-    bwaMemAligner.out to: "outdir", mode: 'copy', overwrite: true
+    bwaMemAligner.out to: "outdir", overwrite: true
 }

@@ -4,7 +4,7 @@ id: bwa-mem-aligner
 requirements:
 - class: ShellCommandRequirement
 - class: DockerRequirement
-  dockerPull: 'quay.io/icgc-argo/bwa-mem-aligner:bwa-mem-aligner.0.1.2'
+  dockerPull: 'quay.io/icgc-argo/bwa-mem-aligner:bwa-mem-aligner.0.1.3.0'
 
 baseCommand: [ 'bwa-mem-aligner.py' ]
 
