@@ -159,16 +159,24 @@ def generate_ubams_from_bam(bam, readgroups, tool):
             subprocess.run(cmd, check=True)
 
         except Exception as e:
-            sys.exit("Error: %s: RevertSam failed: %s\n" % (e, bam))
+            sys.exit("Error: %s. 'samtools split' failed: %s\n" % (e, bam))
 
-        for filename in glob.glob(os.path.join(os.getcwd(), "*.bam")):
+        for bamfile in glob.glob(os.path.join(os.getcwd(), "*.bam")):
             # convert readGroupId to filename friendly
-            if os.path.basename(filename) == os.path.basename(bam): continue
-            rg_id = os.path.basename(filename).replace(".bam", "")
-            os.rename(filename, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id)))
+            if os.path.basename(bamfile) == os.path.basename(bam): continue  # skip input bam
+
+            # remove file extension to get rg_id
+            rg_id = os.path.splitext(os.path.basename(bamfile))[0]
+
+            # Strong assumption here: rg_id in file name must exist in readgroups, so let's test it
+            if rg_id not in [ rg['submitter_read_group_id'] for rg in readgroups ]:
+                sys.exit('Error: read group ID extracted from file name %s is not expected' % bamfile)
+
+            os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id)))
 
     else:
         sys.exit("Error: Unsupported tool: %s\n" % tool)
+
 
 def filename_to_file(filenames: tuple, files: list) -> tuple:
     name_to_file_map = {}
