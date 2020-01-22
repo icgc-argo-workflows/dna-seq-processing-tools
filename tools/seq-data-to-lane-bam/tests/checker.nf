@@ -26,6 +26,7 @@ nextflow.preview.dsl=2
 params.metadata_json = "input/1a1fbac3-00bf-4606-9fba-c300bf46068d.bam.sequencing_experiment.song-analysis.json"
 params.seq_files = "input/test_rg_3.v2.bam"
 params.reads_max_discard_fraction = -1
+params.tool = ""
 
 include '../seq-data-to-lane-bam' params(params)
 
@@ -34,7 +35,8 @@ workflow {
     seqDataToLaneBam(
       file(params.metadata_json),
       Channel.fromPath(params.seq_files).collect(),
-      params.reads_max_discard_fraction
+      params.reads_max_discard_fraction,
+      params.tool
     )
     // seqDataToLaneBam.out.lane_bams.view()
 

@@ -22,12 +22,13 @@
  */
 
 nextflow.preview.dsl=2
-version = '0.1.7.0'
+version = '0.2.0.0'
 
 params.metadata_json = ""
 params.seq_files = ""
 params.reads_max_discard_fraction = -1
 params.container_version = ''
+params.tool = ""
 
 
 process seqDataToLaneBam {
@@ -37,16 +38,20 @@ process seqDataToLaneBam {
     path metadata_json
     path seq_files
     val reads_max_discard_fraction
+    val tool
 
   output:
     path "*.lane.bam", emit: lane_bams
 
   script:
     reads_max_discard_fraction = reads_max_discard_fraction < 0 ? 0.05: reads_max_discard_fraction
+    arg_tool = tool != "" ? "-t ${tool}" : ""
     """
     seq-data-to-lane-bam.py \
       -p ${metadata_json} \
       -d ${seq_files} \
-      -m ${reads_max_discard_fraction}
+      -m ${reads_max_discard_fraction} \
+      -n ${task.cpus} \
+      ${arg_tool}
     """
 }
