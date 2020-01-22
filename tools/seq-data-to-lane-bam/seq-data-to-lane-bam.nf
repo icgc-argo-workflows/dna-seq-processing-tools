@@ -37,15 +37,13 @@ process seqDataToLaneBam {
   input:
     path metadata_json
     path seq_files
-    val reads_max_discard_fraction
-    val tool
 
   output:
     path "*.lane.bam", emit: lane_bams
 
   script:
-    reads_max_discard_fraction = reads_max_discard_fraction < 0 ? 0.05: reads_max_discard_fraction
-    arg_tool = tool != "" ? "-t ${tool}" : ""
+    reads_max_discard_fraction = params.reads_max_discard_fraction < 0 ? 0.05: params.reads_max_discard_fraction
+    arg_tool = params.tool != "" ? "-t ${params.tool}" : ""
     """
     seq-data-to-lane-bam.py \
       -p ${metadata_json} \
