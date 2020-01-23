@@ -170,7 +170,7 @@ def generate_ubams_from_bam(bam, readgroups, tool):
 
             # Strong assumption here: rg_id in file name must exist in readgroups, so let's test it
             if rg_id not in [ rg['submitter_read_group_id'] for rg in readgroups ]:
-                sys.exit('Error: read group ID extracted from file name %s is not expected' % bamfile)
+                sys.exit("Error: read group ID '%s' extracted from file name '%s' does not match what's in the provided metadata JSON." % (rg_id, bamfile))
 
             os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id)))
 
