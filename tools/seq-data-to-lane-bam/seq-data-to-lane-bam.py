@@ -24,6 +24,8 @@ import json
 import re
 import hashlib
 from argparse import ArgumentParser
+from multiprocessing import cpu_count
+import glob
 
 
 def group_readgroup_by_filepair(seq_experiment_analysis):
@@ -116,39 +118,64 @@ def generate_ubam_from_fastq(fq_pair, readgroup):
                     ' and '.join(fastq_pair) if fastq_pair[1] else fastq_pair[0]))
 
 
-def generate_ubams_from_bam(bam, readgroups):
-    # create an output map TSV file with each line containing read group ID and desired file name
-    with open('%s.output_map.tsv' % os.path.basename(bam), 'w') as m:
-        m.write("READ_GROUP_ID\tOUTPUT\n")
+def generate_ubams_from_bam(bam, readgroups, tool):
+    if tool == 'picard':
+        # create an output map TSV file with each line containing read group ID and desired file name
+        with open('%s.output_map.tsv' % os.path.basename(bam), 'w') as m:
+            m.write("READ_GROUP_ID\tOUTPUT\n")
 
-        for rg in readgroups:
-            rg_id = rg['submitter_read_group_id']
-            fname = readgroup_id_to_fname(rg_id)
-            m.write("%s\t%s\n" % (rg_id, fname))
+            for rg in readgroups:
+                rg_id = rg['submitter_read_group_id']
+                fname = readgroup_id_to_fname(rg_id)
+                m.write("%s\t%s\n" % (rg_id, fname))
 
-    # Revert the bam to unaligned and lane level bam sorted by query name
-    # Suggested options from: https://github.com/broadinstitute/picard/issues/849#issuecomment-313128088
-    try:
-        subprocess.run(['java', '-jar', '/tools/picard.jar',
-                        'RevertSam',
-                        'I=%s' % bam,
-                        'SANITIZE=true',
-                        'ATTRIBUTE_TO_CLEAR=XT',
-                        'ATTRIBUTE_TO_CLEAR=XN',
-                        'ATTRIBUTE_TO_CLEAR=AS',
-                        'ATTRIBUTE_TO_CLEAR=OC',
-                        'ATTRIBUTE_TO_CLEAR=OP',
-                        'SORT_ORDER=queryname',
-                        'RESTORE_ORIGINAL_QUALITIES=true',
-                        'REMOVE_DUPLICATE_INFORMATION=true',
-                        'REMOVE_ALIGNMENT_INFORMATION=true',
-                        'OUTPUT_BY_READGROUP=true',
-                        'VALIDATION_STRINGENCY=LENIENT',
-                        'MAX_DISCARD_FRACTION=%s' % args.max_discard_fraction,
-                        'OUTPUT_MAP=%s.output_map.tsv' % os.path.basename(bam)], check=True)
+        # Revert the bam to unaligned and lane level bam sorted by query name
+        # Suggested options from: https://github.com/broadinstitute/picard/issues/849#issuecomment-313128088
+        try:
+            subprocess.run(['java', '-jar', '/tools/picard.jar',
+                            'RevertSam',
+                            'I=%s' % bam,
+                            'SANITIZE=true',
+                            'ATTRIBUTE_TO_CLEAR=XT',
+                            'ATTRIBUTE_TO_CLEAR=XN',
+                            'ATTRIBUTE_TO_CLEAR=AS',
+                            'ATTRIBUTE_TO_CLEAR=OC',
+                            'ATTRIBUTE_TO_CLEAR=OP',
+                            'SORT_ORDER=queryname',
+                            'RESTORE_ORIGINAL_QUALITIES=true',
+                            'REMOVE_DUPLICATE_INFORMATION=true',
+                            'REMOVE_ALIGNMENT_INFORMATION=true',
+                            'OUTPUT_BY_READGROUP=true',
+                            'VALIDATION_STRINGENCY=LENIENT',
+                            'MAX_DISCARD_FRACTION=%s' % args.max_discard_fraction,
+                            'OUTPUT_MAP=%s.output_map.tsv' % os.path.basename(bam)], check=True)
 
-    except Exception as e:
-        sys.exit("Error: %s: RevertSam failed: %s\n" % (e, bam))
+        except Exception as e:
+            sys.exit("Error: %s: RevertSam failed: %s\n" % (e, bam))
+
+    elif tool == 'samtools':
+        try:
+            cmd = ['samtools', 'split', '-f', '%!.bam', '-@ %s' % str(args.cpus), bam]
+            subprocess.run(cmd, check=True)
+
+        except Exception as e:
+            sys.exit("Error: %s. 'samtools split' failed: %s\n" % (e, bam))
+
+        for bamfile in glob.glob(os.path.join(os.getcwd(), "*.bam")):
+            # convert readGroupId to filename friendly
+            if os.path.basename(bamfile) == os.path.basename(bam): continue  # skip input bam
+
+            # remove file extension to get rg_id
+            rg_id = os.path.splitext(os.path.basename(bamfile))[0]
+
+            # Strong assumption here: rg_id in file name must exist in readgroups, so let's test it
+            if rg_id not in [ rg['submitter_read_group_id'] for rg in readgroups ]:
+                sys.exit("Error: read group ID '%s' extracted from file name '%s' does not match what's in the provided metadata JSON." % (rg_id, bamfile))
+
+            os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id)))
+
+    else:
+        sys.exit("Error: Unsupported tool: %s\n" % tool)
 
 
 def filename_to_file(filenames: tuple, files: list) -> tuple:
@@ -168,7 +195,7 @@ def main(args):
     for fp in filepair_map_to_readgroup:
         if filepair_map_to_readgroup[fp]['format'] == 'BAM':
             # for bam just need fp[0] since fp[1] is either the same as fp[0] or None
-            generate_ubams_from_bam(filename_to_file(fp, args.seq_files)[0], filepair_map_to_readgroup[fp]['read_groups'])
+            generate_ubams_from_bam(filename_to_file(fp, args.seq_files)[0], filepair_map_to_readgroup[fp]['read_groups'], args.tool)
         else:
             generate_ubam_from_fastq(filename_to_file(fp, args.seq_files), filepair_map_to_readgroup[fp]['read_groups'][0])  # FASTQ must be one read group
 
@@ -183,6 +210,9 @@ if __name__ == "__main__":
                         dest="max_discard_fraction",
                         default=0.05, type=float,
                         help="Max fraction of reads allowed to be discarded when reverting aligned BAM to unaligned")
+    parser.add_argument("-t", "--tool", dest="tool", default="samtools", type=str, choices=['picard', 'samtools'],
+                        help="The tool which is used to do splitting to lane bams")
+    parser.add_argument("-n", "--cpus", type=int, default=cpu_count())
     args = parser.parse_args()
 
     main(args)
