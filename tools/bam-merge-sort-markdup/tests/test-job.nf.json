@@ -4,10 +4,7 @@
     "input/grch38-aligned.D0RE2_1.lane.bam",
     "input/grch38-aligned.C0HVY_2.lane.bam"
   ],
-  "ref_genome": "reference/tiny-grch38-chr11-530001-537000.fa",
-  "cpus": 1,
-  "aligned_basename": "HCC1143.3.20190726.wgs.grch38",
-  "markdup": true,
-  "lossy": false,
-  "output_format": "cram"
+  "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
+  "cpus": 4,
+  "mem": 4
 }
