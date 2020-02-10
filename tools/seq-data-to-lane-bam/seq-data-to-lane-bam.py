@@ -81,7 +81,8 @@ def bunzip2(fq_pair):
     return bunzipped
 
 
-def generate_ubam_from_fastq(fq_pair, readgroup):
+def generate_ubam_from_fastq(fq_pair, readgroup, mem=None):
+    jvm_Xmx = "-Xmx%sM" % mem if mem else ""
     fastq_pair = bunzip2(fq_pair)
 
     rg_args = [
@@ -104,7 +105,7 @@ def generate_ubam_from_fastq(fq_pair, readgroup):
     # convert readGroupId to filename friendly
     try:
         cmd = [
-                'java', '-jar', '/tools/picard.jar', 'FastqToSam', 'FASTQ=%s' % fastq_pair[0],
+                'java', jvm_Xmx, '-jar', '/tools/picard.jar', 'FastqToSam', 'FASTQ=%s' % fastq_pair[0],
                 'OUTPUT=%s' % readgroup_id_to_fname(readgroup['submitter_read_group_id'])
               ] + rg_args
 
@@ -118,8 +119,9 @@ def generate_ubam_from_fastq(fq_pair, readgroup):
                     ' and '.join(fastq_pair) if fastq_pair[1] else fastq_pair[0]))
 
 
-def generate_ubams_from_bam(bam, readgroups, tool):
+def generate_ubams_from_bam(bam, readgroups, tool, mem=None):
     if tool == 'picard':
+        jvm_Xmx = "-Xmx%sM" % mem if mem else ""
         # create an output map TSV file with each line containing read group ID and desired file name
         with open('%s.output_map.tsv' % os.path.basename(bam), 'w') as m:
             m.write("READ_GROUP_ID\tOUTPUT\n")
@@ -132,7 +134,7 @@ def generate_ubams_from_bam(bam, readgroups, tool):
         # Revert the bam to unaligned and lane level bam sorted by query name
         # Suggested options from: https://github.com/broadinstitute/picard/issues/849#issuecomment-313128088
         try:
-            subprocess.run(['java', '-jar', '/tools/picard.jar',
+            subprocess.run(['java', jvm_Xmx, '-jar', '/tools/picard.jar',
                             'RevertSam',
                             'I=%s' % bam,
                             'SANITIZE=true',
@@ -195,24 +197,25 @@ def main(args):
     for fp in filepair_map_to_readgroup:
         if filepair_map_to_readgroup[fp]['format'] == 'BAM':
             # for bam just need fp[0] since fp[1] is either the same as fp[0] or None
-            generate_ubams_from_bam(filename_to_file(fp, args.seq_files)[0], filepair_map_to_readgroup[fp]['read_groups'], args.tool)
+            generate_ubams_from_bam(filename_to_file(fp, args.seq_files)[0], filepair_map_to_readgroup[fp]['read_groups'], args.tool, args.mem)
         else:
-            generate_ubam_from_fastq(filename_to_file(fp, args.seq_files), filepair_map_to_readgroup[fp]['read_groups'][0])  # FASTQ must be one read group
+            generate_ubam_from_fastq(filename_to_file(fp, args.seq_files), filepair_map_to_readgroup[fp]['read_groups'][0], args.mem)  # FASTQ must be one read group
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-d", "--seq-files", dest="seq_files", required=True,
+    parser.add_argument("-s", "--seq-files", dest="seq_files", required=True,
                         help="Seq files to process", type=str, nargs='+')
     parser.add_argument("-p", "--metadata-json", dest="metadata_json", required=True,
                         help="JSON file containing sequencing_experiment analysis")
-    parser.add_argument("-m", "--max-discard-fraction",
+    parser.add_argument("-d", "--max-discard-fraction",
                         dest="max_discard_fraction",
                         default=0.05, type=float,
                         help="Max fraction of reads allowed to be discarded when reverting aligned BAM to unaligned")
     parser.add_argument("-t", "--tool", dest="tool", default="samtools", type=str, choices=['picard', 'samtools'],
                         help="The tool which is used to do splitting to lane bams")
     parser.add_argument("-n", "--cpus", type=int, default=cpu_count())
+    parser.add_argument("-m", "--mem", dest="mem", help="Maximal allocated memory in MB", type=int)
     args = parser.parse_args()
 
     main(args)
