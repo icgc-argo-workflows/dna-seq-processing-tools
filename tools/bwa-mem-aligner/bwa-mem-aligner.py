@@ -7,17 +7,20 @@ from multiprocessing import cpu_count
 import sys
 import os
 import json
+import re
 
 
 def get_read_group_info(metadata_file, input_bam):
     if metadata_file and metadata_file != 'NO_FILE':
         with open(metadata_file, 'r') as f:
             metadata = json.load(f)
-        parts = input_bam.split('.lane.bam')  # input bam naming convention: <read_group_id>.lane.bam
-        if len(parts) == 2 and parts[1] == '':
-            read_group_id = parts[0]
+
+        # input bam naming convention: <read_group_id>.<md5sum>.lane.bam
+        matched = re.match(r'^(.+?)\.[a-f0-9]{32}\.lane\.bam$', input_bam)
+        if matched:
+            read_group_id = matched.group(1)
         else:
-            sys.exit("Error: input bam does not follow naming convention '<read_group_id>.lane.bam': %s" % input_bam)
+            sys.exit("Error: input bam does not follow naming convention '<read_group_id>.<md5sum>.lane.bam': %s" % input_bam)
     else:
         return {}
 

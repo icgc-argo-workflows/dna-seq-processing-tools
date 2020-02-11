@@ -1,5 +1,5 @@
 {
-    "input_bam": "input/C0HVY.2.lane.bam",
+    "input_bam": "input/C0HVY.2.2a20e32f077348d97b3cf6c6cb4745c0.lane.bam",
     "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
     "sequencing_experiment_metadata": "input/0ae2c59b-2976-485c-a2c5-9b2976085cbf.fq.sequencing_experiment.song-analysis.json"
 }
