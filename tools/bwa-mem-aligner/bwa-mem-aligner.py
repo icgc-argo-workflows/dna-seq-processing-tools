@@ -17,7 +17,7 @@ def get_read_group_info(metadata_file, input_bam):
         if len(parts) == 2 and parts[1] == '':
             read_group_id = parts[0]
         else:
-            return {}
+            sys.exit("Error: input bam does not follow naming convention '<read_group_id>.lane.bam': %s" % input_bam)
     else:
         return {}
 
