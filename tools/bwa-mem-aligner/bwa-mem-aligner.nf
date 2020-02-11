@@ -30,7 +30,7 @@ params.ref_genome_gz = "tests/reference/tiny-grch38-chr11-530001-537000.fa.gz"
 params.container_version = ""
 params.cpus = 1
 params.mem = 1  // GB
-params.sequencing_experiment_analysis = ""
+params.sequencing_experiment_analysis = "NO_FILE"
 
 def getBwaSecondaryFiles(main_file){  //this is kind of like CWL's secondary files
   def all_files = []
