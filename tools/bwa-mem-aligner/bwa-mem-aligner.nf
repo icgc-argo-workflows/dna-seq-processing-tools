@@ -22,12 +22,15 @@
  */
 
 nextflow.preview.dsl=2
-version = '0.1.4.0'
+version = '0.1.5.0'
 
 params.input_bam = "tests/input/?????_?.lane.bam"
 params.aligned_lane_prefix = 'grch38-aligned'
 params.ref_genome_gz = "tests/reference/tiny-grch38-chr11-530001-537000.fa.gz"
 params.container_version = ""
+params.cpus = 1
+params.mem = 1  // GB
+params.sequencing_experiment_analysis = ""
 
 def getBwaSecondaryFiles(main_file){  //this is kind of like CWL's secondary files
   def all_files = []
@@ -40,21 +43,25 @@ def getBwaSecondaryFiles(main_file){  //this is kind of like CWL's secondary fil
 process bwaMemAligner {
   container "quay.io/icgc-argo/bwa-mem-aligner:bwa-mem-aligner.${params.container_version ?: version}"
 
+  cpus params.cpus
+  memory "${params.mem} GB"
+
   input:
     path input_bam
-    val aligned_lane_prefix
     path ref_genome_gz
     path ref_genome_gz_secondary_files
+    path sequencing_experiment_analysis
 
   output:
-    path "${aligned_lane_prefix}.${input_bam.baseName}.bam", emit: aligned_bam
+    path "${params.aligned_lane_prefix}.${input_bam.baseName}.bam", emit: aligned_bam
 
   script:
+    metadata = sequencing_experiment_analysis ? "-m " + sequencing_experiment_analysis : ""
     """
     bwa-mem-aligner.py \
       -i ${input_bam} \
       -r ${ref_genome_gz} \
-      -o ${aligned_lane_prefix} \
-      -n ${task.cpus}
+      -o ${params.aligned_lane_prefix} \
+      -n ${task.cpus} ${metadata}
     """
 }

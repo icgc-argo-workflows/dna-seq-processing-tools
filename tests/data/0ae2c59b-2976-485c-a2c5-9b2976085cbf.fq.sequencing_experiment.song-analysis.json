@@ -5,20 +5,21 @@
   "samples": [
     {
       "info": {},
-      "sampleId": "2648e53f-cb71-5eaf-b7ec-6b4766d50e2a",
-      "specimenId": "2648e53f-cb71-5eaf-b7ec-6b4766d50e2a",
+      "sampleId": "SA610149",
+      "specimenId": "SP210129",
       "submitterSampleId": "HCC1143_FASTQ_INPUT",
       "sampleType": "DNA",
       "specimen": {
         "info": {},
-        "specimenId": "2648e53f-cb71-5eaf-b7ec-6b4766d50e2a",
-        "donorId": "96c05977-b40e-5c00-8bc6-3aaa8fbdda35",
+        "specimenId": "SP210129",
+        "donorId": "DO250122",
         "submitterSpecimenId": "HCC1143_FASTQ_INPUT",
-        "specimenClass": "Tumour",
-        "specimenType": "Primary tumour - solid tissue"
+        "tumourNormalDesignation": "Tumour",
+        "specimenTissueSource": "Solid tissue",
+        "specimenType": "Primary tumour - adjacent to normal"
       },
       "donor": {
-        "donorId": "96c05977-b40e-5c00-8bc6-3aaa8fbdda35",
+        "donorId": "DO250122",
         "submitterDonorId": "HCC1143",
         "studyId": "TEST-PRO",
         "donorGender": "female",

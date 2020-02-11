@@ -6,6 +6,63 @@ import argparse
 from multiprocessing import cpu_count
 import sys
 import os
+import json
+
+
+def get_read_group_info(metadata_file, input_bam):
+    if metadata_file and metadata_file != 'NO_FILE':
+        with open(metadata_file, 'r') as f:
+            metadata = json.load(f)
+        parts = input_bam.split('.lane.bam')  # input bam naming convention: <read_group_id>.lane.bam
+        if len(parts) == 2 and parts[1] == '':
+            read_group_id = parts[0]
+        else:
+            return {}
+    else:
+        return {}
+
+    read_group = {}
+    for rg in metadata['read_groups']:
+        if rg['submitter_read_group_id'] == read_group_id:
+            read_group = rg
+            break
+    if not read_group:
+        sys.exit("Error: unable to find read group info for '%s' in the supplied metadata" % read_group_id)
+
+    experiment = metadata['experiment']
+
+    read_group_info = {
+        'ID': read_group_id,
+        'SM': metadata['samples'][0]['sampleId'],
+        'LB': read_group['library_name'],
+        'PU': read_group['platform_unit']
+    }
+
+    if read_group.get('insert_size'):
+        read_group_info.update({'PI': read_group['insert_size']})
+    if read_group.get('sample_barcode'):
+        read_group_info.update({'BC': read_group['sample_barcode']})
+    if experiment.get('sequencing_center'):
+        read_group_info.update({'CN': experiment['sequencing_center']})
+    if experiment.get('platform'):
+        read_group_info.update({'PL': experiment['platform']})
+    if experiment.get('platform_model'):
+        read_group_info.update({'PM': experiment['platform_model']})
+    if experiment.get('sequencing_date'):
+        read_group_info.update({'DT': experiment['sequencing_date']})
+
+    description = '|'.join([
+                                experiment['library_strategy'],
+                                metadata['studyId'],
+                                metadata['samples'][0]['specimenId'],
+                                metadata['samples'][0]['donor']['donorId'],
+                                metadata['samples'][0]['specimen']['specimenType'],
+                                metadata['samples'][0]['specimen']['tumourNormalDesignation']
+                            ])
+
+    read_group_info.update({'DS': description})
+
+    return read_group_info
 
 
 def main():
@@ -19,7 +76,12 @@ def main():
     parser.add_argument('-o','--aligned_lane_prefix', dest='aligned_lane_prefix', type=str,
                         help='Output aligned lane bam file prefix', required=True)
     parser.add_argument("-n", "--cpus", type=int, default=cpu_count())
+    parser.add_argument('-m','--metadata', dest='metadata', type=str,
+                        help='Sequencing experiment metadata')
     args = parser.parse_args()
+
+    # retrieve read_group_info from metadata
+    read_group_info = get_read_group_info(args.metadata, args.input_bam)
 
     # retrieve the @RG from BAM header
     try:
@@ -36,6 +98,10 @@ def main():
         rg_array.append(line.rstrip().replace('\t', '\\t'))
 
     if not len(rg_array) == 1: sys.exit('\n%s: The input bam should only contain one readgroup ID: %s' % args.input_bam)
+
+    if read_group_info:  # use what's in metadata instead of in BAM header
+        rg_kv = [ '@RG' ] + [ '%s:%s' % (k, v) for k, v in read_group_info.items() ]
+        rg_array = [ '\\t'.join(rg_kv) ]
 
     sort_qname = 'samtools sort -n -O BAM -@ %s %s ' % (str(args.cpus), args.input_bam)
 
