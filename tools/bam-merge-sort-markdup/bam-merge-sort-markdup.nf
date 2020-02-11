@@ -55,9 +55,9 @@ process bamMergeSortMarkdup {
     path ref_genome_gz_secondary_file
 
   output:
-    path "${params.aligned_basename}*.{bam,cram}", emit: merged_seq
-    path "${params.aligned_basename}*.{bam.bai,cram.crai}", emit: merged_seq_idx
-    path "${params.aligned_basename}.duplicates-metrics.txt", emit: duplicates_metrics
+    path "${params.aligned_basename}.{bam,cram}", emit: merged_seq
+    path "${params.aligned_basename}.{bam.bai,cram.crai}", emit: merged_seq_idx
+    path "${params.aligned_basename}.duplicates-metrics.tgz", emit: duplicates_metrics
 
   script:
     arg_markdup = params.markdup ? "-d" : ""
