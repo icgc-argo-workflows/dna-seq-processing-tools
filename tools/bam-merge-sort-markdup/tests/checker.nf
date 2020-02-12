@@ -23,12 +23,8 @@
 
 nextflow.preview.dsl=2
 
-params.aligned_lane_bams = "input/grch38-aligned.*.lane.bam"
-params.ref_genome = "reference/tiny-grch38-chr11-530001-537000.fa"
-params.aligned_basename = "HCC1143.3.20190726.wgs.grch38"
-params.markdup = true
-params.output_format = 'cram'
-params.lossy = false
+params.aligned_lane_bams = ""
+params.ref_genome_gz = ""
 
 include '../bam-merge-sort-markdup.nf' params(params)
 
@@ -38,20 +34,16 @@ Channel
   .set { aligned_lane_bams_ch }
 
 Channel
-  .fromPath(getFaiFile(params.ref_genome), checkIfExists: true)
-  .set { ref_genome_fai_ch }
+  .fromPath(getMdupSecondaryFile(params.ref_genome_gz), checkIfExists: true)
+  .set { ref_genome_gz_ch }
 
 // will not run when import as module
 workflow {
   main:
     bamMergeSortMarkdup(
       aligned_lane_bams_ch.collect(),
-      file(params.ref_genome),
-      ref_genome_fai_ch.collect(),
-      params.aligned_basename,
-      params.markdup,
-      params.output_format,
-      params.lossy
+      file(params.ref_genome_gz),
+      ref_genome_gz_ch.collect()
     )
 
   publish:

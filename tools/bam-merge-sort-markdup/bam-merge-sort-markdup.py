@@ -6,7 +6,31 @@ import subprocess
 import argparse
 from multiprocessing import cpu_count
 import json
+import os
 
+def run_cmd(cmd):
+  stdout, stderr, p, success = '', '', None, True
+  try:
+    p = subprocess.Popen([cmd],
+                          stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE,
+                          shell=True)
+    stdout, stderr = p.communicate()
+  except Exception as e:
+    print('Execution failed: %s' % e, file=sys.stderr)
+    success = False
+
+  if p and p.returncode != 0:
+    print('Execution failed, none zero code returned.', file=sys.stderr)
+    success = False
+
+  print(stdout.decode("utf-8"))
+  print(stderr.decode("utf-8"), file=sys.stderr)
+
+  if not success:
+    sys.exit(p.returncode if p.returncode else 1)
+
+  return stdout, stderr
 
 def main():
     """ Main program """
@@ -41,6 +65,7 @@ def main():
     bai = 'samtools index -@ %s /dev/stdin %s' % (args.cpus, args.output_base + ".bam.bai")
     bai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".bam", args.output_base + ".bam.bai")
     crai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".cram", args.output_base + ".cram.crai")
+    tgz = 'tar czf %s.duplicates-metrics.tgz %s.duplicates-metrics.txt' % (args.output_base, args.output_base)
 
     # build command
     if "bam" in args.output_format and "cram" in args.output_format:
@@ -54,26 +79,14 @@ def main():
     elif not "bam" in args.output_format and "cram" in args.output_format:
         cmd.append('|'.join([merge, cram]))
         cmd.append(crai1)
+    else:
+        sys.exit("Unsupported sequence format!")
 
     for c in cmd:
+       run_cmd(c)
 
-        stderr, p, success = '', None, True
-        try:
-            p = subprocess.Popen([c],
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE,
-                                 shell=True)
-            stderr = p.communicate()[1].decode('utf-8')
-        except Exception as e:
-            print('Execution failed: %s' % e, file=sys.stderr)
-            success = False
-
-        if p and p.returncode != 0:
-            print('Execution failed, none zero code returned. \nSTDERR: %s' % repr(stderr), file=sys.stderr)
-            success = False
-
-        if not success:
-            sys.exit(p.returncode if p.returncode else 1)
+    if os.path.isfile(os.path.join(os.getcwd(), args.output_base + ".duplicates-metrics.txt")):
+       run_cmd(tgz)
 
     # write the parameter to stdout
     output = {"bundle_type": "dna_alignment"}
