@@ -22,7 +22,7 @@
  */
 
 nextflow.preview.dsl=2
-version = '0.1.5.0'
+version = '0.1.5.1'
 
 params.input_bam = "tests/input/?????_?.lane.bam"
 params.aligned_lane_prefix = 'grch38-aligned'
