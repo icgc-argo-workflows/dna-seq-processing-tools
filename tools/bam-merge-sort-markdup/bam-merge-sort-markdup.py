@@ -59,7 +59,7 @@ def main():
     if args.lossy:
         cram = 'java -jar /tools/cramtools.jar cram -R %s --capture-all-tags --lossy-quality-score-spec \*8 --preserve-read-names -O %s' % (args.reference, args.output_base + ".cram")
     else:
-        cram = 'samtools view -C -T %s -@ %s /dev/stdin -o %s ' % (args.reference, args.cpus, args.output_base + ".cram")
+        cram = 'samtools view -C -T %s -@ %s --write-index /dev/stdin -o %s ' % (args.reference, args.cpus, args.output_base + ".cram")
 
     tee = 'tee %s ' % (args.output_base + ".bam")
     bai = 'samtools index -@ %s /dev/stdin %s' % (args.cpus, args.output_base + ".bam.bai")
@@ -71,14 +71,14 @@ def main():
     if "bam" in args.output_format and "cram" in args.output_format:
         cmd.append('|'.join([merge, tee, cram]))
         cmd.append(bai1)
-        cmd.append(crai1)
+        if args.lossy: cmd.append(crai1)
 
     elif "bam" in args.output_format and not "cram" in args.output_format:
         cmd.append('|'.join([merge, tee, bai]))
 
     elif not "bam" in args.output_format and "cram" in args.output_format:
         cmd.append('|'.join([merge, cram]))
-        cmd.append(crai1)
+        if args.lossy: cmd.append(crai1)
     else:
         sys.exit("Unsupported sequence format!")
 
