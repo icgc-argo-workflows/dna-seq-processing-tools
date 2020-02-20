@@ -52,7 +52,7 @@ def main():
 
     if args.mdup:
         merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s | bammarkduplicates2 markthreads=%s level=0 rewritebam=1 rewritebamlevel=1 O=/dev/stdout M=%s ' % \
-                (str(args.cpus), ' '.join(args.input_bams), str(args.cpus), args.output_base + ".duplicates-metrics.txt")
+                (str(args.cpus), ' '.join(args.input_bams), str(args.cpus), args.output_base + ".duplicates_metrics.txt")
     else:
         merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s ' % (str(args.cpus), ' '.join(args.input_bams))
 
@@ -65,7 +65,7 @@ def main():
     bai = 'samtools index -@ %s /dev/stdin %s' % (args.cpus, args.output_base + ".bam.bai")
     bai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".bam", args.output_base + ".bam.bai")
     crai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".cram", args.output_base + ".cram.crai")
-    tgz = 'tar czf %s.duplicates-metrics.tgz %s.duplicates-metrics.txt' % (args.output_base, args.output_base)
+    tgz = 'tar czf %s.duplicates_metrics.tgz %s.duplicates_metrics.txt' % (args.output_base, args.output_base)
 
     # build command
     if "bam" in args.output_format and "cram" in args.output_format:
@@ -85,7 +85,7 @@ def main():
     for c in cmd:
        run_cmd(c)
 
-    if os.path.isfile(os.path.join(os.getcwd(), args.output_base + ".duplicates-metrics.txt")):
+    if os.path.isfile(os.path.join(os.getcwd(), args.output_base + ".duplicates_metrics.txt")):
        run_cmd(tgz)
 
     # write the parameter to stdout
