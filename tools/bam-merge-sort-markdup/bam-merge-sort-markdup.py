@@ -51,7 +51,7 @@ def main():
     cmd = []
 
     if args.mdup:
-        merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s | bammarkduplicates2 markthreads=%s level=0 rewritebam=1 rewritebamlevel=0 O=/dev/stdout M=%s ' % \
+        merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s | bammarkduplicates2 markthreads=%s level=0 rewritebam=1 O=/dev/stdout M=%s ' % \
                 (str(args.cpus), ' '.join(args.input_bams), str(args.cpus), args.output_base + ".duplicates-metrics.txt")
     else:
         merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s ' % (str(args.cpus), ' '.join(args.input_bams))
