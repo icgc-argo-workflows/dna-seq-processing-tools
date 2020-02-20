@@ -108,11 +108,11 @@ def main():
 
     sort_qname = 'samtools sort -l 0 -n -O BAM -@ %s %s ' % (str(args.cpus), args.input_bam)
 
-    # only output paired reads, discarding singletons, supplementary and secondary reads.
-    bam2fastq = ' samtools fastq -O -F 0x900 -0 /dev/null -s /dev/null -@ %s - ' % (str(args.cpus))
+    # discarding supplementary and secondary reads.
+    bam2fastq = ' samtools fastq -O -F 0x900 -@ %s - ' % (str(args.cpus))
 
     #Command with header
-    alignment = ' bwa mem -K 100000000 -Y -t %s -p -R "%s" %s - ' % (str(args.cpus), rg_array[0], args.ref_genome)
+    alignment = ' bwa mem -K 100000000 -Y -T 0 -t %s -p -R "%s" %s - ' % (str(args.cpus), rg_array[0], args.ref_genome)
 
     # Sort the SAM output by coordinate from bwa and save to BAM file
     sort_coordinate = ' samtools sort --no-PG -O BAM -@ %s -o %s /dev/stdin' % (str(args.cpus), args.aligned_lane_prefix + "." + os.path.basename(args.input_bam))
