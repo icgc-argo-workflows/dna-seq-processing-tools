@@ -51,15 +51,15 @@ def main():
     cmd = []
 
     if args.mdup:
-        merge = 'bammarkduplicates2 markthreads=%s O=/dev/stdout M=%s I=%s ' % \
-                (str(args.cpus), args.output_base + ".duplicates-metrics.txt", ' I='.join(args.input_bams))
+        merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s | bammarkduplicates2 markthreads=%s level=0 O=/dev/stdout M=%s ' % \
+                (str(args.cpus), ' '.join(args.input_bams), str(args.cpus), args.output_base + ".duplicates-metrics.txt")
     else:
-        merge = 'samtools merge -uf -@ %s /dev/stdout %s ' % (args.cpus, ' '.join(args.input_bams))
+        merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s ' % (str(args.cpus), ' '.join(args.input_bams))
 
     if args.lossy:
         cram = 'java -jar /tools/cramtools.jar cram -R %s --capture-all-tags --lossy-quality-score-spec \*8 --preserve-read-names -O %s' % (args.reference, args.output_base + ".cram")
     else:
-        cram = 'samtools view -C -T %s -@ %s --write-index /dev/stdin -o %s ' % (args.reference, args.cpus, args.output_base + ".cram")
+        cram = 'samtools view --no-PG -C -T %s -@ %s --write-index /dev/stdin -o %s ' % (args.reference, args.cpus, args.output_base + ".cram")
 
     tee = 'tee %s ' % (args.output_base + ".bam")
     bai = 'samtools index -@ %s /dev/stdin %s' % (args.cpus, args.output_base + ".bam.bai")
