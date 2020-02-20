@@ -4,5 +4,6 @@
                   "input/D0RH0.2.43d6e0af883449ee27e6e6240d909bf5.lane.bam"],
     "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
     "cpus": 2,
-    "mem": 1.5
+    "mem": 1.5,
+    "sequencing_experiment_metadata": "input/0ae2c59b-2976-485c-a2c5-9b2976085cbf.fq.sequencing_experiment.song-analysis.json"
 }
