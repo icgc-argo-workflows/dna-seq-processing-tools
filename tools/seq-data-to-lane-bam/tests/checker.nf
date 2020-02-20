@@ -26,7 +26,7 @@ nextflow.preview.dsl=2
 params.metadata_json = ""
 params.seq_files = ""
 
-include '../seq-data-to-lane-bam' params(params)
+include seqDataToLaneBam from '../seq-data-to-lane-bam' params(params)
 
 workflow {
   main:
