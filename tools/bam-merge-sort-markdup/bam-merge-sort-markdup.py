@@ -51,8 +51,8 @@ def main():
     cmd = []
 
     if args.mdup:
-        merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s | bammarkduplicates2 markthreads=%s level=0 rewritebam=1 rewritebamlevel=1 O=/dev/stdout M=%s ' % \
-                (str(args.cpus), ' '.join(args.input_bams), str(args.cpus), args.output_base + ".duplicates_metrics.txt")
+        merge = 'bammarkduplicates2 markthreads=%s level=0 O=/dev/stdout M=%s I=%s ' % \
+                (str(args.cpus), args.output_base + ".duplicates_metrics.txt", ' I='.join(args.input_bams))
     else:
         merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s ' % (str(args.cpus), ' '.join(args.input_bams))
 
@@ -87,10 +87,6 @@ def main():
 
     if os.path.isfile(os.path.join(os.getcwd(), args.output_base + ".duplicates_metrics.txt")):
        run_cmd(tgz)
-
-    # write the parameter to stdout
-    output = {"bundle_type": "dna_alignment"}
-    print(json.dumps(output))
 
 
 if __name__ == "__main__":
