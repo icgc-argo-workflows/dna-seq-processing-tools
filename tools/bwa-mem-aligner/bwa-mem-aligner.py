@@ -115,7 +115,7 @@ def main():
     alignment = ' bwa mem -K 100000000 -Y -T 0 -t %s -p -R "%s" %s - ' % (str(args.cpus), rg_array[0], args.ref_genome)
 
     # Sort the SAM output by coordinate from bwa and save to BAM file
-    sort_coordinate = ' samtools sort --no-PG -O BAM -@ %s -o %s /dev/stdin' % (str(args.cpus), args.aligned_lane_prefix + "." + os.path.basename(args.input_bam))
+    sort_coordinate = ' samtools sort -O BAM -@ %s -o %s /dev/stdin' % (str(args.cpus), args.aligned_lane_prefix + "." + os.path.basename(args.input_bam))
 
     cmd = ' | '.join([sort_qname, bam2fastq, alignment, sort_coordinate])
 
