@@ -51,46 +51,42 @@ def main():
     cmd = []
 
     if args.mdup:
-        merge = 'bammarkduplicates2 markthreads=%s O=/dev/stdout M=%s I=%s ' % \
-                (str(args.cpus), args.output_base + ".duplicates-metrics.txt", ' I='.join(args.input_bams))
+        merge = 'bammarkduplicates2 markthreads=%s level=0 O=/dev/stdout M=%s I=%s ' % \
+                (str(args.cpus), args.output_base + ".duplicates_metrics.txt", ' I='.join(args.input_bams))
     else:
-        merge = 'samtools merge -uf -@ %s /dev/stdout %s ' % (args.cpus, ' '.join(args.input_bams))
+        merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s ' % (str(args.cpus), ' '.join(args.input_bams))
 
     if args.lossy:
         cram = 'java -jar /tools/cramtools.jar cram -R %s --capture-all-tags --lossy-quality-score-spec \*8 --preserve-read-names -O %s' % (args.reference, args.output_base + ".cram")
     else:
-        cram = 'samtools view -C -T %s -@ %s /dev/stdin -o %s ' % (args.reference, args.cpus, args.output_base + ".cram")
+        cram = 'samtools view -C -T %s -@ %s --write-index /dev/stdin -o %s ' % (args.reference, args.cpus, args.output_base + ".cram")
 
     tee = 'tee %s ' % (args.output_base + ".bam")
     bai = 'samtools index -@ %s /dev/stdin %s' % (args.cpus, args.output_base + ".bam.bai")
     bai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".bam", args.output_base + ".bam.bai")
     crai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".cram", args.output_base + ".cram.crai")
-    tgz = 'tar czf %s.duplicates-metrics.tgz %s.duplicates-metrics.txt' % (args.output_base, args.output_base)
+    tgz = 'tar czf %s.duplicates_metrics.tgz %s.duplicates_metrics.txt' % (args.output_base, args.output_base)
 
     # build command
     if "bam" in args.output_format and "cram" in args.output_format:
         cmd.append('|'.join([merge, tee, cram]))
         cmd.append(bai1)
-        cmd.append(crai1)
+        if args.lossy: cmd.append(crai1)
 
     elif "bam" in args.output_format and not "cram" in args.output_format:
         cmd.append('|'.join([merge, tee, bai]))
 
     elif not "bam" in args.output_format and "cram" in args.output_format:
         cmd.append('|'.join([merge, cram]))
-        cmd.append(crai1)
+        if args.lossy: cmd.append(crai1)
     else:
         sys.exit("Unsupported sequence format!")
 
     for c in cmd:
        run_cmd(c)
 
-    if os.path.isfile(os.path.join(os.getcwd(), args.output_base + ".duplicates-metrics.txt")):
+    if os.path.isfile(os.path.join(os.getcwd(), args.output_base + ".duplicates_metrics.txt")):
        run_cmd(tgz)
-
-    # write the parameter to stdout
-    output = {"bundle_type": "dna_alignment"}
-    print(json.dumps(output))
 
 
 if __name__ == "__main__":
