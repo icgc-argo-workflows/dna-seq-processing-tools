@@ -106,15 +106,16 @@ def main():
         rg_kv = [ '@RG' ] + [ '%s:%s' % (k, v) for k, v in read_group_info.items() ]
         rg_array = [ '\\t'.join(rg_kv) ]
 
-    sort_qname = 'samtools sort -n -O BAM -@ %s %s ' % (str(args.cpus), args.input_bam)
+    sort_qname = 'samtools sort -l 0 -n -O BAM -@ %s %s ' % (str(args.cpus), args.input_bam)
 
+    # discarding supplementary and secondary reads.
     bam2fastq = ' samtools fastq -O -F 0x900 -@ %s - ' % (str(args.cpus))
 
     #Command with header
-    alignment = ' bwa mem -K 100000000 -Y -t %s -p -R "%s" %s - ' % (str(args.cpus), rg_array[0], args.ref_genome)
+    alignment = ' bwa mem -K 100000000 -Y -T 0 -t %s -p -R "%s" %s - ' % (str(args.cpus), rg_array[0], args.ref_genome)
 
     # Sort the SAM output by coordinate from bwa and save to BAM file
-    sort_coordinate = ' samtools sort -O BAM -@ %s -o %s /dev/stdin' % (str(args.cpus), args.aligned_lane_prefix+"."+os.path.basename(args.input_bam))
+    sort_coordinate = ' samtools sort -O BAM -@ %s -o %s /dev/stdin' % (str(args.cpus), args.aligned_lane_prefix + "." + os.path.basename(args.input_bam))
 
     cmd = ' | '.join([sort_qname, bam2fastq, alignment, sort_coordinate])
 
