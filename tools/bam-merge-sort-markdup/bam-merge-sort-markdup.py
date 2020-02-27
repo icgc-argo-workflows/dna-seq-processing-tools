@@ -88,7 +88,7 @@ def main():
         stdout, _ = run_cmd('bammarkduplicates2  -v 2>&1  | grep "biobambam2 version"')
         version = stdout.decode("utf-8").split(' ')[-1].strip().rstrip('.')
         with open("%s.duplicates_metrics.extra_info.json" % args.output_base, "w") as j:
-          j.write(json.dumps({  "tool": "biobambam2@%s" % version }, indent=2))
+          j.write(json.dumps({  "tool": "biobambam2:bammarkduplicates2@%s" % version }, indent=2))
 
         tgz = 'tar czf %s.duplicates_metrics.tgz %s.duplicates_metrics.*' % (args.output_base, args.output_base)
         run_cmd(tgz)
