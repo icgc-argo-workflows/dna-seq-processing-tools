@@ -65,7 +65,6 @@ def main():
     bai = 'samtools index -@ %s /dev/stdin %s' % (args.cpus, args.output_base + ".bam.bai")
     bai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".bam", args.output_base + ".bam.bai")
     crai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".cram", args.output_base + ".cram.crai")
-    tgz = 'tar czf %s.duplicates_metrics.tgz %s.duplicates_metrics.txt' % (args.output_base, args.output_base)
 
     # build command
     if "bam" in args.output_format and "cram" in args.output_format:
@@ -83,10 +82,16 @@ def main():
         sys.exit("Unsupported sequence format!")
 
     for c in cmd:
-       run_cmd(c)
+        run_cmd(c)
 
     if os.path.isfile(os.path.join(os.getcwd(), args.output_base + ".duplicates_metrics.txt")):
-       run_cmd(tgz)
+        stdout, _ = run_cmd('bammarkduplicates2  -v 2>&1  | grep "biobambam2 version"')
+        version = stdout.decode("utf-8").split(' ')[-1].strip().rstrip('.')
+        with open("%s.duplicates_metrics.extra_info.json" % args.output_base, "w") as j:
+          j.write(json.dumps({  "tool": "biobambam2:bammarkduplicates2@%s" % version }, indent=2))
+
+        tgz = 'tar czf %s.duplicates_metrics.tgz %s.duplicates_metrics.*' % (args.output_base, args.output_base)
+        run_cmd(tgz)
 
 
 if __name__ == "__main__":
