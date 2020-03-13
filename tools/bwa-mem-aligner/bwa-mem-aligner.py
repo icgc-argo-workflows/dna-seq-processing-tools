@@ -98,7 +98,6 @@ def main():
     # retrieve read_group_info from metadata
     read_group_info = get_read_group_info(args.metadata, rg_id)
 
-
     if read_group_info:  # use what's in metadata instead of in BAM header
         rg_kv = [ '@RG' ] + [ '%s:%s' % (k, v) for k, v in read_group_info.items() ]
         rg_array = [ '\\t'.join(rg_kv) ]
