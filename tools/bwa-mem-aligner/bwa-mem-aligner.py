@@ -93,7 +93,7 @@ def main():
     if not len(rg_array) == 1: sys.exit('\n%s: The input bam should only contain one readgroup ID: %s' % args.input_bam)
 
     # get rg_id from BAM header
-    rg_id = [ kv for kv in rg_array[0].split('\\t') if kv.startswith('ID:') ][0].split(':')[1]
+    rg_id = ':'.join([ kv for kv in rg_array[0].split('\\t') if kv.startswith('ID:') ][0].split(':')[1:])
 
     # retrieve read_group_info from metadata
     read_group_info = get_read_group_info(args.metadata, rg_id)
