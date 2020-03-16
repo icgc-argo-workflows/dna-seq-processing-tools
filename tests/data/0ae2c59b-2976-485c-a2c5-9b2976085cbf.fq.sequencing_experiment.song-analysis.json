@@ -123,7 +123,7 @@
       "read_length_r1": 150,
       "read_length_r2": 150,
       "sample_barcode": null,
-      "submitter_read_group_id": "C0HVY.2"
+      "submitter_read_group_id": "C0HVY:2"
     },
     {
       "file_r1": "D0RE2.1_r1.fq",

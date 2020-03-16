@@ -28,7 +28,7 @@ params.aligned_lane_prefix = 'grch38-aligned'
 params.ref_genome_gz = "reference/tiny-grch38-chr11-530001-537000.fa.gz"
 params.sequencing_experiment_metadata = "NO_FILE"
 
-include '../bwa-mem-aligner' params(params)
+include {bwaMemAligner; getBwaSecondaryFiles} from '../bwa-mem-aligner' params(params)
 
 Channel
   .fromPath(getBwaSecondaryFiles(params.ref_genome_gz), checkIfExists: true)

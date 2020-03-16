@@ -10,17 +10,10 @@ import json
 import re
 
 
-def get_read_group_info(metadata_file, input_bam):
+def get_read_group_info(metadata_file, read_group_id):
     if metadata_file and metadata_file != 'NO_FILE':
         with open(metadata_file, 'r') as f:
             metadata = json.load(f)
-
-        # input bam naming convention: <read_group_id>.<md5sum>.lane.bam
-        matched = re.match(r'^(.+?)\.[a-f0-9]{32}\.lane\.bam$', input_bam)
-        if matched:
-            read_group_id = matched.group(1)
-        else:
-            sys.exit("Error: input bam does not follow naming convention '<read_group_id>.<md5sum>.lane.bam': %s" % input_bam)
     else:
         return {}
 
@@ -83,9 +76,6 @@ def main():
                         help='Sequencing experiment metadata')
     args = parser.parse_args()
 
-    # retrieve read_group_info from metadata
-    read_group_info = get_read_group_info(args.metadata, args.input_bam)
-
     # retrieve the @RG from BAM header
     try:
         header = subprocess.check_output(['samtools', 'view', '-H', args.input_bam])
@@ -101,6 +91,12 @@ def main():
         rg_array.append(line.rstrip().replace('\t', '\\t'))
 
     if not len(rg_array) == 1: sys.exit('\n%s: The input bam should only contain one readgroup ID: %s' % args.input_bam)
+
+    # get rg_id from BAM header
+    rg_id = ':'.join([ kv for kv in rg_array[0].split('\\t') if kv.startswith('ID:') ][0].split(':')[1:])
+
+    # retrieve read_group_info from metadata
+    read_group_info = get_read_group_info(args.metadata, rg_id)
 
     if read_group_info:  # use what's in metadata instead of in BAM header
         rg_kv = [ '@RG' ] + [ '%s:%s' % (k, v) for k, v in read_group_info.items() ]
