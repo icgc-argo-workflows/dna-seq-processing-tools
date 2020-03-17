@@ -170,9 +170,16 @@ def generate_ubams_from_bam(bam, readgroups, tool, mem=None):
             # remove file extension to get rg_id
             rg_id = os.path.splitext(os.path.basename(bamfile))[0]
 
-            # Strong assumption here: rg_id in file name must exist in readgroups, so let's test it
-            if rg_id not in [ rg['submitter_read_group_id'] for rg in readgroups ]:
-                sys.exit("Error: read group ID '%s' extracted from file name '%s' does not match what's in the provided metadata JSON." % (rg_id, bamfile))
+            # let's make sure RG_ID in lane bam exists in readgroup metadata, either matching read_group_id_in_bam or submitter_read_group_id
+            rg_id_found = False
+            for rg in readgroups:
+                if rg.get('read_group_id_in_bam') == rg_id or \
+                        (rg.get('read_group_id_in_bam') is None and rg['submitter_read_group_id'] == rg_id):
+                    rg_id_found = True
+                    break
+
+            if not rg_id_found:
+                sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
 
             os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id)))
 
