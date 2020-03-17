@@ -10,7 +10,7 @@ import json
 import re
 
 
-def get_read_group_info(metadata_file, read_group_id):
+def get_read_group_info(metadata_file, rg_id_in_bam):
     if metadata_file and metadata_file != 'NO_FILE':
         with open(metadata_file, 'r') as f:
             metadata = json.load(f)
@@ -19,16 +19,17 @@ def get_read_group_info(metadata_file, read_group_id):
 
     read_group = {}
     for rg in metadata['read_groups']:
-        if rg['submitter_read_group_id'] == read_group_id:
+        if rg.get('read_group_id_in_bam') == rg_id_in_bam or \
+                (rg.get('read_group_id_in_bam') is None and rg['submitter_read_group_id'] == rg_id_in_bam):
             read_group = rg
             break
     if not read_group:
-        sys.exit("Error: unable to find read group info for '%s' in the supplied metadata" % read_group_id)
+        sys.exit("Error: unable to find read group info for rg_id_in_bam ('%s') in the supplied metadata" % rg_id_in_bam)
 
     experiment = metadata['experiment']
 
     read_group_info = {
-        'ID': read_group_id,
+        'ID': read_group['submitter_read_group_id'],
         'SM': metadata['samples'][0]['sampleId'],
         'LB': read_group['library_name'],
         'PU': read_group['platform_unit']
@@ -93,10 +94,13 @@ def main():
     if not len(rg_array) == 1: sys.exit('\n%s: The input bam should only contain one readgroup ID: %s' % args.input_bam)
 
     # get rg_id from BAM header
-    rg_id = ':'.join([ kv for kv in rg_array[0].split('\\t') if kv.startswith('ID:') ][0].split(':')[1:])
+    rg_id_in_bam = ':'.join([ kv for kv in rg_array[0].split('\\t') if kv.startswith('ID:') ][0].split(':')[1:])
+
+    if len(rg_id_in_bam) == 0:  # should never happen, but still need to make sure
+        sys.exit('Error: no read group ID defined the in BAM: %s' % args.input_bam)
 
     # retrieve read_group_info from metadata
-    read_group_info = get_read_group_info(args.metadata, rg_id)
+    read_group_info = get_read_group_info(args.metadata, rg_id_in_bam)
 
     if read_group_info:  # use what's in metadata instead of in BAM header
         rg_kv = [ '@RG' ] + [ '%s:%s' % (k, v) for k, v in read_group_info.items() ]
