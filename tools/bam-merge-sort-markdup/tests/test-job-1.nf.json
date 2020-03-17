@@ -1,0 +1,11 @@
+{
+  "aligned_lane_bams": [
+    "input/grch38-aligned.D0RH0_2.lane.bam",
+    "input/grch38-aligned.D0RE2_1.lane.bam",
+    "input/grch38-aligned.C0HVY_2.lane.bam"
+  ],
+  "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
+  "cpus": 1,
+  "mem": 2,
+  "markdup": false
+}
