@@ -123,6 +123,7 @@
       "read_length_r1": 150,
       "read_length_r2": 150,
       "sample_barcode": null,
+      "read_group_id_in_bam": "",
       "submitter_read_group_id": "C0HVY:2"
     },
     {

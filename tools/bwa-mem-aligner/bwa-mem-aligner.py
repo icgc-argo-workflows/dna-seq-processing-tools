@@ -20,7 +20,7 @@ def get_read_group_info(metadata_file, rg_id_in_bam):
     read_group = {}
     for rg in metadata['read_groups']:
         if rg.get('read_group_id_in_bam') == rg_id_in_bam or \
-                (rg.get('read_group_id_in_bam') is None and rg['submitter_read_group_id'] == rg_id_in_bam):
+                (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id_in_bam):
             read_group = rg
             break
     if not read_group:
