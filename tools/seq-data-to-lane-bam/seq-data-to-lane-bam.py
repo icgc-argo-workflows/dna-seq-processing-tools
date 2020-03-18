@@ -33,6 +33,10 @@ def group_readgroup_by_filepair(seq_experiment_analysis):
 
     # we assume information in seq_experiment_analysis has gone through
     # all validation checks in sequencing experiment submission
+    # note: since advanced SONG validation is not ready, here we still validate uniqueness of
+    #       read_group_id_in_bam and submitter_read_group_id
+    read_group_id_in_bam_set = set()
+    submitter_read_group_id_set = set()
     for rg in seq_experiment_analysis.get('read_groups'):
         rg['experiment'] = seq_experiment_analysis['experiment']  # let read group carry experiment
         rg['submitter_sample_id'] = seq_experiment_analysis['samples'][0]['submitterSampleId']  # let read group carry submitter_sample_id
@@ -50,6 +54,19 @@ def group_readgroup_by_filepair(seq_experiment_analysis):
                 sys.exit('Error found: same FASTQ %s must not be associated to more than one read group\n' % \
                     ' and '.join(file_r1_r2) if file_r1_r2[1] else file_r1_r2[0])
             filepair_map_to_readgroup[file_r1_r2]['read_groups'].append(rg)
+
+        # make sure no duplicate of read_group_id_in_bam (when populated)
+        if rg.get('read_group_id_in_bam'):
+            if rg['read_group_id_in_bam'] in read_group_id_in_bam_set:
+                sys.exit('Error found: read_group_id_in_bam duplicated: %s' % rg['read_group_id_in_bam'])
+            else:
+                read_group_id_in_bam_set.add(rg['read_group_id_in_bam'])
+
+        # make sure no duplicate of submitter_read_group_id
+        if rg['submitter_read_group_id'] in submitter_read_group_id_set:
+            sys.exit('Error found: submitter_read_group_id duplicated: %s' % rg['submitter_read_group_id'])
+        else:
+            submitter_read_group_id_set.add(rg['submitter_read_group_id'])
 
     return filepair_map_to_readgroup
 
@@ -170,9 +187,16 @@ def generate_ubams_from_bam(bam, readgroups, tool, mem=None):
             # remove file extension to get rg_id
             rg_id = os.path.splitext(os.path.basename(bamfile))[0]
 
-            # Strong assumption here: rg_id in file name must exist in readgroups, so let's test it
-            if rg_id not in [ rg['submitter_read_group_id'] for rg in readgroups ]:
-                sys.exit("Error: read group ID '%s' extracted from file name '%s' does not match what's in the provided metadata JSON." % (rg_id, bamfile))
+            # let's make sure RG_ID in lane bam exists in readgroup metadata, either matching read_group_id_in_bam or submitter_read_group_id
+            rg_id_found = False
+            for rg in readgroups:
+                if rg.get('read_group_id_in_bam') == rg_id or \
+                        (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id):
+                    rg_id_found = True
+                    break
+
+            if not rg_id_found:
+                sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
 
             os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id)))
 
