@@ -17,7 +17,7 @@ TSV_FIELDS = {
         'library_strategy', 'sequencing_date', 'read_group_count'
     ],
     'read_group': [
-        'type', 'submitter_read_group_id', 'submitter_sequencing_experiment_id', 'platform_unit',
+        'type', 'submitter_read_group_id', 'read_group_id_in_bam', 'submitter_sequencing_experiment_id', 'platform_unit',
         'is_paired_end', 'file_r1', 'file_r2', 'read_length_r1', 'read_length_r2', 'insert_size', 'sample_barcode', 'library_name'
     ],
     'file': [

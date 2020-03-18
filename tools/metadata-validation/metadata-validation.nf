@@ -22,7 +22,7 @@
  */
 
 nextflow.preview.dsl=2
-version = '0.1.4.0'
+version = '0.1.5.0'
 
 params.exp_tsv = "tests/input/experiment-fq.tsv"
 params.rg_tsv = "tests/input/read_group-fq.tsv"
