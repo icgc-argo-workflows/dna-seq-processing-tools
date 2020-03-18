@@ -90,6 +90,9 @@ def bam_header_rg_info_validation(metadata, bam_header_rg_info):
             sys.exit("Error found: neither submitter_read_group_id %s nor read_group_id_in_bam %s is found in any BAM file\n" % \
                         (submitter_read_group_id, read_group_id_in_bam))
 
+        if read_group_id_in_bam and read_group_id_in_bam in bam_header_rg_info:
+            submitter_read_group_id = read_group_id_in_bam
+
         if metadata.get('platform').upper() != bam_header_rg_info[submitter_read_group_id].get('PL', '').upper():  # relaxing it a bit
             sys.exit("Error found: platform %s in experiment metadata does not match PL %s for submitter_read_group_id %s in BAM %s\n" % \
                 (
