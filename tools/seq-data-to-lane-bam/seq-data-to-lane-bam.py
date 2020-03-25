@@ -71,10 +71,15 @@ def group_readgroup_by_filepair(seq_experiment_analysis):
     return filepair_map_to_readgroup
 
 
-def readgroup_id_to_fname(rg_id):
+def readgroup_id_to_fname(rg_id, study_id=None, donor_id=None, sample_id=None):
     friendly_fname = "".join([ c if re.match(r"[a-zA-Z0-9\.\-_]", c) else "_" for c in rg_id ])
     md5sum = hashlib.md5(rg_id.encode('utf-8')).hexdigest()
-    return "%s.%s.lane.bam" % (friendly_fname, md5sum)
+    fname_parts = [friendly_fname, md5sum, 'lane.bam']
+    if sample_id: fname_parts.insert(0, sample_id)
+    if donor_id: fname_parts.insert(0, donor_id)
+    if study_id: fname_parts.insert(0, study_id)
+
+    return ".".join(fname_parts)
 
 
 def bunzip2(fq_pair):
@@ -98,7 +103,7 @@ def bunzip2(fq_pair):
     return bunzipped
 
 
-def generate_ubam_from_fastq(fq_pair, readgroup, mem=None):
+def generate_ubam_from_fastq(fq_pair, readgroup, mem=None, study_id=None, donor_id=None, sample_id=None):
     jvm_Xmx = "-Xmx%sM" % mem if mem else ""
     fastq_pair = bunzip2(fq_pair)
 
@@ -123,7 +128,7 @@ def generate_ubam_from_fastq(fq_pair, readgroup, mem=None):
     try:
         cmd = [
                 'java', jvm_Xmx, '-jar', '/tools/picard.jar', 'FastqToSam', 'FASTQ=%s' % fastq_pair[0],
-                'OUTPUT=%s' % readgroup_id_to_fname(readgroup['submitter_read_group_id'])
+                'OUTPUT=%s' % readgroup_id_to_fname(readgroup['submitter_read_group_id'], study_id, donor_id, sample_id)
               ] + rg_args
 
         if fastq_pair[1]:
@@ -136,7 +141,7 @@ def generate_ubam_from_fastq(fq_pair, readgroup, mem=None):
                     ' and '.join(fastq_pair) if fastq_pair[1] else fastq_pair[0]))
 
 
-def generate_ubams_from_bam(bam, readgroups, tool, mem=None):
+def generate_ubams_from_bam(bam, readgroups, tool, mem=None, study_id=None, donor_id=None, sample_id=None):
     if tool == 'picard':
         jvm_Xmx = "-Xmx%sM" % mem if mem else ""
         # create an output map TSV file with each line containing read group ID and desired file name
@@ -145,7 +150,7 @@ def generate_ubams_from_bam(bam, readgroups, tool, mem=None):
 
             for rg in readgroups:
                 rg_id = rg['submitter_read_group_id']
-                fname = readgroup_id_to_fname(rg_id)
+                fname = readgroup_id_to_fname(rg_id, study_id, donor_id, sample_id)
                 m.write("%s\t%s\n" % (rg_id, fname))
 
         # Revert the bam to unaligned and lane level bam sorted by query name
@@ -198,7 +203,7 @@ def generate_ubams_from_bam(bam, readgroups, tool, mem=None):
             if not rg_id_found:
                 sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
 
-            os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id)))
+            os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, study_id, donor_id, sample_id)))
 
     else:
         sys.exit("Error: Unsupported tool: %s\n" % tool)
@@ -216,14 +221,22 @@ def main(args):
     with open(args.metadata_json, 'r') as f:
         seq_experiment_analysis = json.load(f)
 
+    study_id = seq_experiment_analysis['studyId']
+    donor_id = seq_experiment_analysis['samples'][0]['donor']['donorId']
+    sample_id = seq_experiment_analysis['samples'][0]['sampleId']
+
     filepair_map_to_readgroup = group_readgroup_by_filepair(seq_experiment_analysis)
 
     for fp in filepair_map_to_readgroup:
         if filepair_map_to_readgroup[fp]['format'] == 'BAM':
             # for bam just need fp[0] since fp[1] is either the same as fp[0] or None
-            generate_ubams_from_bam(filename_to_file(fp, args.seq_files)[0], filepair_map_to_readgroup[fp]['read_groups'], args.tool, args.mem)
+            generate_ubams_from_bam(filename_to_file(fp, args.seq_files)[0],
+                                        filepair_map_to_readgroup[fp]['read_groups'],
+                                        args.tool, args.mem, study_id, donor_id, sample_id)
         else:
-            generate_ubam_from_fastq(filename_to_file(fp, args.seq_files), filepair_map_to_readgroup[fp]['read_groups'][0], args.mem)  # FASTQ must be one read group
+            generate_ubam_from_fastq(filename_to_file(fp, args.seq_files),
+                                        filepair_map_to_readgroup[fp]['read_groups'][0],
+                                        args.mem, study_id, donor_id, sample_id)  # FASTQ must be one read group
 
 
 if __name__ == "__main__":
