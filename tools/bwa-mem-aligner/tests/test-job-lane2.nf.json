@@ -4,5 +4,6 @@
     "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
     "aligned_lane_prefix": "grch38-aligned",
     "sequencing_experiment_metadata": "input/0ae2c59b-2976-485c-a2c5-9b2976085cbf.fq.sequencing_experiment.song-analysis.json",
+    "tempdir": "/tmp/",
     "cpus": 2
 }
