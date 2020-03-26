@@ -41,7 +41,7 @@ def main():
                         type=str, help='Output merged file basename', required=True)
     parser.add_argument('-r', '--reference', dest='reference',
                         type=str, help='reference fasta', required=True)
-    parser.add_argument('-t', '--tempdir', dest='tempdir', type=str, default=".",
+    parser.add_argument('-t', '--tempdir', dest='tempdir', type=str, default="./",
                         help='Specify directory for temporary files')
     parser.add_argument("-n", "--cpus", dest='cpus', type=int, default=cpu_count())
     parser.add_argument("-d", "--mdup", dest='mdup', action='store_true')
