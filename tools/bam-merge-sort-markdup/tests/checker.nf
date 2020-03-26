@@ -25,8 +25,9 @@ nextflow.preview.dsl=2
 
 params.aligned_lane_bams = ""
 params.ref_genome_gz = ""
+params.tempdir = "NO_DIR"
 
-include '../bam-merge-sort-markdup.nf' params(params)
+include {bamMergeSortMarkdup; getMdupSecondaryFile} from '../bam-merge-sort-markdup.nf' params(params)
 
 
 Channel
@@ -43,7 +44,8 @@ workflow {
     bamMergeSortMarkdup(
       aligned_lane_bams_ch.collect(),
       file(params.ref_genome_gz),
-      ref_genome_gz_ch.collect()
+      ref_genome_gz_ch.collect(),
+      file(params.tempdir)
     )
 
   publish:

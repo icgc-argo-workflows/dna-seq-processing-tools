@@ -41,6 +41,8 @@ def main():
                         type=str, help='Output merged file basename', required=True)
     parser.add_argument('-r', '--reference', dest='reference',
                         type=str, help='reference fasta', required=True)
+    parser.add_argument('-t', '--tempdir', dest='tempdir', type=str, default=".",
+                        help='Specify directory for temporary files')
     parser.add_argument("-n", "--cpus", dest='cpus', type=int, default=cpu_count())
     parser.add_argument("-d", "--mdup", dest='mdup', action='store_true')
     parser.add_argument("-l", "--lossy", dest='lossy', action='store_true')
@@ -50,9 +52,12 @@ def main():
 
     cmd = []
 
+    if not os.path.isdir(args.tempdir):
+        sys.exit('Error: specified tempdir %s does not exist!' % args.tempdir)
+
     if args.mdup:
-        merge = 'bammarkduplicates2 markthreads=%s level=0 O=/dev/stdout M=%s I=%s ' % \
-                (str(args.cpus), args.output_base + ".duplicates_metrics.txt", ' I='.join(args.input_bams))
+        merge = 'bammarkduplicates2 markthreads=%s tmpfile=%s/tmp level=0 O=/dev/stdout M=%s I=%s ' % \
+                (str(args.cpus), args.tempdir, args.output_base + ".duplicates_metrics.txt", ' I='.join(args.input_bams))
     else:
         merge = 'samtools merge --no-PG -uf -@ %s /dev/stdout %s ' % (str(args.cpus), ' '.join(args.input_bams))
 
