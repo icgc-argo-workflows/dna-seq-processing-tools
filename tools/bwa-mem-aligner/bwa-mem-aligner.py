@@ -72,10 +72,15 @@ def main():
                              '(eg. .alt, .ann, .bwt etc) are all present at the same location', required=True)
     parser.add_argument('-o','--aligned_lane_prefix', dest='aligned_lane_prefix', type=str,
                         help='Output aligned lane bam file prefix', required=True)
+    parser.add_argument('-t','--tempdir', dest='tempdir', type=str, default='.',
+                        help='Directory to keep temporary files')
     parser.add_argument("-n", "--cpus", type=int, default=cpu_count())
     parser.add_argument('-m','--metadata', dest='metadata', type=str,
                         help='Sequencing experiment metadata')
     args = parser.parse_args()
+
+    if not os.path.isdir(args.tempdir):
+        sys.exit('Error: specified tempdir %s does not exist!' % args.tempdir)
 
     # retrieve the @RG from BAM header
     try:
@@ -106,7 +111,7 @@ def main():
         rg_kv = [ '@RG' ] + [ '%s:%s' % (k, v) for k, v in read_group_info.items() ]
         rg_array = [ '\\t'.join(rg_kv) ]
 
-    sort_qname = 'samtools sort -l 0 -n -O BAM -@ %s %s ' % (str(args.cpus), args.input_bam)
+    sort_qname = 'samtools sort -l 0 -n -O BAM -T %s/tmp1 -@ %s %s ' % (args.tempdir, str(args.cpus), args.input_bam)
 
     # discarding supplementary and secondary reads.
     bam2fastq = ' samtools fastq -O -F 0x900 -@ %s - ' % (str(args.cpus))
@@ -115,7 +120,7 @@ def main():
     alignment = ' bwa mem -K 100000000 -Y -T 0 -t %s -p -R "%s" %s - ' % (str(args.cpus), rg_array[0], args.ref_genome)
 
     # Sort the SAM output by coordinate from bwa and save to BAM file
-    sort_coordinate = ' samtools sort -O BAM -@ %s -o %s /dev/stdin' % (str(args.cpus), args.aligned_lane_prefix + "." + os.path.basename(args.input_bam))
+    sort_coordinate = ' samtools sort -O BAM -T %s/tmp2 -@ %s -o %s /dev/stdin' % (args.tempdir, str(args.cpus), args.aligned_lane_prefix + "." + os.path.basename(args.input_bam))
 
     cmd = ' | '.join([sort_qname, bam2fastq, alignment, sort_coordinate])
 

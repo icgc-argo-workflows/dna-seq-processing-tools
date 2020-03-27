@@ -27,6 +27,7 @@ params.input_bam = "input/?????_?.lane.bam"
 params.aligned_lane_prefix = 'grch38-aligned'
 params.ref_genome_gz = "reference/tiny-grch38-chr11-530001-537000.fa.gz"
 params.sequencing_experiment_metadata = "NO_FILE"
+params.tempdir = "NO_DIR"
 
 include {bwaMemAligner; getBwaSecondaryFiles} from '../bwa-mem-aligner' params(params)
 
@@ -45,7 +46,8 @@ workflow {
       input_bam_ch,
       file(params.ref_genome_gz),
       ref_genome_gz_ch.collect(),
-      file(params.sequencing_experiment_metadata)
+      file(params.sequencing_experiment_metadata),
+      file(params.tempdir)
     )
 
   publish:
