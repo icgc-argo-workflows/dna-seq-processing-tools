@@ -6,6 +6,7 @@
   ],
   "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
   "tempdir": "/tmp",
+  "markdup": false,
   "cpus": 1,
   "mem": 2
 }
