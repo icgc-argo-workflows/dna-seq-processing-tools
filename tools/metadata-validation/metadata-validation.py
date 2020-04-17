@@ -14,7 +14,7 @@ TSV_FIELDS = {
         'type', 'program_id', 'submitter_sequencing_experiment_id', 'submitter_donor_id', 'gender',
         'submitter_specimen_id', 'tumour_normal_designation', 'specimen_type', 'specimen_tissue_source', 'submitter_sample_id',
         'sample_type', 'submitter_matched_normal_sample_id', 'sequencing_center', 'platform', 'platform_model',
-        'library_strategy', 'sequencing_date', 'read_group_count'
+        'experimental_strategy', 'sequencing_date', 'read_group_count'
     ],
     'read_group': [
         'type', 'submitter_read_group_id', 'read_group_id_in_bam', 'submitter_sequencing_experiment_id', 'platform_unit',
