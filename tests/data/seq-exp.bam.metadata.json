@@ -13,13 +13,14 @@
   "sequencing_center": "EXT",
   "platform": "ILLUMINA",
   "platform_model": "HiSeq 2000",
-  "library_strategy": "WGS",
+  "experimental_strategy": "WGS",
   "sequencing_date": "2014-12-12",
   "read_group_count": 3,
   "read_groups": [
     {
       "type": "read_group",
-      "submitter_read_group_id": "C0HVY.2",
+      "submitter_read_group_id": "C0HVY_2",
+      "read_group_id_in_bam": "C0HVY.2",
       "submitter_sequencing_experiment_id": "TEST_EXP",
       "platform_unit": "74_8a",
       "is_paired_end": true,
@@ -33,7 +34,8 @@
     },
     {
       "type": "read_group",
-      "submitter_read_group_id": "D0RE2.1",
+      "submitter_read_group_id": "D0RE2-1",
+      "read_group_id_in_bam": "D0RE2.1",
       "submitter_sequencing_experiment_id": "TEST_EXP",
       "platform_unit": "74_8b",
       "is_paired_end": true,

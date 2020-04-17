@@ -13,7 +13,7 @@
   "sequencing_center": "EXT",
   "platform": "ILLUMINA",
   "platform_model": "HiSeq 2000",
-  "library_strategy": "WGS",
+  "experimental_strategy": "WGS",
   "sequencing_date": "2014-12-12",
   "read_group_count": 3,
   "read_groups": [
