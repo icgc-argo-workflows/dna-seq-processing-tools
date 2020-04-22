@@ -27,6 +27,9 @@ def get_read_group_info(metadata_file, rg_id_in_bam):
         sys.exit("Error: unable to find read group info for rg_id_in_bam ('%s') in the supplied metadata" % rg_id_in_bam)
 
     experiment = metadata['experiment']
+    if 'library_strategy' in experiment:
+        experimental_strategy = experiment.pop('library_strategy')
+        experiment['experimental_strategy'] = experimental_strategy
 
     read_group_info = {
         'ID': read_group['submitter_read_group_id'],
@@ -49,7 +52,7 @@ def get_read_group_info(metadata_file, rg_id_in_bam):
         read_group_info.update({'DT': experiment['sequencing_date']})
 
     description = '|'.join([
-                                experiment['library_strategy'],
+                                experiment['experimental_strategy'],
                                 metadata['studyId'],
                                 metadata['samples'][0]['specimenId'],
                                 metadata['samples'][0]['donor']['donorId'],
