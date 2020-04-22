@@ -26,7 +26,7 @@ nextflow.preview.dsl=2
 params.seq_rg_json = "input/seq-exp.bam.metadata.json"
 params.seq_files = "input/test_rg_3.bam"
 
-include '../seq-validation' params(params)
+include seqValidation from '../seq-validation' params(params)
 
 Channel
   .fromPath(params.seq_files, checkIfExists: true)
