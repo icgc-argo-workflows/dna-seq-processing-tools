@@ -47,7 +47,8 @@ workflow {
       file(params.ref_genome_gz),
       ref_genome_gz_ch.collect(),
       file(params.sequencing_experiment_metadata),
-      file(params.tempdir)
+      file(params.tempdir),
+      true
     )
 
   publish:
