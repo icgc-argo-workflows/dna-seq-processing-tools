@@ -71,10 +71,10 @@ def group_readgroup_by_filepair(seq_experiment_analysis):
     return filepair_map_to_readgroup
 
 
-def readgroup_id_to_fname(rg_id, lane_bamfile, study_id=None, donor_id=None, sample_id=None):
+def readgroup_id_to_fname(rg_id, input_bam_name='', study_id=None, donor_id=None, sample_id=None):
     friendly_fname = "".join([ c if re.match(r"[a-zA-Z0-9\.\-_]", c) else "_" for c in rg_id ])
-    # use lane_bamfile(include original bam and rg_id) to calculate the md5sum to avoid lane bam file collision
-    md5sum = hashlib.md5(lane_bamfile.encode('utf-8')).hexdigest()
+    # use original bam file name and rg_id to calculate the md5sum to avoid new lane bam file name collision
+    md5sum = hashlib.md5(("%s.%s" % (input_bam_name, rg_id)).encode('utf-8')).hexdigest()
 
     if not sample_id or not donor_id or not study_id:
         sys.exit('Error: missing study/donor/sample ID in the provided metadata')
@@ -128,7 +128,7 @@ def generate_ubam_from_fastq(fq_pair, readgroup, mem=None, study_id=None, donor_
     try:
         cmd = [
                 'java', jvm_Xmx, '-jar', '/tools/picard.jar', 'FastqToSam', 'FASTQ=%s' % fastq_pair[0],
-                'OUTPUT=%s' % readgroup_id_to_fname(readgroup['submitter_read_group_id'], readgroup['submitter_read_group_id'], study_id, donor_id, sample_id)
+                'OUTPUT=%s' % readgroup_id_to_fname(readgroup['submitter_read_group_id'], '', study_id, donor_id, sample_id)
               ] + rg_args
 
         if fastq_pair[1]:
@@ -142,42 +142,7 @@ def generate_ubam_from_fastq(fq_pair, readgroup, mem=None, study_id=None, donor_
 
 
 def generate_ubams_from_bam(bam, readgroups, tool, mem=None, study_id=None, donor_id=None, sample_id=None):
-    if tool == 'picard':
-        jvm_Xmx = "-Xmx%sM" % mem if mem else ""
-        # create an output map TSV file with each line containing read group ID and desired file name
-        with open('%s.output_map.tsv' % os.path.basename(bam), 'w') as m:
-            m.write("READ_GROUP_ID\tOUTPUT\n")
-
-            for rg in readgroups:
-                rg_id = rg['submitter_read_group_id']
-                fname = readgroup_id_to_fname(rg_id, study_id, donor_id, sample_id)
-                m.write("%s\t%s\n" % (rg_id, fname))
-
-        # Revert the bam to unaligned and lane level bam sorted by query name
-        # Suggested options from: https://github.com/broadinstitute/picard/issues/849#issuecomment-313128088
-        try:
-            subprocess.run(['java', jvm_Xmx, '-jar', '/tools/picard.jar',
-                            'RevertSam',
-                            'I=%s' % bam,
-                            'SANITIZE=true',
-                            'ATTRIBUTE_TO_CLEAR=XT',
-                            'ATTRIBUTE_TO_CLEAR=XN',
-                            'ATTRIBUTE_TO_CLEAR=AS',
-                            'ATTRIBUTE_TO_CLEAR=OC',
-                            'ATTRIBUTE_TO_CLEAR=OP',
-                            'SORT_ORDER=queryname',
-                            'RESTORE_ORIGINAL_QUALITIES=true',
-                            'REMOVE_DUPLICATE_INFORMATION=true',
-                            'REMOVE_ALIGNMENT_INFORMATION=true',
-                            'OUTPUT_BY_READGROUP=true',
-                            'VALIDATION_STRINGENCY=LENIENT',
-                            'MAX_DISCARD_FRACTION=%s' % args.max_discard_fraction,
-                            'OUTPUT_MAP=%s.output_map.tsv' % os.path.basename(bam)], check=True)
-
-        except Exception as e:
-            sys.exit("Error: %s: RevertSam failed: %s\n" % (e, bam))
-
-    elif tool == 'samtools':
+    if tool == 'samtools':
         # get input bam basename, remove extention to use as output subfolder name
         bam_base = os.path.splitext(os.path.basename(bam))[0]
         out_format = bam_base+'/%!.bam'
@@ -206,7 +171,7 @@ def generate_ubams_from_bam(bam, readgroups, tool, mem=None, study_id=None, dono
             if not rg_id_found:
                 sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
 
-            os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, bamfile, study_id, donor_id, sample_id)))
+            os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, os.path.basename(bam), study_id, donor_id, sample_id)))
 
     else:
         sys.exit("Error: Unsupported tool: %s\n" % tool)
@@ -252,7 +217,7 @@ if __name__ == "__main__":
                         dest="max_discard_fraction",
                         default=0.05, type=float,
                         help="Max fraction of reads allowed to be discarded when reverting aligned BAM to unaligned")
-    parser.add_argument("-t", "--tool", dest="tool", default="samtools", type=str, choices=['picard', 'samtools'],
+    parser.add_argument("-t", "--tool", dest="tool", default="samtools", type=str, choices=['samtools'],
                         help="The tool which is used to do splitting to lane bams")
     parser.add_argument("-n", "--cpus", type=int, default=cpu_count())
     parser.add_argument("-m", "--mem", dest="mem", help="Maximal allocated memory in MB", type=int)
