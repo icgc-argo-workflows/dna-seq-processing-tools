@@ -128,7 +128,7 @@ def generate_ubam_from_fastq(fq_pair, readgroup, mem=None, study_id=None, donor_
     try:
         cmd = [
                 'java', jvm_Xmx, '-jar', '/tools/picard.jar', 'FastqToSam', 'FASTQ=%s' % fastq_pair[0],
-                'OUTPUT=%s' % readgroup_id_to_fname(readgroup['submitter_read_group_id'], study_id, donor_id, sample_id)
+                'OUTPUT=%s' % readgroup_id_to_fname(readgroup['submitter_read_group_id'], readgroup['submitter_read_group_id'], study_id, donor_id, sample_id)
               ] + rg_args
 
         if fastq_pair[1]:
