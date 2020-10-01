@@ -196,7 +196,7 @@ def main(args):
             # for bam just need fp[0] since fp[1] is either the same as fp[0] or None
             generate_ubams_from_bam(filename_to_file(fp, args.seq_files)[0],
                                         filepair_map_to_readgroup[fp]['read_groups'],
-                                        args.tool, args.mem, study_id, donor_id, sample_id)
+                                        args.mem, study_id, donor_id, sample_id)
         else:
             generate_ubam_from_fastq(filename_to_file(fp, args.seq_files),
                                         filepair_map_to_readgroup[fp]['read_groups'][0],
