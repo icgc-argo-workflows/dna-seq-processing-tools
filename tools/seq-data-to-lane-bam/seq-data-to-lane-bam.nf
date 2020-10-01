@@ -28,7 +28,6 @@ params.metadata_json = ""
 params.seq_files = ""
 params.reads_max_discard_fraction = 0.05
 params.container_version = ""
-params.tool = "samtools"
 params.cpus = 1
 params.mem = 2  // in GB
 params.publish_dir = ""
@@ -54,7 +53,6 @@ process seqDataToLaneBam {
       -s ${seq_files} \
       -d ${params.reads_max_discard_fraction} \
       -n ${params.cpus} \
-      -m ${(int) (params.mem * 1000)} \
-      -t ${params.tool}
+      -m ${(int) (params.mem * 1000)}
     """
 }

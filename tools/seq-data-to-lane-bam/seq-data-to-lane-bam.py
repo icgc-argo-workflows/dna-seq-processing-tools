@@ -141,8 +141,7 @@ def generate_ubam_from_fastq(fq_pair, readgroup, mem=None, study_id=None, donor_
                     ' and '.join(fastq_pair) if fastq_pair[1] else fastq_pair[0]))
 
 
-def generate_ubams_from_bam(bam, readgroups, tool, mem=None, study_id=None, donor_id=None, sample_id=None):
-    if tool == 'samtools':
+def generate_ubams_from_bam(bam, readgroups, mem=None, study_id=None, donor_id=None, sample_id=None):
         # get input bam basename, remove extention to use as output subfolder name
         bam_base = os.path.splitext(os.path.basename(bam))[0]
         out_format = bam_base+'/%!.bam'
@@ -172,9 +171,6 @@ def generate_ubams_from_bam(bam, readgroups, tool, mem=None, study_id=None, dono
                 sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
 
             os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, os.path.basename(bam), study_id, donor_id, sample_id)))
-
-    else:
-        sys.exit("Error: Unsupported tool: %s\n" % tool)
 
 
 def filename_to_file(filenames: tuple, files: list) -> tuple:
@@ -217,8 +213,6 @@ if __name__ == "__main__":
                         dest="max_discard_fraction",
                         default=0.05, type=float,
                         help="Max fraction of reads allowed to be discarded when reverting aligned BAM to unaligned")
-    parser.add_argument("-t", "--tool", dest="tool", default="samtools", type=str, choices=['samtools'],
-                        help="The tool which is used to do splitting to lane bams")
     parser.add_argument("-n", "--cpus", type=int, default=cpu_count())
     parser.add_argument("-m", "--mem", dest="mem", help="Maximal allocated memory in MB", type=int)
     args = parser.parse_args()
