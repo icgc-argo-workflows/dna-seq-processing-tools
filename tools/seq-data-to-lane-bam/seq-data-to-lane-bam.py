@@ -71,9 +71,10 @@ def group_readgroup_by_filepair(seq_experiment_analysis):
     return filepair_map_to_readgroup
 
 
-def readgroup_id_to_fname(rg_id, study_id=None, donor_id=None, sample_id=None):
+def readgroup_id_to_fname(rg_id, lane_bamfile, study_id=None, donor_id=None, sample_id=None):
     friendly_fname = "".join([ c if re.match(r"[a-zA-Z0-9\.\-_]", c) else "_" for c in rg_id ])
-    md5sum = hashlib.md5(rg_id.encode('utf-8')).hexdigest()
+    # use lane_bamfile(include original bam and rg_id) to calculate the md5sum to avoid lane bam file collision
+    md5sum = hashlib.md5(lane_bamfile.encode('utf-8')).hexdigest()
 
     if not sample_id or not donor_id or not study_id:
         sys.exit('Error: missing study/donor/sample ID in the provided metadata')
@@ -177,16 +178,19 @@ def generate_ubams_from_bam(bam, readgroups, tool, mem=None, study_id=None, dono
             sys.exit("Error: %s: RevertSam failed: %s\n" % (e, bam))
 
     elif tool == 'samtools':
+        # get input bam basename, remove extention to use as output subfolder name
+        bam_base = os.path.splitext(os.path.basename(bam))[0]
+        out_format = bam_base+'/%!.bam'
+        os.mkdir(bam_base)
+        cmd = ['samtools', 'split', '-f', '%s' % out_format, '-@ %s' % str(args.cpus), bam]
         try:
-            cmd = ['samtools', 'split', '-f', '%!.bam', '-@ %s' % str(args.cpus), bam]
             subprocess.run(cmd, check=True)
-
         except Exception as e:
             sys.exit("Error: %s. 'samtools split' failed: %s\n" % (e, bam))
 
-        for bamfile in glob.glob(os.path.join(os.getcwd(), "*.bam")):
-            # convert readGroupId to filename friendly
-            if os.path.basename(bamfile) == os.path.basename(bam): continue  # skip input bam
+        # convert readGroupId to filename friendly
+        # only process the lanes output for given input bam
+        for bamfile in glob.glob(os.path.join(os.getcwd(), bam_base, "*.bam")):
 
             # remove file extension to get rg_id
             rg_id = os.path.splitext(os.path.basename(bamfile))[0]
@@ -202,7 +206,7 @@ def generate_ubams_from_bam(bam, readgroups, tool, mem=None, study_id=None, dono
             if not rg_id_found:
                 sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
 
-            os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, study_id, donor_id, sample_id)))
+            os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, bamfile, study_id, donor_id, sample_id)))
 
     else:
         sys.exit("Error: Unsupported tool: %s\n" % tool)
