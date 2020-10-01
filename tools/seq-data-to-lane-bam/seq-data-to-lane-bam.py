@@ -142,35 +142,35 @@ def generate_ubam_from_fastq(fq_pair, readgroup, mem=None, study_id=None, donor_
 
 
 def generate_ubams_from_bam(bam, readgroups, mem=None, study_id=None, donor_id=None, sample_id=None):
-        # get input bam basename, remove extention to use as output subfolder name
-        bam_base = os.path.splitext(os.path.basename(bam))[0]
-        out_format = bam_base+'/%!.bam'
-        os.mkdir(bam_base)
-        cmd = ['samtools', 'split', '-f', '%s' % out_format, '-@ %s' % str(args.cpus), bam]
-        try:
-            subprocess.run(cmd, check=True)
-        except Exception as e:
-            sys.exit("Error: %s. 'samtools split' failed: %s\n" % (e, bam))
+    # get input bam basename, remove extention to use as output subfolder name
+    bam_base = os.path.splitext(os.path.basename(bam))[0]
+    out_format = bam_base+'/%!.bam'
+    os.mkdir(bam_base)
+    cmd = ['samtools', 'split', '-f', '%s' % out_format, '-@ %s' % str(args.cpus), bam]
+    try:
+        subprocess.run(cmd, check=True)
+    except Exception as e:
+        sys.exit("Error: %s. 'samtools split' failed: %s\n" % (e, bam))
 
-        # convert readGroupId to filename friendly
-        # only process the lanes output for given input bam
-        for bamfile in glob.glob(os.path.join(os.getcwd(), bam_base, "*.bam")):
+    # convert readGroupId to filename friendly
+    # only process the lanes output for given input bam
+    for bamfile in glob.glob(os.path.join(os.getcwd(), bam_base, "*.bam")):
 
-            # remove file extension to get rg_id
-            rg_id = os.path.splitext(os.path.basename(bamfile))[0]
+        # remove file extension to get rg_id
+        rg_id = os.path.splitext(os.path.basename(bamfile))[0]
 
-            # let's make sure RG_ID in lane bam exists in readgroup metadata, either matching read_group_id_in_bam or submitter_read_group_id
-            rg_id_found = False
-            for rg in readgroups:
-                if rg.get('read_group_id_in_bam') == rg_id or \
-                        (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id):
-                    rg_id_found = True
-                    break
+        # let's make sure RG_ID in lane bam exists in readgroup metadata, either matching read_group_id_in_bam or submitter_read_group_id
+        rg_id_found = False
+        for rg in readgroups:
+            if rg.get('read_group_id_in_bam') == rg_id or \
+                    (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id):
+                rg_id_found = True
+                break
 
-            if not rg_id_found:
-                sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
+        if not rg_id_found:
+            sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
 
-            os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, os.path.basename(bam), study_id, donor_id, sample_id)))
+        os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, os.path.basename(bam), study_id, donor_id, sample_id)))
 
 
 def filename_to_file(filenames: tuple, files: list) -> tuple:
