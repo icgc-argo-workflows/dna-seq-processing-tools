@@ -71,14 +71,16 @@ def group_readgroup_by_filepair(seq_experiment_analysis):
     return filepair_map_to_readgroup
 
 
-def readgroup_id_to_fname(rg_id, study_id=None, donor_id=None, sample_id=None):
-    friendly_fname = "".join([ c if re.match(r"[a-zA-Z0-9\.\-_]", c) else "_" for c in rg_id ])
-    md5sum = hashlib.md5(rg_id.encode('utf-8')).hexdigest()
+def readgroup_id_to_fname(rg_id, input_bam_name='', study_id=None, donor_id=None, sample_id=None):
+    friendly_rgid = "".join([ c if re.match(r"[a-zA-Z0-9\.\-_]", c) else "_" for c in rg_id ])
+    # use original bam file name and rg_id to calculate the md5sum to avoid new lane bam file name collision
+    # use white space (' ') to separate bam name and rg_id
+    md5sum = hashlib.md5(("%s %s" % (input_bam_name, rg_id)).encode('utf-8')).hexdigest()
 
     if not sample_id or not donor_id or not study_id:
         sys.exit('Error: missing study/donor/sample ID in the provided metadata')
 
-    return ".".join([study_id, donor_id, sample_id, friendly_fname, md5sum, 'lane.bam'])
+    return ".".join([study_id, donor_id, sample_id, friendly_rgid, md5sum, 'lane.bam'])
 
 
 def bunzip2(fq_pair):

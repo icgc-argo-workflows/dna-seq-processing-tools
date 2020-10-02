@@ -21,8 +21,8 @@
  * author Junjun Zhang <junjun.zhang@oicr.on.ca>
  */
 
-nextflow.preview.dsl=2
-version = '0.2.4.0'
+nextflow.enable.dsl=2
+version = '0.3.1.0'
 
 params.metadata_json = ""
 params.seq_files = ""
