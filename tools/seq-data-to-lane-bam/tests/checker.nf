@@ -21,12 +21,12 @@
  * author Junjun Zhang <junjun.zhang@oicr.on.ca>
  */
 
-nextflow.preview.dsl=2
+nextflow.enable.dsl=2
 
 params.metadata_json = ""
 params.seq_files = ""
 
-include seqDataToLaneBam from '../seq-data-to-lane-bam' params(params)
+include {seqDataToLaneBam} from '../seq-data-to-lane-bam'
 
 workflow {
   main:
@@ -35,6 +35,6 @@ workflow {
       Channel.fromPath(params.seq_files).collect()
     )
 
-  publish:
-    seqDataToLaneBam.out.lane_bams to: 'outdir', overwrite: true
+  emit:
+    lane_bams = seqDataToLaneBam.out.lane_bams
 }

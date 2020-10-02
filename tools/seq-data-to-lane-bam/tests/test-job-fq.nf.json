@@ -7,5 +7,6 @@
     "input/D0RE2.1_r2.fq",
     "input/C0HVY.2_r1.fq",
     "input/C0HVY.2_r2.fq"
-  ]
+  ],
+  "publish_dir": "output"
 }
