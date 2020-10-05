@@ -9,19 +9,28 @@ import os
 import json
 
 
-def get_read_group_info(metadata_file, rg_id_in_bam):
+def get_read_group_info(metadata_file, rg_id_in_bam, lane_bam_name):
     if metadata_file and metadata_file != 'NO_FILE':
         with open(metadata_file, 'r') as f:
             metadata = json.load(f)
     else:
         return {}
 
+    # example lane_bam_name: TEST-PR.DO250122.SA610149.C0HVY.2.2adf885152f5f6d41d5193bd01164372.lane.bam
+    md5sum_from_filename = lane_bam_name.split('.')[-3]
+
     read_group = {}
     for rg in metadata['read_groups']:
         rg_id_in_bam = rg.get("read_group_id_in_bam") if rg.get("read_group_id_in_bam") else rg.get("submitter_read_group_id")
         seq_file_name = rg.get("file_r1")
-        bam_name = seq_file_name if seq_file_name.endswith('.bam') else ''
-        md5sum_from_metadata = hashlib.md5(("%s %s" % (bam_name, rg_id_in_bam)).encode('utf-8')).hexdigest()
+        original_bam_name = seq_file_name if seq_file_name.endswith('.bam') else ''
+        md5sum_from_metadata = hashlib.md5(("%s %s" % (original_bam_name, rg_id_in_bam)).encode('utf-8')).hexdigest()
+
+        # debugging
+        print(original_bam_name)
+        print(lane_bam_name)
+        print(md5sum_from_filename)
+        print(md5sum_from_metadata)
         if md5sum_from_metadata == md5sum_from_filename:
             read_group = rg
             break
@@ -111,7 +120,7 @@ def main():
         sys.exit('Error: no read group ID defined the in BAM: %s' % args.input_bam)
 
     # retrieve read_group_info from metadata
-    read_group_info = get_read_group_info(args.metadata, rg_id_in_bam)
+    read_group_info = get_read_group_info(args.metadata, rg_id_in_bam, os.path.basename(args.inut_bam))
 
     if read_group_info:  # use what's in metadata instead of in BAM header
         rg_kv = [ '@RG' ] + [ '%s:%s' % (k, v) for k, v in read_group_info.items() ]
