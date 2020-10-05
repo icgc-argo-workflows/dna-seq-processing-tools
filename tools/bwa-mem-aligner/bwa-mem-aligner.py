@@ -7,7 +7,6 @@ from multiprocessing import cpu_count
 import sys
 import os
 import json
-import re
 
 
 def get_read_group_info(metadata_file, rg_id_in_bam):
@@ -19,10 +18,14 @@ def get_read_group_info(metadata_file, rg_id_in_bam):
 
     read_group = {}
     for rg in metadata['read_groups']:
-        if rg.get('read_group_id_in_bam') == rg_id_in_bam or \
-                (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id_in_bam):
+        rg_id_in_bam = rg.get("read_group_id_in_bam") if rg.get("read_group_id_in_bam") else rg.get("submitter_read_group_id")
+        seq_file_name = rg.get("file_r1")
+        bam_name = seq_file_name if seq_file_name.endswith('.bam') else ''
+        md5sum_from_metadata = hashlib.md5(("%s %s" % (bam_name, rg_id_in_bam)).encode('utf-8')).hexdigest()
+        if md5sum_from_metadata == md5sum_from_filename:
             read_group = rg
             break
+
     if not read_group:
         sys.exit("Error: unable to find read group info for rg_id_in_bam ('%s') in the supplied metadata" % rg_id_in_bam)
 
