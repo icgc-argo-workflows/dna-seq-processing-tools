@@ -156,15 +156,15 @@ def generate_ubams_from_bam(bam, readgroups, mem=None, study_id=None, donor_id=N
 
     # convert readGroupId to filename friendly
     # only process the lanes output for given input bam
-    for bamfile in glob.glob(os.path.join(os.getcwd(), bam_base, "*.bam")):
+    for lane_bam in glob.glob(os.path.join(os.getcwd(), bam_base, "*.bam")):
 
         # remove file extension to get rg_id
-        rg_id = os.path.splitext(os.path.basename(bamfile))[0]
+        rg_id = os.path.splitext(os.path.basename(lane_bam))[0]
 
         # let's make sure RG_ID in lane bam exists in readgroup metadata, either matching read_group_id_in_bam or submitter_read_group_id
         rg_id_found = False
         for rg in readgroups:
-            if rg.get('file_r1') == os.path.basename(bamfile) and (rg.get('read_group_id_in_bam') == rg_id or
+            if rg.get('file_r1') == os.path.basename(bam) and (rg.get('read_group_id_in_bam') == rg_id or
                     (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id)):
                 rg_id_found = True
                 break
@@ -172,7 +172,7 @@ def generate_ubams_from_bam(bam, readgroups, mem=None, study_id=None, donor_id=N
         if not rg_id_found:
             sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
 
-        os.rename(bamfile, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, os.path.basename(bam), study_id, donor_id, sample_id)))
+        os.rename(lane_bam, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, os.path.basename(bam), study_id, donor_id, sample_id)))
 
 
 def filename_to_file(filenames: tuple, files: list) -> tuple:
