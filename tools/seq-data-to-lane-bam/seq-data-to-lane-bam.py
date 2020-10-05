@@ -55,12 +55,13 @@ def group_readgroup_by_filepair(seq_experiment_analysis):
                     ' and '.join(file_r1_r2) if file_r1_r2[1] else file_r1_r2[0])
             filepair_map_to_readgroup[file_r1_r2]['read_groups'].append(rg)
 
-        # make sure no duplicate of read_group_id_in_bam (when populated)
+        # make sure no duplicate of read_group_id_in_bam (when populated) within the same bam
         if rg.get('read_group_id_in_bam'):
-            if rg['read_group_id_in_bam'] in read_group_id_in_bam_set:
-                sys.exit('Error found: read_group_id_in_bam duplicated: %s' % rg['read_group_id_in_bam'])
+            bam_and_rg_id = '%s %s' % (rg.get('file_r1'), rg.get('read_group_id_in_bam'))
+            if bam_and_rg_id in read_group_id_in_bam_set:
+                sys.exit('Error found: read_group_id_in_bam duplicated in the same BAM: %s' % bam_and_rg_id)
             else:
-                read_group_id_in_bam_set.add(rg['read_group_id_in_bam'])
+                read_group_id_in_bam_set.add(bam_and_rg_id)
 
         # make sure no duplicate of submitter_read_group_id
         if rg['submitter_read_group_id'] in submitter_read_group_id_set:
@@ -163,8 +164,8 @@ def generate_ubams_from_bam(bam, readgroups, mem=None, study_id=None, donor_id=N
         # let's make sure RG_ID in lane bam exists in readgroup metadata, either matching read_group_id_in_bam or submitter_read_group_id
         rg_id_found = False
         for rg in readgroups:
-            if rg.get('read_group_id_in_bam') == rg_id or \
-                    (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id):
+            if rg.get('file_r1') == os.path.basename(bamfile) and (rg.get('read_group_id_in_bam') == rg_id or
+                    (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id)):
                 rg_id_found = True
                 break
 
