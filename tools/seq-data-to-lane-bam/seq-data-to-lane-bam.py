@@ -175,7 +175,7 @@ def generate_ubams_from_bam(bam, readgroups, mem=None, study_id=None, donor_id=N
         if rg_id_found:
             os.rename(lane_bam, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, os.path.basename(bam), study_id, donor_id, sample_id)))
         else:  # ignore lane bam without read group information in metadata, just produce a warning message here
-            print("Ignore lane BAM: %s (split from input BAM: %s) has not corresponding read group in metadata" %
+            print("WARNING: Ignore lane BAM '%s' (split from input BAM '%s') that has no corresponding read group in the metadata" %
                   (lane_bam, os.path.basename(bam)), file=sys.stderr)
 
 
