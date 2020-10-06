@@ -105,7 +105,7 @@ def bunzip2(fq_pair):
     return bunzipped
 
 
-def generate_ubam_from_fastq(fq_pair, readgroup, mem=None, study_id=None, donor_id=None, sample_id=None):
+def generate_ubam_from_fastq(fq_pair, readgroup, mem=None, study_id=None, donor_id=None, sample_id=None, rgs_with_lane_bam_produced=set()):
     jvm_Xmx = "-Xmx%sM" % mem if mem else ""
     fastq_pair = bunzip2(fq_pair)
 
@@ -137,13 +137,14 @@ def generate_ubam_from_fastq(fq_pair, readgroup, mem=None, study_id=None, donor_
             cmd += ['FASTQ2=%s' % fastq_pair[1]]
 
         subprocess.run(cmd, check=True)
+        rgs_with_lane_bam_produced.add(readgroup['submitter_read_group_id'])
 
     except Exception as e:
         sys.exit("Error: %s. FastqToSam failed: %s\n" % (e,
                     ' and '.join(fastq_pair) if fastq_pair[1] else fastq_pair[0]))
 
 
-def generate_ubams_from_bam(bam, readgroups, mem=None, study_id=None, donor_id=None, sample_id=None):
+def generate_ubams_from_bam(bam, readgroups, mem=None, study_id=None, donor_id=None, sample_id=None, rgs_with_lane_bam_produced=set()):
     # get input bam basename, remove extention to use as output subfolder name
     bam_base = os.path.splitext(os.path.basename(bam))[0]
     out_format = bam_base+'/%!.bam'
@@ -162,17 +163,20 @@ def generate_ubams_from_bam(bam, readgroups, mem=None, study_id=None, donor_id=N
         rg_id = os.path.splitext(os.path.basename(lane_bam))[0]
 
         # let's make sure RG_ID in lane bam exists in readgroup metadata, either matching read_group_id_in_bam or submitter_read_group_id
+        # otherwise, it should be a lane that's expected to be ignored
         rg_id_found = False
         for rg in readgroups:
             if rg.get('file_r1') == os.path.basename(bam) and (rg.get('read_group_id_in_bam') == rg_id or
                     (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id)):
                 rg_id_found = True
+                rgs_with_lane_bam_produced.add(rg['submitter_read_group_id'])
                 break
 
-        if not rg_id_found:
-            sys.exit("Error: unable to find read group info for rg_id ('%s') in the supplied metadata (SONG Analysis)" % rg_id)
-
-        os.rename(lane_bam, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, os.path.basename(bam), study_id, donor_id, sample_id)))
+        if rg_id_found:
+            os.rename(lane_bam, os.path.join(os.getcwd(), readgroup_id_to_fname(rg_id, os.path.basename(bam), study_id, donor_id, sample_id)))
+        else:  # ignore lane bam without read group information in metadata, just produce a warning message here
+            print("Ignore lane BAM: %s (split from input BAM: %s) has not corresponding read group in metadata" %
+                  (lane_bam, os.path.basename(bam)), file=sys.stderr)
 
 
 def filename_to_file(filenames: tuple, files: list) -> tuple:
@@ -193,16 +197,28 @@ def main(args):
 
     filepair_map_to_readgroup = group_readgroup_by_filepair(seq_experiment_analysis)
 
+    rgs_with_lane_bam_produced = set()
+
     for fp in filepair_map_to_readgroup:
         if filepair_map_to_readgroup[fp]['format'] == 'BAM':
             # for bam just need fp[0] since fp[1] is either the same as fp[0] or None
             generate_ubams_from_bam(filename_to_file(fp, args.seq_files)[0],
                                         filepair_map_to_readgroup[fp]['read_groups'],
-                                        args.mem, study_id, donor_id, sample_id)
+                                        args.mem, study_id, donor_id, sample_id, rgs_with_lane_bam_produced)
         else:
             generate_ubam_from_fastq(filename_to_file(fp, args.seq_files),
                                         filepair_map_to_readgroup[fp]['read_groups'][0],
-                                        args.mem, study_id, donor_id, sample_id)  # FASTQ must be one read group
+                                        args.mem, study_id, donor_id, sample_id, rgs_with_lane_bam_produced)  # FASTQ must be one read group
+
+    # now we check whether all read groups in metadata have produced lane bam
+    rgs_missed_lane_bam = set()
+    for rg in seq_experiment_analysis['read_groups']:
+        if rg['submitter_read_group_id'] not in rgs_with_lane_bam_produced:
+            rgs_missed_lane_bam.add(rg['submitter_read_group_id'])
+
+    if rgs_missed_lane_bam:  # throw error here if that happens
+        sys.exit("Error: no lane BAM has been generated for some read groups: '%s'. "
+                 "Please make sure supplied sequencing files and metadata are correct." % "', '".join(rgs_missed_lane_bam))
 
 
 if __name__ == "__main__":
