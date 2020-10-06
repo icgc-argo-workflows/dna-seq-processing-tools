@@ -22,25 +22,21 @@ def get_read_group_info(metadata_file, rg_id_in_bam, lane_bam_name):
 
     read_group = {}
     for rg in metadata['read_groups']:
-        rg_id_in_bam = rg.get("read_group_id_in_bam") if rg.get("read_group_id_in_bam") else rg.get("submitter_read_group_id")
+        rg_id_in_bam_from_metadata = rg.get("read_group_id_in_bam") if rg.get("read_group_id_in_bam") else rg.get("submitter_read_group_id")
+        if rg_id_in_bam != rg_id_in_bam_from_metadata:
+            continue
+
         seq_file_name = rg.get("file_r1")
         original_bam_name = seq_file_name if seq_file_name.endswith('.bam') else ''
         md5sum_from_metadata = hashlib.md5(("%s %s" % (original_bam_name, rg_id_in_bam)).encode('utf-8')).hexdigest()
 
-        # debugging
-        print(original_bam_name)
-        print(lane_bam_name)
-        print(rg.get("read_group_id_in_bam"))
-        print(rg.get("submitter_read_group_id"))
-        print(rg_id_in_bam)
-        print(md5sum_from_filename)
-        print(md5sum_from_metadata)
         if md5sum_from_metadata == md5sum_from_filename:
             read_group = rg
             break
 
     if not read_group:
-        sys.exit("Error: unable to find read group info for rg_id_in_bam ('%s') in the supplied metadata" % rg_id_in_bam)
+        sys.exit("Error: unable to find read group info for rg_id_in_bam '%s' from BAM '%s' in the supplied metadata" %
+                 (rg_id_in_bam, lane_bam_name))
 
     experiment = metadata['experiment']
     if 'library_strategy' in experiment:
