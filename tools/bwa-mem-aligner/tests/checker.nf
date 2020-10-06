@@ -50,7 +50,4 @@ workflow {
       file(params.tempdir),
       true
     )
-
-  publish:
-    bwaMemAligner.out to: "outdir", overwrite: true
 }

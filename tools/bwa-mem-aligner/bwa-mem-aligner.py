@@ -7,6 +7,7 @@ from multiprocessing import cpu_count
 import sys
 import os
 import json
+import hashlib
 
 
 def get_read_group_info(metadata_file, rg_id_in_bam, lane_bam_name):
@@ -29,6 +30,9 @@ def get_read_group_info(metadata_file, rg_id_in_bam, lane_bam_name):
         # debugging
         print(original_bam_name)
         print(lane_bam_name)
+        print(rg.get("read_group_id_in_bam"))
+        print(rg.get("submitter_read_group_id"))
+        print(rg_id_in_bam)
         print(md5sum_from_filename)
         print(md5sum_from_metadata)
         if md5sum_from_metadata == md5sum_from_filename:
@@ -120,7 +124,7 @@ def main():
         sys.exit('Error: no read group ID defined the in BAM: %s' % args.input_bam)
 
     # retrieve read_group_info from metadata
-    read_group_info = get_read_group_info(args.metadata, rg_id_in_bam, os.path.basename(args.inut_bam))
+    read_group_info = get_read_group_info(args.metadata, rg_id_in_bam, os.path.basename(args.input_bam))
 
     if read_group_info:  # use what's in metadata instead of in BAM header
         rg_kv = [ '@RG' ] + [ '%s:%s' % (k, v) for k, v in read_group_info.items() ]

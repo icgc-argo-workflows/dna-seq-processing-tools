@@ -1,7 +1,7 @@
 {
-    "input_bam": ["input/C0HVY.2.2a20e32f077348d97b3cf6c6cb4745c0.lane.bam",
-                  "input/D0RE2.1.d57f7e84fca26d288ed81eb9dfff5fe7.lane.bam",
-                  "input/D0RH0.2.43d6e0af883449ee27e6e6240d909bf5.lane.bam"],
+    "input_bam": ["input/C0HVY.2.2db5a19d9d5fdb9f534f68046bb2e8fa.lane.bam",
+		  "input/D0RE2.1.0a95ae6789a0d5b1af3c2a24ce377b0b.lane.bam",
+                  "input/D0RH0.2.231146e66d802729c719428e33e555a8.lane.bam"],
     "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
     "cpus": 2,
     "mem": 1.5,
