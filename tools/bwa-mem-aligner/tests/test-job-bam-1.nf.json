@@ -1,9 +1,9 @@
 {
-    "input_bam": ["input/D0RE2.1.0a95ae6789a0d5b1af3c2a24ce377b0b.lane.bam",
+    "input_bam": ["input/D0RE2.1.b8ac1a3b5b52ced6068b28c4e9b4e5e9.lane.bam",
                   "input/D0RH0.2.231146e66d802729c719428e33e555a8.lane.bam"],
     "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
     "aligned_lane_prefix": "grch38-aligned",
-    "sequencing_experiment_metadata": "input/0ae2c59b-2976-485c-a2c5-9b2976085cbf.fq.sequencing_experiment.song-analysis.json",
+    "sequencing_experiment_metadata": "input/0ae2c59b-2976-485c-a2c5-9b2976085cbf.bam-1.sequencing_experiment.song-analysis.json",
     "tempdir": "/tmp/",
     "cpus": 2
 }
