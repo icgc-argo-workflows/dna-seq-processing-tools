@@ -21,7 +21,7 @@
  * author Junjun Zhang <junjun.zhang@oicr.on.ca>
  */
 
-nextflow.preview.dsl=2
+nextflow.enable.dsl=2
 
 params.aligned_lane_bams = ""
 params.ref_genome_gz = ""
@@ -47,7 +47,4 @@ workflow {
       ref_genome_gz_ch.collect(),
       file(params.tempdir)
     )
-
-  publish:
-    bamMergeSortMarkdup.out to: "outdir", overwrite: true
 }

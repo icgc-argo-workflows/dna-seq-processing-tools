@@ -21,13 +21,13 @@
  * author Junjun Zhang <junjun.zhang@oicr.on.ca>
  */
 
-nextflow.preview.dsl=2
+nextflow.enable.dsl=2
 
 params.exp_tsv = "input/experiment-fq.v2.tsv"
 params.rg_tsv = "input/read_group-fq.v2.tsv"
 params.file_tsv = "input/file-fq.v2.tsv"
 
-include metadataValidation from '../metadata-validation' params(params)
+include { metadataValidation } from '../metadata-validation' params(params)
 
 workflow {
   main:
@@ -36,6 +36,4 @@ workflow {
       file(params.rg_tsv),
       file(params.file_tsv)
     )
-  publish:
-    metadataValidation.out to: "outdir", overwrite: true
 }
