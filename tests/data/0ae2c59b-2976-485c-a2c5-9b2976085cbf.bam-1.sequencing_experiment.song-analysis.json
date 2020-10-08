@@ -71,28 +71,6 @@
       "fileType": "FASTQ",
       "fileMd5sum": "058510bbdab2dccc14a2d7402a21248d",
       "fileAccess": "controlled"
-    },
-    {
-      "info": {},
-      "objectId": "a64aaf5b-c696-5f6e-bb65-b1c028c51867",
-      "studyId": "TEST-PRO",
-      "analysisId": "0ae2c59b-2976-485c-a2c5-9b2976085cbf",
-      "fileName": "C0HVY.2_r2.fq",
-      "fileSize": 5381,
-      "fileType": "FASTQ",
-      "fileMd5sum": "d649696f346eb75b95b68e8ecd45f44f",
-      "fileAccess": "controlled"
-    },
-    {
-      "info": {},
-      "objectId": "3f23ea8c-5fe9-5c15-9765-29f5345f2d73",
-      "studyId": "TEST-PRO",
-      "analysisId": "0ae2c59b-2976-485c-a2c5-9b2976085cbf",
-      "fileName": "C0HVY.2_r1.fq",
-      "fileSize": 5381,
-      "fileType": "FASTQ",
-      "fileMd5sum": "6584ebb05edfbd6f59be6307556bd871",
-      "fileAccess": "controlled"
     }
   ],
   "analysisType": {
@@ -114,18 +92,6 @@
   },
   "read_groups": [
     {
-      "file_r1": "C0HVY.2_r1.fq",
-      "file_r2": "C0HVY.2_r2.fq",
-      "insert_size": 298,
-      "library_name": "Pond-147580",
-      "is_paired_end": true,
-      "platform_unit": "74_8a",
-      "read_length_r1": 150,
-      "read_length_r2": 150,
-      "sample_barcode": null,
-      "submitter_read_group_id": "C0HVY:2"
-    },
-    {
       "file_r1": "D0RE2.1_r1.fq",
       "file_r2": "D0RE2.1_r2.fq",
       "insert_size": 298,
@@ -135,7 +101,7 @@
       "read_length_r1": 150,
       "read_length_r2": 150,
       "sample_barcode": null,
-      "submitter_read_group_id": "D0RE2_1"
+      "submitter_read_group_id": "D0RE2.1"
     },
     {
       "file_r1": "D0RH0.2_r1.fq",
@@ -150,6 +116,6 @@
       "submitter_read_group_id": "D0RH0.2"
     }
   ],
-  "read_group_count": 3,
+  "read_group_count": 2,
   "submitter_sequencing_experiment_id": "TEST_EXP"
 }

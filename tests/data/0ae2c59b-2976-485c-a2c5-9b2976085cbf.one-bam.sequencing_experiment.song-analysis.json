@@ -33,65 +33,21 @@
       "objectId": "1c91b42a-a55a-5cc0-8d3a-f0da81b47def",
       "studyId": "TEST-PRO",
       "analysisId": "0ae2c59b-2976-485c-a2c5-9b2976085cbf",
-      "fileName": "D0RH0.2_r2.fq",
+      "fileName": "test-input-1.bam",
       "fileSize": 4784,
-      "fileType": "FASTQ",
+      "fileType": "BAM",
       "fileMd5sum": "ed209fda15a5928087104253a6bfb42d",
       "fileAccess": "controlled"
     },
     {
       "info": {},
-      "objectId": "d781f270-f27e-5f26-8445-f640691856da",
+      "objectId": "1c91b42a-a55a-5cc0-8d3a-f0da81b47def",
       "studyId": "TEST-PRO",
       "analysisId": "0ae2c59b-2976-485c-a2c5-9b2976085cbf",
-      "fileName": "D0RH0.2_r1.fq",
+      "fileName": "test-input-2.bam",
       "fileSize": 4784,
-      "fileType": "FASTQ",
-      "fileMd5sum": "eb109b8774df03084024bc09a86721be",
-      "fileAccess": "controlled"
-    },
-    {
-      "info": {},
-      "objectId": "72c95274-e532-5ec1-b167-0e0e00c36717",
-      "studyId": "TEST-PRO",
-      "analysisId": "0ae2c59b-2976-485c-a2c5-9b2976085cbf",
-      "fileName": "D0RE2.1_r2.fq",
-      "fileSize": 6148,
-      "fileType": "FASTQ",
-      "fileMd5sum": "5fb35647198666b6a06e8539074282fd",
-      "fileAccess": "controlled"
-    },
-    {
-      "info": {},
-      "objectId": "223e68fc-b793-5ac8-b240-008abf87eb2d",
-      "studyId": "TEST-PRO",
-      "analysisId": "0ae2c59b-2976-485c-a2c5-9b2976085cbf",
-      "fileName": "D0RE2.1_r1.fq",
-      "fileSize": 6148,
-      "fileType": "FASTQ",
-      "fileMd5sum": "058510bbdab2dccc14a2d7402a21248d",
-      "fileAccess": "controlled"
-    },
-    {
-      "info": {},
-      "objectId": "a64aaf5b-c696-5f6e-bb65-b1c028c51867",
-      "studyId": "TEST-PRO",
-      "analysisId": "0ae2c59b-2976-485c-a2c5-9b2976085cbf",
-      "fileName": "C0HVY.2_r2.fq",
-      "fileSize": 5381,
-      "fileType": "FASTQ",
-      "fileMd5sum": "d649696f346eb75b95b68e8ecd45f44f",
-      "fileAccess": "controlled"
-    },
-    {
-      "info": {},
-      "objectId": "3f23ea8c-5fe9-5c15-9765-29f5345f2d73",
-      "studyId": "TEST-PRO",
-      "analysisId": "0ae2c59b-2976-485c-a2c5-9b2976085cbf",
-      "fileName": "C0HVY.2_r1.fq",
-      "fileSize": 5381,
-      "fileType": "FASTQ",
-      "fileMd5sum": "6584ebb05edfbd6f59be6307556bd871",
+      "fileType": "BAM",
+      "fileMd5sum": "ed209fda15a5928087104253a6bfb42d",
       "fileAccess": "controlled"
     }
   ],
@@ -114,8 +70,8 @@
   },
   "read_groups": [
     {
-      "file_r1": "C0HVY.2_r1.fq",
-      "file_r2": "C0HVY.2_r2.fq",
+      "file_r1": "test-input-1.bam",
+      "file_r2": "test-input-1.bam",
       "insert_size": 298,
       "library_name": "Pond-147580",
       "is_paired_end": true,
@@ -123,11 +79,12 @@
       "read_length_r1": 150,
       "read_length_r2": 150,
       "sample_barcode": null,
-      "submitter_read_group_id": "C0HVY:2"
+      "read_group_id_in_bam": "AAA",
+      "submitter_read_group_id": "C0HVY-AAA"
     },
     {
-      "file_r1": "D0RE2.1_r1.fq",
-      "file_r2": "D0RE2.1_r2.fq",
+      "file_r1": "test-input-1.bam",
+      "file_r2": "test-input-1.bam",
       "insert_size": 298,
       "library_name": "Pond-147580",
       "is_paired_end": true,
@@ -135,11 +92,11 @@
       "read_length_r1": 150,
       "read_length_r2": 150,
       "sample_barcode": null,
-      "submitter_read_group_id": "D0RE2_1"
+      "submitter_read_group_id": "BBB"
     },
     {
-      "file_r1": "D0RH0.2_r1.fq",
-      "file_r2": "D0RH0.2_r2.fq",
+      "file_r1": "test-input-2.bam",
+      "file_r2": "test-input-2.bam",
       "insert_size": 298,
       "library_name": "Pond-147580",
       "is_paired_end": true,
@@ -147,7 +104,7 @@
       "read_length_r1": 150,
       "read_length_r2": 150,
       "sample_barcode": null,
-      "submitter_read_group_id": "D0RH0.2"
+      "submitter_read_group_id": "AAA"
     }
   ],
   "read_group_count": 3,

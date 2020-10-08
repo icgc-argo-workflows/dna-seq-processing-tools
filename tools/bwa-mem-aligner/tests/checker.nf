@@ -21,13 +21,14 @@
  * author Junjun Zhang <junjun.zhang@oicr.on.ca>
  */
 
-nextflow.preview.dsl=2
+nextflow.enable.dsl=2
 
 params.input_bam = "input/?????_?.lane.bam"
 params.aligned_lane_prefix = 'grch38-aligned'
 params.ref_genome_gz = "reference/tiny-grch38-chr11-530001-537000.fa.gz"
 params.sequencing_experiment_metadata = "NO_FILE"
 params.tempdir = "NO_DIR"
+params.publish_dir = ""
 
 include {bwaMemAligner; getBwaSecondaryFiles} from '../bwa-mem-aligner' params(params)
 
@@ -50,7 +51,4 @@ workflow {
       file(params.tempdir),
       true
     )
-
-  publish:
-    bwaMemAligner.out to: "outdir", overwrite: true
 }

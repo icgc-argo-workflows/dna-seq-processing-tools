@@ -7,24 +7,36 @@ from multiprocessing import cpu_count
 import sys
 import os
 import json
-import re
+import hashlib
 
 
-def get_read_group_info(metadata_file, rg_id_in_bam):
+def get_read_group_info(metadata_file, rg_id_in_bam, lane_bam_name):
     if metadata_file and metadata_file != 'NO_FILE':
         with open(metadata_file, 'r') as f:
             metadata = json.load(f)
     else:
         return {}
 
+    # example lane_bam_name: TEST-PR.DO250122.SA610149.C0HVY.2.2adf885152f5f6d41d5193bd01164372.lane.bam
+    md5sum_from_filename = lane_bam_name.split('.')[-3]
+
     read_group = {}
     for rg in metadata['read_groups']:
-        if rg.get('read_group_id_in_bam') == rg_id_in_bam or \
-                (not rg.get('read_group_id_in_bam') and rg['submitter_read_group_id'] == rg_id_in_bam):
+        rg_id_in_bam_from_metadata = rg.get("read_group_id_in_bam") if rg.get("read_group_id_in_bam") else rg.get("submitter_read_group_id")
+        if rg_id_in_bam != rg_id_in_bam_from_metadata:
+            continue
+
+        seq_file_name = rg.get("file_r1")
+        original_bam_name = seq_file_name if seq_file_name.endswith('.bam') else ''
+        md5sum_from_metadata = hashlib.md5(("%s %s" % (original_bam_name, rg_id_in_bam)).encode('utf-8')).hexdigest()
+
+        if md5sum_from_metadata == md5sum_from_filename:
             read_group = rg
             break
+
     if not read_group:
-        sys.exit("Error: unable to find read group info for rg_id_in_bam ('%s') in the supplied metadata" % rg_id_in_bam)
+        sys.exit("Error: unable to find read group info for rg_id_in_bam '%s' from BAM '%s' in the supplied metadata" %
+                 (rg_id_in_bam, lane_bam_name))
 
     experiment = metadata['experiment']
     if 'library_strategy' in experiment:
@@ -108,7 +120,7 @@ def main():
         sys.exit('Error: no read group ID defined the in BAM: %s' % args.input_bam)
 
     # retrieve read_group_info from metadata
-    read_group_info = get_read_group_info(args.metadata, rg_id_in_bam)
+    read_group_info = get_read_group_info(args.metadata, rg_id_in_bam, os.path.basename(args.input_bam))
 
     if read_group_info:  # use what's in metadata instead of in BAM header
         rg_kv = [ '@RG' ] + [ '%s:%s' % (k, v) for k, v in read_group_info.items() ]

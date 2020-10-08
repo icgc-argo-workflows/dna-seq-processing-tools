@@ -1,0 +1,11 @@
+{
+    "input_bam": [
+        "input/AAA.227005013f41989b8719d3dfcdf1e105.lane.bam",
+        "input/BBB.09149666597ac5f96e53990f4d23ef04.lane.bam",
+        "input/AAA.b98a338e747f0a01d23b699bdc103dab.lane.bam"
+    ],
+    "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
+    "cpus": 2,
+    "mem": 1.5,
+    "sequencing_experiment_metadata": "input/0ae2c59b-2976-485c-a2c5-9b2976085cbf.one-bam.sequencing_experiment.song-analysis.json"
+}
