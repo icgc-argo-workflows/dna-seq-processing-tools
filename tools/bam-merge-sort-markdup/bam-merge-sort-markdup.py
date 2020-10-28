@@ -66,9 +66,9 @@ def main():
     else:
         cram = 'samtools view -C -T %s -@ %s --write-index /dev/stdin -o %s ' % (args.reference, args.cpus, args.output_base + ".cram")
 
-    tee = 'tee %s ' % (args.output_base + ".bam")
-    bai = 'samtools index -@ %s /dev/stdin %s' % (args.cpus, args.output_base + ".bam.bai")
-    bai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".bam", args.output_base + ".bam.bai")
+    tee = 'tee %s ' % (args.output_base + ".uncompress.bam")
+    bam = 'samtools view -b -h -@ %s --write-index /dev/stdin -o %s ' % (args.cpus, args.output_base + ".bam")
+    bai1 = 'samtools view -b -h -@ %s --write-index %s -o %s ' % (args.cpus, args.output_base + ".uncompress.bam", args.output_base + ".bam")
     crai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".cram", args.output_base + ".cram.crai")
 
     # build command
@@ -78,7 +78,7 @@ def main():
         if args.lossy: cmd.append(crai1)
 
     elif "bam" in args.output_format and not "cram" in args.output_format:
-        cmd.append('|'.join([merge, tee, bai]))
+        cmd.append('|'.join([merge, bam]))
 
     elif not "bam" in args.output_format and "cram" in args.output_format:
         cmd.append('|'.join([merge, cram]))
