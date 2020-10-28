@@ -46,7 +46,7 @@ def main():
     parser.add_argument("-n", "--cpus", dest='cpus', type=int, default=cpu_count())
     parser.add_argument("-d", "--mdup", dest='mdup', action='store_true')
     parser.add_argument("-l", "--lossy", dest='lossy', action='store_true')
-    parser.add_argument("-o", "--output-format", dest='output_format', choices=['bam', 'cram'], default=['cram'], nargs='+')
+    parser.add_argument("-o", "--output-format", dest='output_format', default='cram', choices=['bam', 'cram'])
 
     args = parser.parse_args()
 
@@ -66,21 +66,16 @@ def main():
     else:
         cram = 'samtools view -C -T %s -@ %s --write-index /dev/stdin -o %s ' % (args.reference, args.cpus, args.output_base + ".cram")
 
-    tee = 'tee %s ' % (args.output_base + ".uncompress.bam")
+    # tee = 'tee %s ' % (args.output_base + ".uncompress.bam")
     bam = 'samtools view -b -h -@ %s --write-index /dev/stdin -o %s##idx##%s ' % (args.cpus, args.output_base + ".bam", args.output_base + ".bam.bai")
-    bai1 = 'samtools view -b -h -@ %s --write-index %s -o %s##idx##%s ' % (args.cpus, args.output_base + ".uncompress.bam", args.output_base + ".bam", args.output_base + ".bam.bai")
+    # bai1 = 'samtools view -b -h -@ %s --write-index %s -o %s##idx##%s ' % (args.cpus, args.output_base + ".uncompress.bam", args.output_base + ".bam", args.output_base + ".bam.bai")
     crai1 = 'samtools index -@ %s %s %s ' % (args.cpus, args.output_base + ".cram", args.output_base + ".cram.crai")
 
     # build command
-    if "bam" in args.output_format and "cram" in args.output_format:
-        cmd.append('|'.join([merge, tee, cram]))
-        cmd.append(bai1)
-        if args.lossy: cmd.append(crai1)
-
-    elif "bam" in args.output_format and not "cram" in args.output_format:
+    if args.output_format == 'bam':
         cmd.append('|'.join([merge, bam]))
 
-    elif not "bam" in args.output_format and "cram" in args.output_format:
+    elif args.output_format == 'cram':
         cmd.append('|'.join([merge, cram]))
         if args.lossy: cmd.append(crai1)
     else:
