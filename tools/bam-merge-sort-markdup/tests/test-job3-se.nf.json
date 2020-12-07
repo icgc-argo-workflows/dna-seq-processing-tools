@@ -1,0 +1,12 @@
+{
+  "aligned_lane_bams": [
+    "input/grch38-aligned.TEST-PRO.DO250122.SA610149.C0HVY_2.2db5a19d9d5fdb9f534f68046bb2e8fa.lane.bam",
+    "input/grch38-aligned.TEST-PRO.DO250122.SA610149.D0RH0.2.231146e66d802729c719428e33e555a8.lane.bam",
+    "input/grch38-aligned.TEST-PRO.DO250122.SA610149.D0RE2_1.0a95ae6789a0d5b1af3c2a24ce377b0b.lane.bam"
+  ],
+  "ref_genome_gz": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
+  "tempdir": "/tmp",
+  "output_format": "bam",
+  "cpus": 1,
+  "mem": 2
+}
