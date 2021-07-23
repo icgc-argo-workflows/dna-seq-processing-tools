@@ -1,0 +1,7 @@
+{
+    "input_bam": "input/TEST-PRO.DO250122.SA610149.C0HVY_2.2db5a19d9d5fdb9f534f68046bb2e8fa.lane.bam",
+    "ref_genome_gz": "input/tiny-grch38-chr11-530001-537000.fa.gz",
+    "expected_output": "expected/expected.TEST-PRO.DO250122.SA610149.C0HVY_2.2db5a19d9d5fdb9f534f68046bb2e8fa.lane.bam",
+    "sequencing_experiment_analysis": "input/0ae2c59b-2976-485c-a2c5-9b2976085cbf.fq-se.sequencing_experiment.song-analysis.json",
+    "tempdir": "/tmp"
+}
