@@ -1,0 +1,14 @@
+{
+  "aligned_lane_bams": [
+    "input/grch38-aligned.D0RH0_2.lane.bam",
+    "input/grch38-aligned.D0RE2_1.lane.bam",
+    "input/grch38-aligned.C0HVY_2.lane.bam"
+  ],
+  "ref_genome_gz": "input/tiny-grch38-chr11-530001-537000.fa.gz",
+  "expected_output": "expected/expected.grch38-aligned.merged.cram",
+  "expected_metrics_output": "expected/expected.grch38-aligned.merged.cram.duplicates_metrics.tgz",
+  "tempdir": "/tmp",
+  "publish_dir": "output",
+  "cpus": 1,
+  "mem": 2
+}
