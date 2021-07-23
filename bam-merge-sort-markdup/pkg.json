@@ -30,8 +30,10 @@
     "devDependencies": [],
     "contributors": [
         {
-            "name": "Linda Xiang",
-            "email": "linda.xiang@oicr.on.ca"
+          "name": "Junjun Zhang"
+        },
+        {
+          "name": "Linda Xiang"
         }
     ],
     "license": "GNU Affero General Public License v3",
