@@ -1,6 +1,6 @@
 FROM quay.io/icgc-argo/dna-seq-processing-tools:base-docker.0.2.1
 
-LABEL org.opencontainers.image.source https://github.com/icgc-argo/dna-seq-processing-tools
+LABEL org.opencontainers.image.source https://github.com/icgc-argo-workflows/dna-seq-processing-tools
 
 ENV PATH="/tools:${PATH}"
 

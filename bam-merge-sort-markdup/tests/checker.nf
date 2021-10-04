@@ -33,7 +33,7 @@ nextflow.enable.dsl = 2
 version = '0.2.0.1'
 
 container = [
-    'ghcr.io': 'ghcr.io/icgc-argo/dna-seq-processing-tools.bam-merge-sort-markdup'
+    'ghcr.io': 'ghcr.io/icgc-argo-workflows/dna-seq-processing-tools.bam-merge-sort-markdup'
 ]
 default_container_registry = 'ghcr.io'
 /********************************************************************/
