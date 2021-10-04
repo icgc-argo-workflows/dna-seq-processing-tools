@@ -1,0 +1,8 @@
+{
+    "input_cram": "input/test.grch38-aligned.merged.cram",
+    "reference": "reference/tiny-grch38-chr11-530001-537000.fa.gz",
+    "expected_output": "expected/expected.grch38-aligned.merged.bam",
+    "publish_dir": "outdir",
+    "cpus": 2,
+    "mem": 2
+}
