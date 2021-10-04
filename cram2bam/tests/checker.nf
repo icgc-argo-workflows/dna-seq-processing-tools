@@ -43,9 +43,11 @@ params.container_version = ""
 params.container = ""
 
 // tool specific parmas go here, add / change as needed
-params.input_file = ""
+params.input_cram = ""
+params.reference = ""
 params.expected_output = ""
 
+include { getSecondaryFiles } from './wfpr_modules/github.com/icgc-argo-workflows/data-processing-utility-tools/helper-functions@1.0.1.1/main.nf'
 include { cram2bam } from '../main'
 
 
@@ -65,11 +67,9 @@ process file_smart_diff {
     # in this example, we need to remove date field before comparison eg, <div id="header_filename">Tue 19 Jan 2021<br/>test_rg_3.bam</div>
     # sed -e 's#"header_filename">.*<br/>test_rg_3.bam#"header_filename"><br/>test_rg_3.bam</div>#'
 
-    cat ${output_file[0]} \
-      | sed -e 's#"header_filename">.*<br/>#"header_filename"><br/>#' > normalized_output
+    samtools view -h ${output_file} | grep -v '^@PG' > normalized_output
 
-    ([[ '${expected_file}' == *.gz ]] && gunzip -c ${expected_file} || cat ${expected_file}) \
-      | sed -e 's#"header_filename">.*<br/>#"header_filename"><br/>#' > normalized_expected
+    samtools view -h ${expected_file} | grep -v '^@PG' > normalized_expected
 
     diff normalized_output normalized_expected \
       && ( echo "Test PASSED" && exit 0 ) || ( echo "Test FAILED, output file mismatch." && exit 1 )
@@ -79,16 +79,20 @@ process file_smart_diff {
 
 workflow checker {
   take:
-    input_file
+    input_cram
+    reference
+    reference_idx
     expected_output
 
   main:
     cram2bam(
-      input_file
+      input_cram,
+      reference,
+      reference_idx
     )
 
     file_smart_diff(
-      cram2bam.out.output_file,
+      cram2bam.out.output_bam,
       expected_output
     )
 }
@@ -96,7 +100,9 @@ workflow checker {
 
 workflow {
   checker(
-    file(params.input_file),
+    file(params.input_cram),
+    file(params.reference),
+    Channel.fromPath(getSecondaryFiles(params.reference,['{fa,gz}i']), checkIfExists: true).collect(),
     file(params.expected_output)
   )
 }

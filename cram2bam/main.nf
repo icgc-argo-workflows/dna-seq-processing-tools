@@ -44,9 +44,10 @@ params.publish_dir = ""  // set to empty string will disable publishDir
 
 
 // tool specific parmas go here, add / change as needed
-params.input_file = ""
-params.output_pattern = "*"  // output file name pattern
+params.input_cram = ""
+params.reference = ""
 
+include { getSecondaryFiles } from './wfpr_modules/github.com/icgc-argo-workflows/data-processing-utility-tools/helper-functions@1.0.1.1/main.nf'
 
 process cram2bam {
   container "${params.container ?: container[params.container_registry ?: default_container_registry]}:${params.container_version ?: version}"
@@ -56,22 +57,28 @@ process cram2bam {
   memory "${params.mem} GB"
 
   input:  // input, make update as needed
-    path input_file
+    path input_cram
+    path reference
+    path reference_idx
 
   output:  // output, make update as needed
-    path "output_dir/${params.output_pattern}", emit: output_file
+    path "*.bam", emit: output_bam
+    path "*.bai", emit: output_bai
 
-  script:
-    // add and initialize variables here as needed
+  shell:
+    '''
+    filename=`basename "!{input_cram}"`
+    fname="${filename%.*}"
+    ext="${filename##*.}"
 
-    """
-    mkdir -p output_dir
+    if [ "$ext" != "cram" ]; then
+      echo "Error: input CRAM file must have .cram extension."
+      exit 1
+    fi
 
-    main.py \
-      -i ${input_file} \
-      -o output_dir
-
-    """
+    samtools view -T !{reference} -b --threads !{params.cpus} -o ${fname}.bam !{input_cram}
+    samtools index ${fname}.bam
+    '''
 }
 
 
@@ -79,6 +86,8 @@ process cram2bam {
 // using this command: nextflow run <git_acc>/<repo>/<pkg_name>/<main_script>.nf -r <pkg_name>.v<pkg_version> --params-file xxx
 workflow {
   cram2bam(
-    file(params.input_file)
+    file(params.input_cram),
+    file(params.reference),
+    Channel.fromPath(getSecondaryFiles(params.reference,['{fai,gzi}']), checkIfExists: true).collect()
   )
 }

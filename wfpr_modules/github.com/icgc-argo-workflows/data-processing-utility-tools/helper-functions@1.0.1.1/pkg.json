@@ -1,18 +1,18 @@
 {
-    "name": "cram2bam",
-    "version": "0.1.0",
-    "description": "Tool to convert CRAM to BAM",
+    "name": "helper-functions",
+    "version": "1.0.1.1",
+    "description": "A collection of helper functions",
     "main": "main.nf",
     "deprecated": false,
     "keywords": [
         "bioinformatics",
-        "seq",
-        "bam",
-        "cram"
+        "utils",
+        "function",
+        "secondary file"
     ],
     "repository": {
         "type": "git",
-        "url": "https://github.com/icgc-argo-workflows/dna-seq-processing-tools.git"
+        "url": "https://github.com/icgc-argo-workflows/data-processing-utility-tools.git"
     },
     "container": {
         "registries": [
@@ -24,9 +24,7 @@
             }
         ]
     },
-    "dependencies": [
-        "github.com/icgc-argo-workflows/data-processing-utility-tools/helper-functions@1.0.1.1"
-    ],
+    "dependencies": [],
     "devDependencies": [],
     "contributors": [
         {
@@ -35,6 +33,6 @@
         }
     ],
     "license": "GNU Affero General Public License v3",
-    "bugReport": "https://github.com/icgc-argo-workflows/dna-seq-processing-tools/issues",
-    "homepage": "https://github.com/icgc-argo-workflows/dna-seq-processing-tools#readme"
+    "bugReport": "https://github.com/icgc-argo-workflows/data-processing-utility-tools/issues",
+    "homepage": "https://github.com/icgc-argo-workflows/data-processing-utility-tools#readme"
 }
