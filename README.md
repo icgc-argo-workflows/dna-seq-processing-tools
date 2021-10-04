@@ -1,6 +1,3 @@
-**NOTE**: this repository is archived to support workflow reproducibility. Active development continues at: https://github.com/icgc-argo-workflows/dna-seq-processing-tools
-
-[![Build Status](https://travis-ci.org/icgc-argo/dna-seq-processing-tools.svg?branch=master)](https://travis-ci.org/icgc-argo/dna-seq-processing-tools)
 # DNA sequencing reads processing
 
 This repository keeps a collect of data processing tools for DNA-Seq analysis. All tools are defined using Nextflow workflow language.
