@@ -67,3 +67,4 @@ docs/_build
 .nextflow*
 work
 outdir
+output
