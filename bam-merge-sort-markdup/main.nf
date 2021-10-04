@@ -25,7 +25,7 @@
 /* this block is auto-generated based on info from pkg.json where   */
 /* changes can be made if needed, do NOT modify this block manually */
 nextflow.enable.dsl = 2
-version = '0.2.0'  // package version
+version = '0.2.0.1'
 
 container = [
     'ghcr.io': 'ghcr.io/icgc-argo-workflows/dna-seq-processing-tools.bam-merge-sort-markdup'
