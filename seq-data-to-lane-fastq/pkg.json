@@ -1,0 +1,35 @@
+{
+    "name": "seq-data-to-lane-fastq",
+    "version": "0.1.0",
+    "description": "convert input reads to lane level fastq",
+    "main": "main.nf",
+    "deprecated": false,
+    "keywords": [
+        "seq conversion"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/icgc-argo-workflows/dna-seq-processing-tools.git"
+    },
+    "container": {
+        "registries": [
+            {
+                "registry": "ghcr.io",
+                "type": "docker",
+                "org": "icgc-argo-workflows",
+                "default": true
+            }
+        ]
+    },
+    "dependencies": [],
+    "devDependencies": [],
+    "contributors": [
+        {
+            "name": "Linda Xiang",
+            "email": "linda.xiang@oicr.on.ca"
+        }
+    ],
+    "license": "GNU Affero General Public License v3",
+    "bugReport": "https://github.com/icgc-argo-workflows/dna-seq-processing-tools/issues",
+    "homepage": "https://github.com/icgc-argo-workflows/dna-seq-processing-tools#readme"
+}
