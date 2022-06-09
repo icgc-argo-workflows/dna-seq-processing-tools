@@ -1,0 +1,9 @@
+{
+  "metadata_json": "input/0ae2c59b-2976-485c-a2c5-9b2976085cbf.fq-se.sequencing_experiment.song-analysis.json",
+  "seq_files": [
+    "input/D0RH0.2_r1.fq",
+    "input/D0RE2.1_r1.fq",
+    "input/C0HVY.2_r1.fq"
+  ],
+  "publish_dir": "output"
+}

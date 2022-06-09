@@ -44,33 +44,42 @@ params.publish_dir = ""  // set to empty string will disable publishDir
 
 
 // tool specific parmas go here, add / change as needed
-params.input_file = ""
-params.output_pattern = "*"  // output file name pattern
+params.metadata_json = ""
+params.seq_files = ""
+params.reads_max_discard_fraction = 0.05
+params.tempdir = "NO_DIR"
 
 
 process seqDataToLaneFastq {
   container "${params.container ?: container[params.container_registry ?: default_container_registry]}:${params.container_version ?: version}"
-  publishDir "${params.publish_dir}/${task.process.replaceAll(':', '_')}", mode: "copy", enabled: params.publish_dir
+  publishDir "${params.publish_dir}/${task.process.replaceAll(':', '_')}", mode: "copy", enabled: params.publish_dir ? true : false
 
   cpus params.cpus
   memory "${params.mem} GB"
 
   input:  // input, make update as needed
-    path input_file
+    path metadata_json
+    path seq
 
   output:  // output, make update as needed
-    path "output_dir/${params.output_pattern}", emit: output_file
+    path "out/*{fq,fastq,fq.gz,fastq.gz}", emit: lane_fastq
+    path "out/rgs_file_pair_map.csv", emit: file_pair_map_csv
 
   script:
     // add and initialize variables here as needed
 
+    arg_tempdir = params.tempdir != 'NO_DIR' ? "-t ${params.tempdir}" : ""
+
     """
-    mkdir -p output_dir
+    mkdir -p out
 
     main.py \
-      -i ${input_file} \
-      -o output_dir
-
+      -p ${metadata_json} \
+      -s ${seq} \
+      -d ${params.reads_max_discard_fraction} \
+      -n ${params.cpus} \
+      -o out ${arg_tempdir}
+    
     """
 }
 
@@ -79,6 +88,7 @@ process seqDataToLaneFastq {
 // using this command: nextflow run <git_acc>/<repo>/<pkg_name>/<main_script>.nf -r <pkg_name>.v<pkg_version> --params-file xxx
 workflow {
   seqDataToLaneFastq(
-    file(params.input_file)
+    file(params.metadata_json),
+    Channel.fromPath(params.seq_files).collect()
   )
 }

@@ -1,0 +1,5 @@
+{
+  "metadata_json": "input/551cebc0-8625-4201-948e-8f98fc1c2bb7.fq-bz2.sequencing_experiment.song-analysis.json",
+  "seq_files": "input/C0HVY.*_r{1,2}.fq.bz2",
+  "publish_dir": "output"
+}

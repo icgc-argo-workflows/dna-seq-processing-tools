@@ -43,60 +43,22 @@ params.container_version = ""
 params.container = ""
 
 // tool specific parmas go here, add / change as needed
-params.input_file = ""
-params.expected_output = ""
+params.metadata_json = ""
+params.seq_files = ""
+params.reads_max_discard_fraction = 0.05
+params.tempdir = "NO_DIR"
 
 include { seqDataToLaneFastq } from '../main'
 
-
-process file_smart_diff {
-  container "${params.container ?: container[params.container_registry ?: default_container_registry]}:${params.container_version ?: version}"
-
-  input:
-    path output_file
-    path expected_file
-
-  output:
-    stdout()
-
-  script:
-    """
-    # Note: this is only for demo purpose, please write your own 'diff' according to your own needs.
-    # in this example, we need to remove date field before comparison eg, <div id="header_filename">Tue 19 Jan 2021<br/>test_rg_3.bam</div>
-    # sed -e 's#"header_filename">.*<br/>test_rg_3.bam#"header_filename"><br/>test_rg_3.bam</div>#'
-
-    cat ${output_file[0]} \
-      | sed -e 's#"header_filename">.*<br/>#"header_filename"><br/>#' > normalized_output
-
-    ([[ '${expected_file}' == *.gz ]] && gunzip -c ${expected_file} || cat ${expected_file}) \
-      | sed -e 's#"header_filename">.*<br/>#"header_filename"><br/>#' > normalized_expected
-
-    diff normalized_output normalized_expected \
-      && ( echo "Test PASSED" && exit 0 ) || ( echo "Test FAILED, output file mismatch." && exit 1 )
-    """
-}
-
-
-workflow checker {
-  take:
-    input_file
-    expected_output
+workflow {
 
   main:
     seqDataToLaneFastq(
-      input_file
+      file(params.metadata_json),
+      Channel.fromPath(params.seq_files).collect()
     )
 
-    file_smart_diff(
-      seqDataToLaneFastq.out.output_file,
-      expected_output
-    )
-}
-
-
-workflow {
-  checker(
-    file(params.input_file),
-    file(params.expected_output)
-  )
+  emit:
+    lane_fastq = seqDataToLaneFastq.out.lane_fastq
+    rg_fastq_map = seqDataToLaneFastq.out.file_pair_map_csv
 }

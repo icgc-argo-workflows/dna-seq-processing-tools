@@ -1,0 +1,6 @@
+{
+  "metadata_json": "input/1a1fbac3-00bf-4606-9fba-c300bf46068d.bam-2.sequencing_experiment.song-analysis.json",
+  "seq_files": "input/test_rg_3-2.v2.bam",
+  "reads_max_discard_fraction": 0.1,
+  "publish_dir": "output"
+}
