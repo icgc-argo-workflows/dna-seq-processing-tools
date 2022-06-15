@@ -1,8 +1,7 @@
-# Package seq-data-to-lane-fastq
+# Nextflow Package `seq-data-to-lane-fastq`
 
-
-Please update this with a brief introduction of the package.
-
+A simple wrapper written in `nextflow` for the sequencing processing tool to convert all input sequencing data into unaligned and lane level fastq files.  
+The tool support both aligned bam or unaligned fastq formats with paired or single end reads.
 
 ## Package development
 
@@ -12,14 +11,20 @@ versioning, updating, CI testing and releasing.
 
 
 ## Inputs
+### Required
+- `metadata_json`: JSON file contains donor/sample/specimen/experiment/read_groups/files metadata
+- `seq_files`: Sequencing reads in aligned BAM or unaligned FASTQ formats. Supported input format: {BAM, *.fq.gz, *.fastq.gz, *.fq.bz2, *.fastq.bz2}
 
-Please list all input parameters
-
+### Optional
+- `reads_max_discard_fraction`: Max fraction of reads allowed to be discarded when reverting aligned BAM to unaligned
+- `tempdir`: Specify directory for temporary files
+- `cpus`: Set cpu number for running the tool
+- `mem`: Set memory(G) for running the tool
+- `publish_dir`: Specify directory for getting output files
 
 ## Outputs
-
-Please list all outputs
-
+- `lane_fastq`: All fastq files 
+- `file_pair_map_csv`: CSV file contains the 3 columns per lane: `read_group_id`, `file_r1`, `file_r2` 
 
 ## Usage
 
