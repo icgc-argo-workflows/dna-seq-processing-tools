@@ -180,6 +180,17 @@ def bunzip2(fq_pair):
 
     return bunzipped
 
+def get_new_filename(fastq_old, rg_id_fn, r1_r2, outdir):
+    if fastq_old.endswith('fq') or fastq_old.endswith('fastq'):
+      fastq_new = os.path.join(os.getcwd(), outdir, f'{rg_id_fn}_{r1_r2}.fq')
+    elif fastq_old.endswith('fq.gz') or fastq_old.endswith('fastq.gz'):
+      fastq_new = os.path.join(os.getcwd(), outdir, f'{rg_id_fn}_{r1_r2}.fq.gz')
+    else:
+      sys.exit("Unsupported file format: %s." % fastq_old)
+    
+    return fastq_new
+    
+
 
 def main():
     """
@@ -228,14 +239,16 @@ def main():
         fq_pair = filename_to_file(fp, args.seq_files)
         fastq_pair = bunzip2(fq_pair)
         rg = filepair_map_to_readgroup[fp]['read_groups'][0]
-        file_r1_new = os.path.join(os.getcwd(), args.outdir, os.path.basename(fastq_pair[0]))
+        rg_id = rg['submitter_read_group_id']
+        rg_id_fn = readgroup_id_to_fname(rg_id, '', study_id, donor_id, sample_id)
+        file_r1_new = get_new_filename(fastq_pair[0], rg_id_fn, "R1", args.outdir)
         os.symlink(os.path.abspath(fastq_pair[0]), file_r1_new)
         if fastq_pair[1]:
-          file_r2_new = os.path.join(os.getcwd(), args.outdir, os.path.basename(fastq_pair[1]))
-          os.symlink(os.path.abspath(fastq_pair[0]), file_r2_new)
+          file_r2_new = get_new_filename(fastq_pair[1], rg_id_fn, "R2", args.outdir)
+          os.symlink(os.path.abspath(fastq_pair[1]), file_r2_new)
         else:
           file_r2_new = 'No_File'
-        rgs_file_pair_map[rg['submitter_read_group_id']] = {
+        rgs_file_pair_map[rg_id] = {
           'file_r1': file_r1_new,
           'file_r2': file_r2_new
         }
